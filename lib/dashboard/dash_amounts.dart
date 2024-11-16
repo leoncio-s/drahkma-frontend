@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -49,7 +50,7 @@ class _Cards extends StatelessWidget {
   StatelessElement createElement() {
     dataNotifier.getData(notifier.dateTimeRange);
     notifier.addListener(() {
-      dataNotifier.getData(appNotifier.dateTimeRange);
+      Timer.periodic(const Duration(seconds: 2), dataNotifier.getData(appNotifier.dateTimeRange));
     });
     return super.createElement();
   }

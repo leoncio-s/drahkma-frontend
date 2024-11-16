@@ -60,7 +60,7 @@ class CardsViewState extends State<CardsView> {
               height: 30,
             ),
             MediaQuery.of(context).size.width < 500 ? Text(
-                "Contas bancárias",
+                "Cartões",
                 style: const TextStyle(
                   fontSize: 20.0,
                 ),

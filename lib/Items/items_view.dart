@@ -54,6 +54,7 @@ class _ItemsViewState extends State<ItemsView>{
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
           child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800.0),
