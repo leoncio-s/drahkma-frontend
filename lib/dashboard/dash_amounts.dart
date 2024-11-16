@@ -26,7 +26,6 @@ class DashboardState extends State<Dashboard> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,11 +44,10 @@ class _Cards extends StatelessWidget {
   AppNotifier notifier;
   DashboardDto data = dataNotifier.data;
 
-
   @override
   StatelessElement createElement() {
     dataNotifier.getData(notifier.dateTimeRange);
-    notifier.addListener((){
+    notifier.addListener(() {
       dataNotifier.getData(appNotifier.dateTimeRange);
     });
     return super.createElement();
@@ -58,96 +56,168 @@ class _Cards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-            child: Center(child: ConstrainedBox(constraints: BoxConstraints(maxWidth: 900.00), child: Wrap(
-              alignment: WrapAlignment.center,
-              clipBehavior: Clip.hardEdge,
-              children: [
-                SizedBox.fromSize(
-                  size: const Size.fromHeight(30),
-                ),
-                _period(context),
-                SizedBox.fromSize(
-                  size: const Size.fromHeight(30.0),
-                ),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
+        body: SingleChildScrollView(
+      child: Center(
+          child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 900.00),
+        child: Wrap(
+          alignment: WrapAlignment.center,
+          clipBehavior: Clip.hardEdge,
+          children: [
+            SizedBox.fromSize(
+              size: const Size.fromHeight(30),
+            ),
+            _period(context),
+            SizedBox.fromSize(
+              size: const Size.fromHeight(30.0),
+            ),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   return _balance(context, dataNotifier.data.amount);
                 }),
-                
-                // _balanceInflow(context, value),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
+
+            // _balanceInflow(context, value),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   return _balanceInflow(context, dataNotifier.data.inflow);
                 }),
 
-                // _balanceOutflow(context),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
+            // _balanceOutflow(context),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   return _balanceOutflow(context, dataNotifier.data.outflow);
                 }),
-                // _balanceInflowCards(context),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
-                  return _balanceInflowCards(context, dataNotifier.data.totalAmountInflowCards);
+            // _balanceInflowCards(context),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
+                  return _balanceInflowCards(
+                      context, dataNotifier.data.totalAmountInflowCards);
                 }),
-                // _balanceOutflowCards(context),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
-                  return _balanceOutflowCards(context, dataNotifier.data.totalAmountOutflowCards);
+            // _balanceOutflowCards(context),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
+                  return _balanceOutflowCards(
+                      context, dataNotifier.data.totalAmountOutflowCards);
                 }),
-                // _balanceInflowTransferBank(context),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
-                  return _balanceInflowTransferBank(context, dataNotifier.data.totalAmountInflowTransferBank);
+            // _balanceInflowTransferBank(context),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
+                  return _balanceInflowTransferBank(
+                      context, dataNotifier.data.totalAmountInflowTransferBank);
                 }),
-                // _balanceOutflowTransferBank(context),
-                ListenableBuilder(listenable: dataNotifier, builder: (c,w){
-                  return _balanceOutflowTransferBank(context, dataNotifier.data.totalAmountOutflowTransferBank);
+            // _balanceOutflowTransferBank(context),
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
+                  return _balanceOutflowTransferBank(context,
+                      dataNotifier.data.totalAmountOutflowTransferBank);
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountGroup(data: dataNotifier.data.amountInflowCategory, title: "Receitas por Categoria",);
+                  return ChartsWidgetTotalAmountGroup(
+                    data: dataNotifier.data.amountInflowCategory,
+                    title: "Receitas por Categoria",
+                  );
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountGroup(data: dataNotifier.data.amountInflowCard, title: "Receitas por Cartão",);
+                  return ChartsWidgetTotalAmountGroup(
+                    data: dataNotifier.data.amountInflowCard,
+                    title: "Receitas por Cartão",
+                  );
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountGroup(data: dataNotifier.data.amountOutflowCategory, title: "Despesas por Categoria",);
+                  return ChartsWidgetTotalAmountGroup(
+                    data: dataNotifier.data.amountOutflowCategory,
+                    title: "Despesas por Categoria",
+                  );
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountGroup(data: dataNotifier.data.amountOutflowCard, title: "Despesas por Cartão",);
+                  return ChartsWidgetTotalAmountGroup(
+                    data: dataNotifier.data.amountOutflowCard,
+                    title: "Despesas por Cartão",
+                  );
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountTranferBank(data: dataNotifier.data.amountInflowTransferBank, title: "Receita por Tranferência Bancária",);
+                  return ChartsWidgetTotalAmountTranferBank(
+                    data: dataNotifier.data.amountInflowTransferBank,
+                    title: "Receita por Tranferência Bancária",
+                  );
                 }),
-                ListenableBuilder(listenable: dataNotifier, builder: (c, w){
+            ListenableBuilder(
+                listenable: dataNotifier,
+                builder: (c, w) {
                   // print("AQUI ALTEROU: ${dataNotifier.data}");
-                  return ChartsWidgetTotalAmountTranferBank(data: dataNotifier.data.amountOutflowTransferBank, title: "Despesa por Tranferência Bancária",);
+                  return ChartsWidgetTotalAmountTranferBank(
+                    data: dataNotifier.data.amountOutflowTransferBank,
+                    title: "Despesa por Tranferência Bancária",
+                  );
                 }),
-              ],
-            ),)
-          ),
+          ],
+        ),
+      )),
     ));
   }
 
   _period(context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListenableBuilder(
-            listenable: notifier,
-            builder: (context, child) {
-              // dataNotifier.getData(notifier.dateTimeRange);
-              return Text(
-                  "Período: ${Config.dateFormat.format(notifier.dateTimeRange.start)} - ${Config.dateFormat.format(notifier.dateTimeRange.end)}");
-            }),
-        TextButton.icon(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: () async {
-              notifier.selectDateRange(context);
-            },
-            label: const Text("Selecionar Período"))
-      ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 800.00, maxHeight: 80.00),
+      child: Center(
+        widthFactor: 800.00,
+        child: Flex(
+          direction: MediaQuery.of(context).size.width < 375
+              ? Axis.vertical
+              : Axis.horizontal,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            ListenableBuilder(
+                listenable: notifier,
+                builder: (context, child) {
+                  return Flexible(
+                      child: SizedBox(
+                    width: 250,
+                    child: Center(
+                      child: Text(
+                          "Período: ${Config.dateFormat.format(notifier.dateTimeRange.start)} - ${Config.dateFormat.format(notifier.dateTimeRange.end)}", textAlign: TextAlign.center,),
+                    ),
+                  ));
+                }),
+            Flexible(
+                child: SizedBox(
+              width: 250,
+              child: Center(
+                child: TextButton.icon(
+                    icon: const Icon(Icons.calendar_month),
+                    onPressed: () async {
+                      notifier.selectDateRange(context);
+                    },
+                    label: const Text("Selecionar Período", textAlign: TextAlign.center)),
+              ),
+            ))
+          ],
+        ),
+      ),
     );
   }
 
@@ -301,8 +371,7 @@ class _Cards extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        Config.currencyFormat
-                            .format(value),
+                        Config.currencyFormat.format(value),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
@@ -343,8 +412,7 @@ class _Cards extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        Config.currencyFormat
-                            .format(value),
+                        Config.currencyFormat.format(value),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
@@ -385,8 +453,7 @@ class _Cards extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        Config.currencyFormat
-                            .format(value),
+                        Config.currencyFormat.format(value),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,
@@ -427,8 +494,7 @@ class _Cards extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        Config.currencyFormat
-                            .format(value),
+                        Config.currencyFormat.format(value),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.white,

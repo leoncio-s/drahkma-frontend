@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:front_lfinanca/BankAccounts/bank_accounts_dto.dart';
 import 'package:front_lfinanca/BankAccounts/bank_accounts_form.dart';
 import 'package:front_lfinanca/BankAccounts/bank_accounts_service.dart';
+import 'package:front_lfinanca/Utils/text_scaler.dart';
 import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
 
 class BankAccountsView extends StatefulwidgetLfinanca {
@@ -17,88 +18,102 @@ class BankAccountsView extends StatefulwidgetLfinanca {
 
 class BankAccountsViewState extends State<BankAccountsView> {
   List<BankAccountsDto>? bank_accounts;
-  Timer? _timer;
   String? _message;
   double _turns = 0.0;
 
   _getData() {
     return BankAccountsService().get().then((value) {
-      setState(() {
+      if(mounted){
+        setState(() {
         bank_accounts = value;
         _message = null;
       });
-    }).onError((e,s){
-      setState(() {
+      }
+    }).onError((e, s) {
+      if(mounted){
+        setState(() {
         _message = "Erro ao processar solicitação. Tente novamente!";
       });
+      }
     });
   }
 
   @override
   void initState() {
-    // _timer = Timer(const Duration(seconds: 3), _getBankAccounts);
     _getData();
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // _timer?.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-          child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 800),
-        child: Flex(
-          direction: Axis.vertical,
-          children: [
-            const SizedBox(
-              height: 30,
-            ),
-            bank_accounts != null && bank_accounts!.isNotEmpty
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Tooltip(
-                        message: "Ordem Crescente",
-                        child: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                bank_accounts!.sort(BankAccountsSort.asc);
-                              });
-                            },
-                            icon: const Icon(Icons.arrow_upward)),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Tooltip(
-                        message: "Ordem Decrescente",
-                        child: IconButton(
-                            onPressed: () {
-                              bank_accounts != null
-                                  ? setState(() {
-                                      bank_accounts!
-                                          .sort(BankAccountsSort.desc);
-                                    })
-                                  : null;
-                            },
-                            icon: const Icon(Icons.arrow_downward)),
-                      ),
-                    ],
-                  )
-                : const SizedBox(),
-            const SizedBox(
-              height: 30,
-            ),
-            listTileCategories()
-          ],
-        ),
-      )),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
+            child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              const SizedBox(
+                height: 30,
+              ),
+              MediaQuery.of(context).size.width < 500 ? Text(
+                "Contas bancárias",
+                style: const TextStyle(
+                  fontSize: 20.0,
+                ),
+                textAlign: TextAlign.center,
+                textScaler: TextScaler.linear(
+                    principalCardScaller(MediaQuery.of(context).size.width)),
+              ) : const SizedBox(),
+              bank_accounts != null && bank_accounts!.isNotEmpty
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: "Ordem Crescente",
+                          child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  bank_accounts!.sort(BankAccountsSort.asc);
+                                });
+                              },
+                              icon: const Icon(Icons.arrow_upward)),
+                        ),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Tooltip(
+                          message: "Ordem Decrescente",
+                          child: IconButton(
+                              onPressed: () {
+                                bank_accounts != null
+                                    ? setState(() {
+                                        bank_accounts!
+                                            .sort(BankAccountsSort.desc);
+                                      })
+                                    : null;
+                              },
+                              icon: const Icon(Icons.arrow_downward)),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
+              const SizedBox(
+                height: 30,
+              ),
+              listTileCategories()
+            ],
+          ),
+        )),
+      ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             BankAccountsDto? data = await Navigator.of(context).push(
@@ -113,10 +128,10 @@ class BankAccountsViewState extends State<BankAccountsView> {
 
   Widget listTileCategories() {
     return bank_accounts != null
-        ? ListView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+        ? Column(
+            // scrollDirection: Axis.vertical,
+            // shrinkWrap: true,
+            // padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
             children: ListTile.divideTiles(
                     context: context,
                     tiles: bank_accounts!
@@ -162,8 +177,13 @@ class BankAccountsViewState extends State<BankAccountsView> {
                             ))
                         .toList())
                 .toList())
-        : _message == null ? SizedBox.fromSize(
-            size: const Size(50, 50), child: const CircularProgressIndicator()) : Center(child: _replayData(),);
+        : _message == null
+            ? SizedBox.fromSize(
+                size: const Size(50, 50),
+                child: const CircularProgressIndicator())
+            : Center(
+                child: _replayData(),
+              );
   }
 
   _snackBarError(String message) {
@@ -176,24 +196,34 @@ class BankAccountsViewState extends State<BankAccountsView> {
   }
 
   _replayData() {
-    return SizedBox.fromSize(size: const Size.fromHeight(100.0), child: Flex(direction: Axis.vertical, children: [
-      Flexible(child: Text(_message!.isEmpty ? "Erro ao processar dados" : _message!)),
-      const SizedBox(height: 30,),
-      Flexible(child: Tooltip(
-        message: "Tentar Novamente",
-        child: IconButton.filled(
-            onPressed: () {
-              setState(() {
-                _turns -= 1.0;
-                _message = null;
-              });
-              _getData();
-            },
-            icon:  AnimatedRotation(
-              turns: _turns,
-              duration: const Duration(seconds: 1),
-              child: const Icon(Icons.replay),
-            ))))
-    ],));
+    return SizedBox.fromSize(
+        size: const Size.fromHeight(100.0),
+        child: Flex(
+          direction: Axis.vertical,
+          children: [
+            Flexible(
+                child: Text(
+                    _message!.isEmpty ? "Erro ao processar dados" : _message!)),
+            const SizedBox(
+              height: 30,
+            ),
+            Flexible(
+                child: Tooltip(
+                    message: "Tentar Novamente",
+                    child: IconButton.filled(
+                        onPressed: () {
+                          setState(() {
+                            _turns -= 1.0;
+                            _message = null;
+                          });
+                          _getData();
+                        },
+                        icon: AnimatedRotation(
+                          turns: _turns,
+                          duration: const Duration(seconds: 1),
+                          child: const Icon(Icons.replay),
+                        ))))
+          ],
+        ));
   }
 }

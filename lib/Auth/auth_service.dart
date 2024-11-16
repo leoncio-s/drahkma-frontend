@@ -69,6 +69,8 @@ class AuthService {
     user = new UserDto();
     if(kIsWeb){
       _st.clear();
+    }else if(io.Platform.isWindows){
+      user = UserDto();
     }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/dashboard/data_notifier.dart';
+// import 'package:front_lfinanca/dashboard/data_notifier.dart';
 
 class AppNotifier with ChangeNotifier{
       DateTimeRange _dateTimeRange = DateTimeRange(start: DateTime.now().subtract(const Duration(days: 30)), end: DateTime.now());

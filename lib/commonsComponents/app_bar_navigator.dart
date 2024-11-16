@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_lfinanca/Auth/auth_service.dart';
 import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
 
 // ignore: must_be_immutable
@@ -22,7 +23,10 @@ class AppBarNavigator extends StatelessWidget {
               toolbarHeight: 30,
               actions: [
                 ElevatedButton.icon(
-                    onPressed: () {}, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
+                    onPressed: () {
+                      AuthService.logout();
+                      Navigator.of(context).pushReplacementNamed("/auth/login");
+                    }, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
               ],
               bottom: TabBar(
                   isScrollable: true,

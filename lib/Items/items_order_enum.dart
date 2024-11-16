@@ -3,7 +3,7 @@ enum ItemsOrderEnum {
   DataAscendente("Data Ascendente"),
 
   DescricaoDecrescente("Descrição Decrescente"),
-  DescricaoAscendente("Data Ascendente"),
+  DescricaoAscendente("Descrição Ascendente"),
   
   ValorDecrescente("Valor Decrescente"),
   ValorAscendente("Valor Ascendente");

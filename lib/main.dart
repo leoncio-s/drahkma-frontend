@@ -10,11 +10,11 @@ void main() async {
   String initialRoute;
 
   if(kDebugMode){
-    Config.setUrlApi = "http://localhost:8080/api/v1";
+    Config.setUrlApi = "http://localhost:8081/public/api/v1/";
   }
 
   try{
-    var user = await UserService.profile();
+    await UserService.profile();
     initialRoute = "/dashboard";
   }catch(e){
     initialRoute = "/auth/login";

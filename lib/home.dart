@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:front_lfinanca/BankAccounts/bank_accounts_view.dart';
 import 'package:front_lfinanca/Cards/cards_view.dart';
-import 'package:front_lfinanca/Categories/CategoriesView.dart';
+import 'package:front_lfinanca/Categories/categories_view.dart';
 import 'package:front_lfinanca/Dashboard/dash_amounts.dart';
 import 'package:front_lfinanca/Items/inflow_view.dart';
 import 'package:front_lfinanca/Items/outflow_view.dart';

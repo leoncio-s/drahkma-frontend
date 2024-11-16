@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:front_lfinanca/Cards/cards_dto.dart';
 import 'package:front_lfinanca/Cards/cards_form.dart';
 import 'package:front_lfinanca/Cards/cards_services.dart';
+import 'package:front_lfinanca/Utils/text_scaler.dart';
 import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
 
 class CardsView extends StatefulwidgetLfinanca {
@@ -17,20 +18,23 @@ class CardsView extends StatefulwidgetLfinanca {
 
 class CardsViewState extends State<CardsView> {
   List<CardsDto>? cards;
-  Timer? _timer;
   String? _message;
   double _turns = 0.0;
 
   _getData() {
     return CardsServices().get().then((value) {
-      setState(() {
+      if(mounted){
+        setState(() {
         cards = value;
         _message = null;
       });
+      }
     }).onError((e,s){
-      setState(() {
+      if(mounted){
+        setState(() {
         _message = "Erro ao processar solicitação. Tente novamente!";
       });
+      }
     });
   }
 
@@ -42,15 +46,11 @@ class CardsViewState extends State<CardsView> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
           child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
         child: Flex(
@@ -59,6 +59,15 @@ class CardsViewState extends State<CardsView> {
             const SizedBox(
               height: 30,
             ),
+            MediaQuery.of(context).size.width < 500 ? Text(
+                "Contas bancárias",
+                style: const TextStyle(
+                  fontSize: 20.0,
+                ),
+                textAlign: TextAlign.center,
+                textScaler: TextScaler.linear(
+                    principalCardScaller(MediaQuery.of(context).size.width)),
+              ) : const SizedBox(),
             cards != null && cards!.isNotEmpty
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -99,6 +108,7 @@ class CardsViewState extends State<CardsView> {
           ],
         ),
       )),
+      ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             CardsDto? data = await Navigator.of(context).push(
@@ -113,10 +123,7 @@ class CardsViewState extends State<CardsView> {
 
   Widget listTileCards() {
     return cards != null
-        ? ListView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+        ? Column(
             children: ListTile.divideTiles(
                     context: context,
                     tiles: cards!

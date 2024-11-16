@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:front_lfinanca/Categories/categories_dto.dart';
 import 'package:front_lfinanca/Categories/categories_form.dart';
 import 'package:front_lfinanca/Categories/categories_service.dart';
+import 'package:front_lfinanca/Utils/text_scaler.dart';
 import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
 
 import 'categories_sort.dart';
@@ -19,21 +20,25 @@ class CategoriesView extends StatefulwidgetLfinanca {
 
 class CategoriesViewState extends State<CategoriesView> {
   List<CategoriesDto>? categories;
-  Timer? _timer;
+  // Timer? _timer;
   String? _message;
   double _turns = 0.0;
 
 
   _getData(){
     CategoriesService().get().then((value) {
-      setState(() {
+      if(mounted){
+        setState(() {
         categories = value;
         _message = null;
       });
+      }
     }).timeout(const Duration(seconds: 3)).onError((e,s){
-      setState(() {
+      if(mounted){
+        setState(() {
         _message = "Erro ao processar a solicitação. Tente novamente!";
       });
+      }
     });
   }
 
@@ -46,15 +51,11 @@ class CategoriesViewState extends State<CategoriesView> {
   }
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
           child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
         child: Flex(
@@ -63,6 +64,15 @@ class CategoriesViewState extends State<CategoriesView> {
             const SizedBox(
               height: 30,
             ),
+            MediaQuery.of(context).size.width < 500 ? Text(
+                "Categorias",
+                style: const TextStyle(
+                  fontSize: 20.0,
+                ),
+                textAlign: TextAlign.center,
+                textScaler: TextScaler.linear(
+                    principalCardScaller(MediaQuery.of(context).size.width)),
+              ) : const SizedBox(),
             categories != null && categories!.isNotEmpty
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -100,6 +110,7 @@ class CategoriesViewState extends State<CategoriesView> {
           ],
         ),
       )),
+      ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             CategoriesDto? data = await Navigator.of(context).push(
@@ -114,10 +125,7 @@ class CategoriesViewState extends State<CategoriesView> {
 
   Widget listTileCategories() {
     return categories != null
-        ? ListView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+        ? Column(
             children: ListTile.divideTiles(
                     context: context,
                     tiles: categories!
