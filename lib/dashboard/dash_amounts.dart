@@ -38,6 +38,7 @@ class DashboardState extends State<Dashboard> {
   }
 }
 
+// ignore: must_be_immutable
 class _Cards extends StatelessWidget {
   _Cards({super.key, required this.notifier, required dataNotifier});
 

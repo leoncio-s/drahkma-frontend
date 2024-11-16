@@ -6,19 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:front_lfinanca/config.dart';
 import 'package:front_lfinanca/dashboard/dashboard_dto.dart';
 import 'package:front_lfinanca/dashboard/data_notifier.dart';
-import 'package:graphic/graphic.dart';
-import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-
-// class ChartsWidget extends StatefulWidget{
-
-//   final DashboardDto data;
-
-//   const ChartsWidget({super.key, required this.data});
-
-//   @override
-//   State<ChartsWidget> createState() => _ChartWidgetState();
-// }
 
 class ChartsWidgetTotalAmountGroup extends StatelessWidget {
   final List<AmountGroupDto>? data;
