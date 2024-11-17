@@ -53,7 +53,7 @@ class AuthState extends State<Auth> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                "LFINANCA",
+                                "DRAHKMA",
                                 textScaler: TextScaler.linear(1.1),
                                 style: TextStyle(fontSize: 20.0),
                               ),

@@ -26,3 +26,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: OpenSans
+      fonts:
+        - asset: fonts/OpenSans-Italic-VariableFont_wdth,wght.ttf
+          style: italic
+        - asset: fonts/OpenSans-VariableFont_wdth,wght.ttf
+

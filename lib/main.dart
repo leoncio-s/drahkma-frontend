@@ -53,6 +53,7 @@ class _MainApp extends State<LFinanca> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Drahkma - Gerenciamento Financeiro Inteligente",
       initialRoute: widget.initialRoute,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
@@ -62,15 +63,16 @@ class _MainApp extends State<LFinanca> {
       ],
       supportedLocales: const [Locale('pt', 'BR')],
       theme: ThemeData(
+        fontFamily: "OpenSans",
         useMaterial3: false,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         primaryColorDark: Colors.black,
-        hoverColor: Colors.lightBlue,
+        hoverColor: Color.fromRGBO(0, 48, 87, 1),
         brightness: Brightness.dark,
         cardColor: Colors.black,
-        secondaryHeaderColor: Colors.white,
+        secondaryHeaderColor: Color.fromRGBO(222, 157, 50, 1),
         textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.white, selectionColor: Colors.lightBlueAccent),
+            cursorColor: Colors.white, selectionColor: Color.fromRGBO(222, 157, 50, 1)),
         inputDecorationTheme: const InputDecorationTheme(
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 2.0, color: Colors.red)),
@@ -79,18 +81,18 @@ class _MainApp extends State<LFinanca> {
               borderSide: BorderSide(
                   strokeAlign: 10, width: 10.0, color: Colors.black)),
           constraints: BoxConstraints(minWidth: 15, minHeight: 200),
-          focusColor: Colors.lightBlue,
+          focusColor: Color.fromRGBO(222, 157, 50, 1),
           hoverColor: Color.fromARGB(255, 248, 248, 248),
           fillColor: Colors.white,
           filled: true,
           enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 2, color: Colors.lightBlue)),
+              borderSide: BorderSide(width: 2, color: Color.fromRGBO(222, 157, 50, 1))),
           counterStyle: TextStyle(color: Colors.black, inherit: false),
           contentPadding: EdgeInsets.all(5.0),
           labelStyle: TextStyle(
-              fontFamily: 'Roboto',
+              fontFamily: 'OpenSans',
               fontSize: 15,
-              color: Colors.lightBlueAccent),
+              color: Color.fromRGBO(222, 157, 50, 1)),
         ),
       ),
       routes: {
