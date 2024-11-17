@@ -62,15 +62,21 @@ class _MainApp extends State<LFinanca> {
         GlobalWidgetsLocalizations.delegate
       ],
       supportedLocales: const [Locale('pt', 'BR')],
+      color: Color.fromRGBO(0, 48, 87, 1),
       theme: ThemeData(
         fontFamily: "OpenSans",
+        brightness: Brightness.dark,
         useMaterial3: false,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         primaryColorDark: Colors.black,
-        hoverColor: Color.fromRGBO(0, 48, 87, 1),
-        brightness: Brightness.dark,
+        hoverColor: const Color.fromRGBO(0, 48, 87, 1),
+        colorScheme: const ColorScheme.dark(
+          primary: Colors.white,
+          secondary: Color.fromRGBO(222, 157, 50, 1),
+          tertiary: Color.fromRGBO(0, 48, 87, 1),
+        ),
         cardColor: Colors.black,
-        secondaryHeaderColor: Color.fromRGBO(222, 157, 50, 1),
+        secondaryHeaderColor: Colors.white,
         textSelectionTheme: const TextSelectionThemeData(
             cursorColor: Colors.white, selectionColor: Color.fromRGBO(222, 157, 50, 1)),
         inputDecorationTheme: const InputDecorationTheme(
@@ -79,7 +85,7 @@ class _MainApp extends State<LFinanca> {
           errorStyle: TextStyle(color: Colors.red, fontSize: 15),
           border: OutlineInputBorder(
               borderSide: BorderSide(
-                  strokeAlign: 10, width: 10.0, color: Colors.black)),
+                  strokeAlign: 10, width: 10.0)),
           constraints: BoxConstraints(minWidth: 15, minHeight: 200),
           focusColor: Color.fromRGBO(222, 157, 50, 1),
           hoverColor: Color.fromARGB(255, 248, 248, 248),
@@ -87,13 +93,33 @@ class _MainApp extends State<LFinanca> {
           filled: true,
           enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 2, color: Color.fromRGBO(222, 157, 50, 1))),
-          counterStyle: TextStyle(color: Colors.black, inherit: false),
+          // counterStyle: TextStyle(color: Colors.black, inherit: false),
           contentPadding: EdgeInsets.all(5.0),
           labelStyle: TextStyle(
               fontFamily: 'OpenSans',
               fontSize: 15,
-              color: Color.fromRGBO(222, 157, 50, 1)),
+              color: Color.fromRGBO(222, 157, 50, 1)
+              ),
         ),
+        buttonTheme: const ButtonThemeData(
+          hoverColor: Color.fromRGBO(0, 48, 87, 1)
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          foregroundColor: Colors.white
+        ),
+        dropdownMenuTheme: DropdownMenuThemeData(
+          menuStyle: MenuStyle(
+            backgroundColor: WidgetStateProperty.resolveWith<Color>((state){
+              if(state.contains(WidgetState.hovered)){
+                return const Color.fromRGBO(222, 157, 50, 1);
+              }
+              return Colors.white;
+            }),
+          ),
+          inputDecorationTheme: const InputDecorationTheme(
+            hoverColor: Color.fromRGBO(222, 157, 50, 1),
+          )
+        )
       ),
       routes: {
         // '/items' :(context) => Items(),
