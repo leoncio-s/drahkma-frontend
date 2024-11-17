@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:io' as io show Platform;
 import 'package:flutter/foundation.dart';
-import 'package:front_lfinanca/User/user_dto.dart';
-import 'package:front_lfinanca/config.dart';
+import 'package:drahkma/User/user_dto.dart';
+import 'package:drahkma/config.dart';
 import 'package:requests/requests.dart';
 
 class AuthService {

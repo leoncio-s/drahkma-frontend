@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:front_lfinanca/Auth/auth_view.dart';
-import 'package:front_lfinanca/User/user_service.dart';
-import 'package:front_lfinanca/config.dart';
-import 'package:front_lfinanca/home.dart';
+import 'package:drahkma/Auth/auth_view.dart';
+import 'package:drahkma/User/user_service.dart';
+import 'package:drahkma/config.dart';
+import 'package:drahkma/home.dart';
 
 void main() async {
   String initialRoute;

@@ -1,8 +1,8 @@
-import 'package:front_lfinanca/Auth/auth_service.dart';
-import 'package:front_lfinanca/Interfaces/services.dart';
-import 'package:front_lfinanca/Items/ItemDto.dart';
-import 'package:front_lfinanca/User/user_dto.dart';
-import 'package:front_lfinanca/config.dart';
+import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/Interfaces/services.dart';
+import 'package:drahkma/Items/ItemDto.dart';
+import 'package:drahkma/User/user_dto.dart';
+import 'package:drahkma/config.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:requests/requests.dart';

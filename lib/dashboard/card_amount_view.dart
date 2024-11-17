@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Dashboard/dash_services.dart';
+import 'package:drahkma/Dashboard/dash_services.dart';
 
 class CardAmountView extends StatefulWidget {
   CardAmountView({super.key});

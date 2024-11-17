@@ -1,6 +1,6 @@
-import 'package:front_lfinanca/BankAccounts/bank_accounts_dto.dart';
-import 'package:front_lfinanca/Interfaces/dto_interface.dart';
-import 'package:front_lfinanca/Tranferbank/transfer_bank_type_enum.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_dto.dart';
+import 'package:drahkma/Interfaces/dto_interface.dart';
+import 'package:drahkma/Tranferbank/transfer_bank_type_enum.dart';
 
 class TransferBankDto extends DtoInterface {
     int? id;

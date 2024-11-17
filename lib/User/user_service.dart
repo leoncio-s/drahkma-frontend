@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:front_lfinanca/Auth/auth_service.dart';
-import 'package:front_lfinanca/User/user_dto.dart';
-import 'package:front_lfinanca/config.dart';
+import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/User/user_dto.dart';
+import 'package:drahkma/config.dart';
 import 'package:requests/requests.dart';
 
 class UserService {

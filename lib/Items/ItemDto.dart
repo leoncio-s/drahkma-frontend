@@ -1,7 +1,7 @@
-import 'package:front_lfinanca/Cards/cards_dto.dart';
-import 'package:front_lfinanca/Categories/categories_dto.dart';
-import 'package:front_lfinanca/Interfaces/dto_interface.dart';
-import 'package:front_lfinanca/Tranferbank/transferbank_dto.dart';
+import 'package:drahkma/Cards/cards_dto.dart';
+import 'package:drahkma/Categories/categories_dto.dart';
+import 'package:drahkma/Interfaces/dto_interface.dart';
+import 'package:drahkma/Tranferbank/transferbank_dto.dart';
 import 'package:intl/intl.dart';
 
 class ItemDto extends DtoInterface{

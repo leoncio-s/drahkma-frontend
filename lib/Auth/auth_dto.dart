@@ -1,4 +1,4 @@
-import 'package:front_lfinanca/Interfaces/dto_interface.dart';
+import 'package:drahkma/Interfaces/dto_interface.dart';
 
 class AuthDto implements DtoInterface{
   

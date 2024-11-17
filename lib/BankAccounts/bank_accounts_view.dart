@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/BankAccounts/bank_accounts_dto.dart';
-import 'package:front_lfinanca/BankAccounts/bank_accounts_form.dart';
-import 'package:front_lfinanca/BankAccounts/bank_accounts_service.dart';
-import 'package:front_lfinanca/Utils/text_scaler.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_dto.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_form.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_service.dart';
+import 'package:drahkma/Utils/text_scaler.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
-class BankAccountsView extends StatefulwidgetLfinanca {
+class BankAccountsView extends StatefulwidgetDrahkma {
   const BankAccountsView(
       {super.name = "Contas Bancárias",
       super.icon = const Icon(Icons.category, size: 20)});

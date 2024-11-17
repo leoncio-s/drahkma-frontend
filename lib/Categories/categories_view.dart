@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Categories/categories_dto.dart';
-import 'package:front_lfinanca/Categories/categories_form.dart';
-import 'package:front_lfinanca/Categories/categories_service.dart';
-import 'package:front_lfinanca/Utils/text_scaler.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/Categories/categories_dto.dart';
+import 'package:drahkma/Categories/categories_form.dart';
+import 'package:drahkma/Categories/categories_service.dart';
+import 'package:drahkma/Utils/text_scaler.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
 import 'categories_sort.dart';
 
-class CategoriesView extends StatefulwidgetLfinanca {
+class CategoriesView extends StatefulwidgetDrahkma {
   const CategoriesView(
       {super.name = "Categorias",
       super.icon = const Icon(Icons.category, size: 20)});

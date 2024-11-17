@@ -1,4 +1,4 @@
-import 'package:front_lfinanca/Tranferbank/transfer_bank_type_enum.dart';
+import 'package:drahkma/Tranferbank/transfer_bank_type_enum.dart';
 
 class DashboardDto{
   double inflow = 0.0;

@@ -2,24 +2,24 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
-import 'package:front_lfinanca/config.dart';
-import 'package:front_lfinanca/dashboard/charts_page.dart';
-import 'package:front_lfinanca/dashboard/dashboard_dto.dart';
-import 'package:front_lfinanca/dashboard/data_notifier.dart';
-import 'package:front_lfinanca/dashboard/date_range.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/config.dart';
+import 'package:drahkma/dashboard/charts_page.dart';
+import 'package:drahkma/dashboard/dashboard_dto.dart';
+import 'package:drahkma/dashboard/data_notifier.dart';
+import 'package:drahkma/dashboard/date_range.dart';
 
-class Dashboard extends StatefulwidgetLfinanca {
+class Dashboard extends StatefulwidgetDrahkma{
   const Dashboard(
       {super.key,
       super.name = "Dashboard",
       super.icon = const Icon(Icons.dashboard, size: 20)});
 
   @override
-  State<StatefulWidget> createState() => DashboardState();
+  State<Dashboard> createState() => _DashboardState();
 }
 
-class DashboardState extends State<Dashboard> {
+class _DashboardState extends State<Dashboard> {
   static final AppNotifier _notifier = appNotifier;
 
   @override

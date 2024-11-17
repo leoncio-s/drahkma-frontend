@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Items/items_service.dart';
-import 'package:front_lfinanca/Items/items_view.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/Items/items_service.dart';
+import 'package:drahkma/Items/items_view.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
-class InflowView extends StatefulwidgetLfinanca {
+class InflowView extends StatefulwidgetDrahkma {
   const InflowView(
       {super.key,
       super.name = "Receitas",
@@ -13,7 +13,7 @@ class InflowView extends StatefulwidgetLfinanca {
       )});
 
   @override
-  State<StatefulWidget> createState() => InflowState();
+  State<InflowView> createState() => InflowState();
 }
 
 class InflowState extends State<InflowView> {

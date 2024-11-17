@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/dashboard/dash_services.dart';
-import 'package:front_lfinanca/dashboard/dashboard_dto.dart';
+import 'package:drahkma/dashboard/dash_services.dart';
+import 'package:drahkma/dashboard/dashboard_dto.dart';
 
 class _DataNotifier with ChangeNotifier {
   DashboardDto _data = DashboardDto();

@@ -3,9 +3,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/config.dart';
-import 'package:front_lfinanca/dashboard/dashboard_dto.dart';
-import 'package:front_lfinanca/dashboard/data_notifier.dart';
+import 'package:drahkma/config.dart';
+import 'package:drahkma/dashboard/dashboard_dto.dart';
+import 'package:drahkma/dashboard/data_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartsWidgetTotalAmountGroup extends StatelessWidget {

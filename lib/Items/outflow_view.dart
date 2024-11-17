@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Items/items_service.dart';
-import 'package:front_lfinanca/Items/items_view.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/Items/items_service.dart';
+import 'package:drahkma/Items/items_view.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
-class OutflowView extends StatefulwidgetLfinanca {
+class OutflowView extends StatefulwidgetDrahkma {
   const OutflowView(
       {super.key,
       super.name = "Despesas",

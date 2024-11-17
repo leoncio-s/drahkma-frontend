@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:front_lfinanca/BankAccounts/bank_accounts_dto.dart';
-import 'package:front_lfinanca/BankAccounts/bank_accounts_service.dart';
-import 'package:front_lfinanca/BankAccounts/banks_dto.dart';
-import 'package:front_lfinanca/Utils/string_regex_validate.dart';
-import 'package:front_lfinanca/commonsComponents/input_text_style.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_dto.dart';
+import 'package:drahkma/BankAccounts/bank_accounts_service.dart';
+import 'package:drahkma/BankAccounts/banks_dto.dart';
+import 'package:drahkma/Utils/string_regex_validate.dart';
+import 'package:drahkma/commonsComponents/input_text_style.dart';
 
 // ignore: must_be_immutable
 class BankAccountsForm extends StatefulWidget {

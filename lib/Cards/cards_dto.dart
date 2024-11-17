@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Cards/cards_flags_enum.dart';
-import 'package:front_lfinanca/Cards/cards_type_enum.dart';
-import 'package:front_lfinanca/Interfaces/dto_interface.dart';
+import 'package:drahkma/Cards/cards_flags_enum.dart';
+import 'package:drahkma/Cards/cards_type_enum.dart';
+import 'package:drahkma/Interfaces/dto_interface.dart';
 import 'package:intl/intl.dart';
 
 class CardsDto implements DtoInterface{

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Auth/auth_service.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
 // ignore: must_be_immutable
 class AppBarNavigator extends StatelessWidget {
-  final List<StatefulwidgetLfinanca> childrens;
+  final List<StatefulwidgetDrahkma> childrens;
 
   const AppBarNavigator({super.key, required this.childrens});
 

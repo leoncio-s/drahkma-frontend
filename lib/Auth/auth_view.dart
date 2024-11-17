@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Auth/auth_dto.dart';
-import 'package:front_lfinanca/Auth/auth_service.dart';
-import 'package:front_lfinanca/User/user_dto.dart';
-import 'package:front_lfinanca/commonsComponents/input_text_style.dart';
+import 'package:drahkma/Auth/auth_dto.dart';
+import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/User/user_dto.dart';
+import 'package:drahkma/commonsComponents/input_text_style.dart';
 
 class Auth extends StatefulWidget {
   const Auth({super.key});

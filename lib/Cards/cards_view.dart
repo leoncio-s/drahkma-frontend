@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:front_lfinanca/Cards/cards_dto.dart';
-import 'package:front_lfinanca/Cards/cards_form.dart';
-import 'package:front_lfinanca/Cards/cards_services.dart';
-import 'package:front_lfinanca/Utils/text_scaler.dart';
-import 'package:front_lfinanca/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/Cards/cards_dto.dart';
+import 'package:drahkma/Cards/cards_form.dart';
+import 'package:drahkma/Cards/cards_services.dart';
+import 'package:drahkma/Utils/text_scaler.dart';
+import 'package:drahkma/commonsComponents/statefullwidget.dart';
 
-class CardsView extends StatefulwidgetLfinanca {
+class CardsView extends StatefulwidgetDrahkma {
   const CardsView(
       {super.key, super.name = "Cartões",
       super.icon = const Icon(Icons.category, size: 20)});
