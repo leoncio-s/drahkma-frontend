@@ -18,7 +18,7 @@ class AppBarNavigator extends StatelessWidget {
           appBar: AppBar(
             elevation: 0.7,
               excludeHeaderSemantics: false,
-              title: const Text("LFinanca"),
+              title: const Text("Drahkma"),
               forceMaterialTransparency: true,
               toolbarHeight: 30,
               actions: [
