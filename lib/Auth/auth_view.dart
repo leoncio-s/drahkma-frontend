@@ -35,7 +35,7 @@ class AuthState extends State<Auth> {
                   child: ConstrainedBox(
                       constraints: const BoxConstraints(
                           maxWidth: 500,
-                          maxHeight: 600,
+                          // maxHeight: 600,
                           minHeight: 300,
                           minWidth: 100),
                       child: Container(
@@ -43,22 +43,25 @@ class AuthState extends State<Auth> {
                         decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(30.0)),
-                            border:
-                                Border.all(color: Colors.white, width: 2.0)),
-                        // width: MediaQuery.of(context).size.width,
-                        // height: MediaQuery.of(context).size.height,
+                            border: MediaQuery.of(context).size.width > 600
+                                ? Border.all(color: Colors.white, width: 2.0)
+                                : null),
                         child: Padding(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(20.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                "DRAHKMA",
-                                textScaler: TextScaler.linear(1.1),
-                                style: TextStyle(fontSize: 20.0),
+                              Image.asset(
+                                'logo_yellow.png',
+                                width: 230,
+                                height: 230,
+                                scale: 1,
+                                errorBuilder: (context, obj, trace) {
+                                  return const Text("DRAHKMA");
+                                },
                               ),
                               const SizedBox(
-                                height: 10.0,
+                                height: 30.0,
                               ),
                               _loginForm(context)
                             ],
@@ -76,10 +79,12 @@ class AuthState extends State<Auth> {
     bool clicked = false;
 
     return SafeArea(
-        maintainBottomViewPadding: true,
+        maintainBottomViewPadding: false,
+        bottom: false,
         minimum: const EdgeInsets.all(5.0),
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUnfocus,
           child: Column(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -87,31 +92,37 @@ class AuthState extends State<Auth> {
               children: [
                 //// email field
                 TextFormField(
-                  controller: email,
-                  showCursor: true,
-                  cursorColor: Colors.black,
-                  keyboardType: TextInputType.emailAddress,
-                  keyboardAppearance: Brightness.dark,
-                  buildCounter: (context,
-                          {required currentLength,
-                          required isFocused,
-                          required maxLength}) =>
-                      null,
-                  maxLength: 150,
-                  maxLines: 1,
-                  autofocus: true,
-                  enableInteractiveSelection: true,
-                  decoration: const InputDecoration(
-                      constraints: BoxConstraints(maxWidth: 400, minHeight: 10),
-                      labelText: "E-mail"),
-                  style: inputTextStyle(),
-                  validator: (value) {
-                    var validate = AuthDto.validateEmail(value);
-                    if (validate is Map) {
-                      return validate['error'];
-                    }
-                    return null;
-                  },
+                    controller: email,
+                    showCursor: true,
+                    cursorColor: Colors.white,
+                    keyboardType: TextInputType.emailAddress,
+                    keyboardAppearance: Brightness.dark,
+                    buildCounter: (context,
+                            {required currentLength,
+                            required isFocused,
+                            required maxLength}) =>
+                        null,
+                    maxLength: 150,
+                    maxLines: 1,
+                    autofocus: true,
+                    enableInteractiveSelection: true,
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                          contentPadding: const EdgeInsets.all(10.0),
+                          hintText: "Email",
+                          labelText: "Email"
+                        )
+                        ,
+                    style: inputTextStyle(),
+                    validator: (value) {
+                      var validate = AuthDto.validateEmail(value);
+                      if (validate is Map) {
+                        return validate['error'];
+                      }
+                      return null;
+                    },
+                  // ),
                 ),
 
                 const SizedBox(
@@ -121,7 +132,7 @@ class AuthState extends State<Auth> {
                 /// password
                 TextFormField(
                   controller: password,
-                  cursorColor: Colors.black,
+                  cursorColor: Colors.white,
                   buildCounter: (context,
                           {required currentLength,
                           required isFocused,
@@ -129,11 +140,12 @@ class AuthState extends State<Auth> {
                       null,
                   maxLength: 20,
                   maxLines: 1,
-                  enableInteractiveSelection: true,
-                  decoration: const InputDecoration(
-                      constraints: BoxConstraints(maxWidth: 400, minHeight: 10),
-                      labelText: "Senha"),
-                  style: inputTextStyle(),
+                  enableInteractiveSelection: false,
+                  decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                    hintText: "Senha",
+                    labelText: "Senha",
+                    contentPadding: const EdgeInsets.all(10.0)
+                  ),
                   obscureText: true,
                   obscuringCharacter: '*',
                   validator: (value) {
@@ -148,10 +160,21 @@ class AuthState extends State<Auth> {
                   height: 30,
                 ),
 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(onPressed: (){}, child: const Text("Esqueceu a senha?",))
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 30,
+                ),
+
                 ConstrainedBox(
                   constraints: const BoxConstraints(
                       minWidth: 60,
-                      maxWidth: 400,
+                      // maxWidth: 400,
                       minHeight: 15,
                       maxHeight: 50),
                   child: SizedBox(
@@ -222,32 +245,25 @@ class AuthState extends State<Auth> {
                               },
                               child: const Text("Login"))),
                 ),
+
+                const SizedBox(
+                  height: 40.0,
+                ),
+
                 
+                ConstrainedBox(constraints: const BoxConstraints(
+                  minWidth: 200, maxWidth: 300, minHeight: 2, maxHeight: 5),
+                  child: const Divider(
+                  height: 10.0,
+                  color: Colors.white,
+                ),
+                ),
 
+                const SizedBox(
+                  height: 30.0,
+                ),
 
-                // esqueceu a senha
-                // Align(
-                //   widthFactor: 3,
-                //   alignment: Alignment.centerRight,
-                //   child: TextButton(
-                //     onPressed: () {},
-                //     style: ButtonStyle(
-                //         overlayColor: null,
-                //         shadowColor: null,
-                //         foregroundColor:
-                //             WidgetStateProperty.resolveWith<Color?>(
-                //                 (Set<WidgetState> state) {
-                //           if (state.contains(WidgetState.hovered)) {
-                //             return Colors.lightBlue;
-                //           }
-                //           return Colors.white;
-                //         })),
-                //     child: const Text(
-                //       "Esqueceu a senha?",
-                //       textAlign: TextAlign.start,
-                //     ),
-                //   ),
-                // ),
+                TextButton(onPressed: (){}, child: const Text("Criar Conta"))
               ]),
         ));
   }
