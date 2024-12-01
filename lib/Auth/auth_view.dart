@@ -51,11 +51,11 @@ class AuthState extends State<Auth> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset(
-                                'logo_yellow.png',
+                              Image(
+                                image: const AssetImage("images/logo_yellow.png"),
                                 width: 230,
                                 height: 230,
-                                scale: 1,
+                                fit: BoxFit.cover,
                                 errorBuilder: (context, obj, trace) {
                                   return const Text("DRAHKMA");
                                 },

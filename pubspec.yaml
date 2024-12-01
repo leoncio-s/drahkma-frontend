@@ -33,4 +33,4 @@ flutter:
           style: italic
         - asset: fonts/OpenSans-VariableFont_wdth,wght.ttf
   assets:
-    - assets/
+    - images/

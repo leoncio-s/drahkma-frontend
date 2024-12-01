@@ -22,15 +22,10 @@ class CardsForm extends StatefulWidget {
 class CardsStateForm extends State<CardsForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _brand = TextEditingController();
-  // final MaskedTextController _expiresAt = MaskedTextController(
-  //   mask: '00/00',
-  // );
-  // DateTime? _expiresAt;
   Months? _expMonth =
       Months.values.firstWhere((el) => DateTime.now().month == el.month);
   int? _expYear = DateTime.now().year;
   final TextEditingController _last4Digits = TextEditingController();
-  // final TextEditingController _invoiceDay = TextEditingController();
   int? _invoiceDay;
   CardsTypeEnum? _type = CardsTypeEnum.Credit;
   CardFlagsEnum? _flag = CardFlagsEnum.Mastercard;
@@ -67,11 +62,7 @@ class CardsStateForm extends State<CardsForm> {
       child: Form(
           key: _formState,
           child: Column(
-            // direction: Axis.vertical,
-            // textBaseline: TextBaseline.alphabetic,
             mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.start,
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 50.0),
               Title(
@@ -86,7 +77,7 @@ class CardsStateForm extends State<CardsForm> {
                 autofocus: true,
                 autocorrect: true,
                 controller: _brand,
-                cursorColor: Colors.black,
+                // cursorColor: Colors.black,
                 maxLength: 50,
                 keyboardType: TextInputType.name,
                 style: inputTextStyle(),
@@ -95,11 +86,14 @@ class CardsStateForm extends State<CardsForm> {
                   FilteringTextInputFormatter.singleLineFormatter,
                   LengthLimitingTextInputFormatter(50),
                 ],
-                decoration: const InputDecoration(
-                    // isCollapsed: true,
-                    labelText: "Nome do cartão",
-                    constraints: BoxConstraints(minHeight: 50.0),
-                    counterText: ""),
+                // decoration: const InputDecoration(
+                //     // isCollapsed: true,
+                //     labelText: "Nome do cartão",
+                //     constraints: BoxConstraints(minHeight: 50.0),
+                //     counterText: ""),
+                decoration: (const InputDecoration())
+                    .applyDefaults(Theme.of(context).inputDecorationTheme)
+                    .copyWith(labelText: "Nome do cartão", counterText: ""),
                 validator: (value) {
                   if (value!.length < 3 || value.length > 50) {
                     return "O tamanho minimo é 3 e o máximo é 50";
@@ -119,19 +113,12 @@ class CardsStateForm extends State<CardsForm> {
               ///
               DropdownButtonFormField(
                   value: _type,
-                  decoration: const InputDecoration(
-                      filled: true,
-                      counterText: "",
-                      label: Text("Tipo"),
-                      isDense: false,
-                      isCollapsed: true,
-                      focusColor: Colors.white,
-                      constraints: BoxConstraints(minHeight: 50.0)
-                      // hoverColor: Colors.blue
+                  decoration: (const InputDecoration())
+                      .applyDefaults(Theme.of(context).inputDecorationTheme)
+                      .copyWith(
+                        labelText: "Tipo",
+                        counterText: "",
                       ),
-                  // itemHeight: 50,
-                  dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                  style: inputTextStyle(),
                   isDense: false,
                   isExpanded: true,
                   items: CardsTypeEnum.values
@@ -139,7 +126,7 @@ class CardsStateForm extends State<CardsForm> {
                             value: el,
                             child: Text(
                               el.type,
-                              style: const TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ))
                       .toList(),
@@ -155,19 +142,12 @@ class CardsStateForm extends State<CardsForm> {
               ///
               DropdownButtonFormField(
                   value: _flag,
-                  decoration: const InputDecoration(
-                      filled: true,
-                      counterText: "",
-                      label: Text("Bandeira"),
-                      isDense: false,
-                      isCollapsed: true,
-                      focusColor: Colors.white,
-                      constraints: BoxConstraints(minHeight: 50.0)
-                      // hoverColor: Colors.blue
+                  decoration: (const InputDecoration())
+                      .applyDefaults(Theme.of(context).inputDecorationTheme)
+                      .copyWith(
+                        labelText: "Bandeira",
+                        counterText: "",
                       ),
-                  // itemHeight: 50,
-                  dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                  style: inputTextStyle(),
                   isDense: false,
                   isExpanded: true,
                   items: CardFlagsEnum.values
@@ -175,7 +155,7 @@ class CardsStateForm extends State<CardsForm> {
                             value: el,
                             child: Text(
                               el.name.toString(),
-                              style: const TextStyle(color: Colors.black),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ))
                       .toList(),
@@ -192,7 +172,7 @@ class CardsStateForm extends State<CardsForm> {
               TextFormField(
                 autocorrect: true,
                 controller: _last4Digits,
-                cursorColor: Colors.black,
+                cursorColor: Colors.white,
                 maxLength: 4,
                 keyboardType: TextInputType.number,
                 style: inputTextStyle(),
@@ -201,10 +181,12 @@ class CardsStateForm extends State<CardsForm> {
                   LengthLimitingTextInputFormatter(4),
                   FilteringTextInputFormatter.allow(RegExp("[0-9]{1,4}"))
                 ],
-                decoration: const InputDecoration(
-                    labelText: "Ultimos 4 dígitos do cartão",
-                    counterText: "",
-                    constraints: BoxConstraints(minHeight: 50.0)),
+                decoration: (const InputDecoration())
+                    .applyDefaults(Theme.of(context).inputDecorationTheme)
+                    .copyWith(
+                      labelText: "Ultimos 4 dígitos do cartão",
+                      counterText: "",
+                    ),
                 validator: (value) {
                   if (value!.isEmpty || value.length > 4) {
                     return "O tamanho do campo deve ser 4";
@@ -216,135 +198,47 @@ class CardsStateForm extends State<CardsForm> {
                 },
               ),
 
-              const SizedBox(
-                height: 25.0,
-              ),
-
-              //// invoice Day
-              ///
-              DropdownButtonFormField<int>(
-                value: _invoiceDay,
-                decoration: const InputDecoration(
-                    filled: true,
-                    counterText: "",
-                    label: Text("Vencimento da Fatura"),
-                    isDense: false,
-                    isCollapsed: true,
-                    focusColor: Colors.white,
-                    constraints: BoxConstraints(minHeight: 50.0)
-                    // hoverColor: Colors.blue
-                    ),
-                // itemHeight: 50,
-                dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                style: inputTextStyle(),
-                isDense: false,
-                isExpanded: true,
-                items: List<int>.generate(30, (n) => n + 1)
-                    .map((el) => DropdownMenuItem<int>(
-                          value: el,
-                          child: Text(
-                            el.toString(),
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  _invoiceDay = val;
-                },
-                validator: (value) {
-                  if (value == null || value.isNaN) {
-                    return "Campo obrigatório";
-                  }
-                  return null;
-                },
-              ),
+              // const SizedBox(
+              //   height: 25.0,
+              // ),
 
               const SizedBox(
                 height: 25.0,
               ),
 
-              //// Expires At
-              ///
-              ///
-              Flex(
-                direction: Axis.horizontal,
+
+              Row(
+                // direction: Axis.horizontal,
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                clipBehavior: Clip.hardEdge,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // clipBehavior: Clip.hardEdge,
                 children: [
-                  DropdownButtonFormField<Months>(
-                    value: _expMonth,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        counterText: "",
-                        label: Text("Mês de Expiração do cartão"),
-                        isDense: false,
-                        isCollapsed: true,
-                        focusColor: Colors.white,
-                        errorMaxLines: 2,
-                        constraints:
-                            BoxConstraints(maxWidth: 150, minHeight: 50.0)
-                        // hoverColor: Colors.blue
-                        ),
-                    // itemHeight: 50,
-                    dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                    style: inputTextStyle(),
+                  //// invoice Day
+                  ///
+                  DropdownButtonFormField<int>(
+                    value: _invoiceDay,
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                            labelText: "Vencimento fatura",
+                            counterText: "",
+                            constraints: const BoxConstraints(
+                                maxWidth: 150, minHeight: 50.0)),
                     isDense: false,
                     isExpanded: true,
-                    items: Months.values
-                        .map((el) => DropdownMenuItem<Months>(
+                    items: List<int>.generate(30, (n) => n + 1)
+                        .map((el) => DropdownMenuItem<int>(
                               value: el,
                               child: Text(
-                                el.name,
-                                style: const TextStyle(color: Colors.black),
+                                el.toString(),
+                                style: const TextStyle(color: Colors.white),
+                                textAlign: TextAlign.center,
                               ),
                             ))
                         .toList(),
                     onChanged: (val) {
-                      _expMonth = val;
-                    },
-                    validator: (value) {
-                      DateTime now = DateTime.now();
-                      if ((_expYear == now.year) && value!.month < now.month) {
-                        return "Cartão já vencido, não pode cadastrar";
-                      } else if (value == null || value.month.isNaN) {
-                        return "Campo obrigatório";
-                      }
-                      return null;
-                    },
-                  ),
-                  DropdownButtonFormField<int?>(
-                    value: _expYear,
-                    decoration: const InputDecoration(
-                        filled: true,
-                        counterText: "",
-                        label: Text("Ano de Expiração do cartão"),
-                        isDense: false,
-                        isCollapsed: true,
-                        focusColor: Colors.white,
-                        errorMaxLines: 3,
-                        constraints:
-                            BoxConstraints(maxWidth: 200, minHeight: 50.0)
-                        // hoverColor: Colors.blue
-                        ),
-                    // itemHeight: 50,
-                    dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                    style: inputTextStyle(),
-                    isDense: false,
-                    isExpanded: true,
-                    items:
-                        List<int>.generate(50, (it) => DateTime.now().year + it)
-                            .map((el) => DropdownMenuItem<int>(
-                                  value: el,
-                                  child: Text(
-                                    el.toString(),
-                                    style: const TextStyle(color: Colors.black),
-                                  ),
-                                ))
-                            .toList(),
-                    onChanged: (val) {
-                      _expYear = val;
+                      _invoiceDay = val;
                     },
                     validator: (value) {
                       if (value == null || value.isNaN) {
@@ -352,6 +246,96 @@ class CardsStateForm extends State<CardsForm> {
                       }
                       return null;
                     },
+                  ),
+
+                  const SizedBox(
+                    width: 15.0,
+                  ),
+
+                                //// Expires At
+              ///
+              ///
+                  Row(
+                    children: [
+                      DropdownButtonFormField<Months>(
+                        value: _expMonth,
+                        decoration: (const InputDecoration())
+                            .applyDefaults(
+                                Theme.of(context).inputDecorationTheme)
+                            .copyWith(
+                                labelText: "Mês Expiração",
+                                counterText: "",
+                                constraints: const BoxConstraints(
+                                    maxWidth: 130, minHeight: 50.0)),
+                        isDense: false,
+                        isExpanded: true,
+                        items: Months.values
+                            .map((el) => DropdownMenuItem<Months>(
+                                  value: el,
+                                  child: Text(
+                                    el.name,
+                                    style: const TextStyle(color: Colors.white,),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          _expMonth = val;
+                        },
+                        validator: (value) {
+                          DateTime now = DateTime.now();
+                          if ((_expYear == now.year) &&
+                              value!.month < now.month) {
+                            return "Cartão já vencido, não pode cadastrar";
+                          } else if (value == null || value.month.isNaN) {
+                            return "Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        width: 10,
+                        child: Text(
+                          "/",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                      ),
+                      DropdownButtonFormField<int?>(
+                        value: _expYear,
+                        decoration: (const InputDecoration())
+                            .applyDefaults(
+                                Theme.of(context).inputDecorationTheme)
+                            .copyWith(
+                              labelText: "Ano Expiração",
+                              counterText: "",
+                              constraints: const BoxConstraints(
+                                  maxWidth: 100, minHeight: 50.0),
+                            ),
+                        isDense: false,
+                        isExpanded: true,
+                        items: List<int>.generate(
+                                50, (it) => DateTime.now().year + it)
+                            .map((el) => DropdownMenuItem<int>(
+                                  value: el,
+                                  child: Text(
+                                    el.toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          _expYear = val;
+                        },
+                        validator: (value) {
+                          if (value == null || value.isNaN) {
+                            return "Campo obrigatório";
+                          }
+                          return null;
+                        },
+                      )
+                    ],
                   )
                 ],
               ),
@@ -392,8 +376,7 @@ class CardsStateForm extends State<CardsForm> {
                                   brand: _brand.text,
                                   invoice_day: _invoiceDay,
                                   last_4_digits: _last4Digits.text,
-                                  expires_at:
-                                      "${_expMonth!.month}/$_expYear",
+                                  expires_at: "${_expMonth!.month}/$_expYear",
                                   flag: _flag,
                                   type: _type));
                             } else {
@@ -401,8 +384,7 @@ class CardsStateForm extends State<CardsForm> {
                                   brand: _brand.text,
                                   invoice_day: _invoiceDay,
                                   last_4_digits: _last4Digits.text,
-                                  expires_at:
-                                      "${_expMonth!.month}/$_expYear",
+                                  expires_at: "${_expMonth!.month}/$_expYear",
                                   flag: _flag,
                                   type: _type));
                             }

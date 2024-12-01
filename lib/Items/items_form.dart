@@ -54,29 +54,11 @@ class ItemsFormState extends State<ItemsForm> {
 
   @override
   void initState() {
-    // CategoriesService().get().then((value) {
-    //   setState(() {
-    //     categories = value;
-    //   });
-    // });
-
-    // BankAccountsService().get().then((value) {
-    //   setState(() {
-    //     bankAccounts = value;
-    //   });
-    // });
-
-    // CardsServices().get().then((value) {
-    //   setState(() {
-    //     cards = value;
-    //   });
-    // });
-    
     Future.wait([
       CategoriesService().get(),
       BankAccountsService().get(),
       CardsServices().get()
-    ]).then((value){
+    ]).then((value) {
       setState(() {
         categories = value[0];
         bankAccounts = value[1];
@@ -100,8 +82,11 @@ class ItemsFormState extends State<ItemsForm> {
         _card = widget.data?.card?.id;
         _transferbank = widget.data?.transfer_bank != null ? true : false;
         _transferbank_type = widget.data?.transfer_bank?.type;
-        _transferbank_description.text = (_transferbank) ? widget.data!.transfer_bank!.description! : "";
-        _transferbank_bank_account = (_transferbank) ? widget.data!.transfer_bank!.bankAccount!.id : null;
+        _transferbank_description.text =
+            (_transferbank) ? widget.data!.transfer_bank!.description! : "";
+        _transferbank_bank_account = (_transferbank)
+            ? widget.data!.transfer_bank!.bankAccount!.id
+            : null;
       } catch (e) {
         rethrow;
       }
@@ -156,18 +141,14 @@ class ItemsFormState extends State<ItemsForm> {
                   _commonsFields(),
                   _transferbankForm(),
                   _cardsForm(),
-                  _buttons(),
+
                   const SizedBox(
-                    height: 25.0,
-                  )
+                    height: 30.0,
+                  ),
+
+                  _buttons(),
                 ],
-              ))
-          // SingleChildScrollView(
-          //   child: Padding(
-          //       padding: const EdgeInsets.all(15.0),
-          //       child: ),
-          // ),
-          ),
+              ))),
     );
   }
 
@@ -178,7 +159,7 @@ class ItemsFormState extends State<ItemsForm> {
         ////// data
         TextFormField(
           controller: _date,
-          cursorColor: Colors.black,
+          cursorColor: Colors.white,
           maxLength: 10,
           keyboardType: TextInputType.datetime,
           style: inputTextStyle(),
@@ -194,29 +175,33 @@ class ItemsFormState extends State<ItemsForm> {
                       TextSelection.collapsed(offset: dateMask.text.length));
             })
           ],
-          decoration: InputDecoration(
-            counterText: "",
-            label: const Text("Data: "),
-            suffixIcon: IconButton(
-                color: Theme.of(context).hoverColor,
-                onPressed: () async {
-                  var date = await showDatePicker(
-                      context: context,
-                      initialDatePickerMode: DatePickerMode.day,
-                      useRootNavigator: false,
-                      barrierDismissible: false,
-                      keyboardType: TextInputType.datetime,
-                      initialEntryMode: DatePickerEntryMode.calendarOnly,
-                      firstDate:
-                          DateTime.now().subtract(const Duration(days: 1000)),
-                      lastDate: DateTime.now().add(const Duration(days: 1000)),
-                      currentDate: DateTime.tryParse(_date.value.text));
-
-                  _date.text = dateFormat.format(date!);
-                },
-                icon: const Icon(Icons.calendar_today)),
-            constraints: const BoxConstraints(minHeight: 50.0),
-          ),
+          decoration: (const InputDecoration())
+              .applyDefaults(Theme.of(context).inputDecorationTheme)
+              .copyWith(
+                labelText: "Data",
+                counterText: "",
+                suffixIcon: IconButton(
+                    // color: Theme.of(context).hoverColor,
+                    color: Colors.white,
+                    onPressed: () async {
+                      var date = await showDatePicker(
+                          context: context,
+                          initialDatePickerMode: DatePickerMode.day,
+                          useRootNavigator: false,
+                          barrierDismissible: false,
+                          keyboardType: TextInputType.datetime,
+                          initialEntryMode: DatePickerEntryMode.calendarOnly,
+                          firstDate: DateTime.now()
+                              .subtract(const Duration(days: 1000)),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 1000)),
+                          currentDate: DateTime.tryParse(_date.value.text));
+                      if (date != null) {
+                        _date.text = dateFormat.format(date);
+                      }
+                    },
+                    icon: const Icon(Icons.calendar_today)),
+              ),
         ),
 
         const SizedBox(
@@ -226,7 +211,7 @@ class ItemsFormState extends State<ItemsForm> {
         ///// descrição
         TextFormField(
           controller: _description,
-          cursorColor: Colors.black,
+          cursorColor: Colors.white,
           maxLength: 100,
           keyboardType: TextInputType.name,
           style: inputTextStyle(),
@@ -234,11 +219,9 @@ class ItemsFormState extends State<ItemsForm> {
             FilteringTextInputFormatter.singleLineFormatter,
             LengthLimitingTextInputFormatter(100),
           ],
-          decoration: const InputDecoration(
-            label: Text("Descrição"),
-            counterText: "",
-            constraints: BoxConstraints(minHeight: 50.0),
-          ),
+          decoration: (const InputDecoration())
+              .applyDefaults(Theme.of(context).inputDecorationTheme)
+              .copyWith(labelText: "Descrição", counterText: ""),
         ),
 
         const SizedBox(
@@ -248,7 +231,6 @@ class ItemsFormState extends State<ItemsForm> {
         ////// valor
         TextFormField(
           controller: _value,
-          cursorColor: Colors.black,
           maxLength: 50,
           keyboardType: TextInputType.number,
           style: inputTextStyle(),
@@ -256,11 +238,9 @@ class ItemsFormState extends State<ItemsForm> {
             FilteringTextInputFormatter.singleLineFormatter,
             LengthLimitingTextInputFormatter(50),
           ],
-          decoration: const InputDecoration(
-            label: Text("Valor"),
-            counterText: "",
-            constraints: BoxConstraints(minHeight: 50.0),
-          ),
+          decoration: (const InputDecoration())
+              .applyDefaults(Theme.of(context).inputDecorationTheme)
+              .copyWith(labelText: "Valor", counterText: ""),
         ),
 
         const SizedBox(
@@ -277,21 +257,13 @@ class ItemsFormState extends State<ItemsForm> {
               )
             : DropdownButtonFormField<int>(
                 value: _category,
-                decoration: const InputDecoration(
-                  filled: true,
-                  counterText: "",
-                  label: Text("Categoria"),
-                  isDense: false,
-                  isCollapsed: true,
-                  focusColor: Colors.white,
-                  constraints: BoxConstraints(minHeight: 50.0),
-                ),
-                dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                style: inputTextStyle(),
+                decoration: (const InputDecoration())
+                    .applyDefaults(Theme.of(context).inputDecorationTheme)
+                    .copyWith(labelText: "Categoria", counterText: ""),
                 isDense: false,
                 isExpanded: true,
-                validator: (value){
-                  if(value == null || value.isNegative){
+                validator: (value) {
+                  if (value == null || value.isNegative) {
                     return "Campo obrigatório ou valor inválido";
                   }
                   return null;
@@ -301,7 +273,8 @@ class ItemsFormState extends State<ItemsForm> {
                           value: cat.id,
                           child: Text(
                             cat.description.toString(),
-                            style: const TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
                         ))
                     .toList(),
@@ -310,32 +283,47 @@ class ItemsFormState extends State<ItemsForm> {
                     _category = val;
                   });
                 },
-                ),
+              ),
         const SizedBox(
           height: 25.0,
         ),
 
         // transferência bancária
-        ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 70, minHeight: 50.0),
-            child: Row(
-              children: [
-                Checkbox(
-                  semanticLabel: "Transferência Bancária",
-                  value: _transferbank,
-                  onChanged: (value) {
-                    setState(() {
-                      _transferbank = value!;
-                    });
-                    // debugPrint(_transferbank.toString());
-                  },
-                  activeColor: Colors.greenAccent,
-                ),
-                const Text("Transferência bancária "),
-              ],
-            )),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const SizedBox(
+            width: 100,
+            child: Text("Cartão", textAlign: TextAlign.end,),
+          ),
+          SizedBox(
+            width: 80,
+            // height: 50,
+            child: Center(child: _switchTransferCard(),),
+          ),
+          const SizedBox(
+            width: 100,
+            child: Text("Transferência Bancária"),
+          ),
+        ]),
+
+                const SizedBox(
+          height: 25.0,
+        ),
       ],
     );
+  }
+
+  Switch _switchTransferCard() {
+    return Switch(
+        activeColor: Theme.of(context).colorScheme.secondary,
+        activeTrackColor: Theme.of(context).colorScheme.primary,
+        inactiveTrackColor: Theme.of(context).colorScheme.primary,
+        inactiveThumbColor: Theme.of(context).colorScheme.secondary,
+        value: _transferbank,
+        onChanged: (value) {
+          setState(() {
+            _transferbank = value;
+          });
+        });
   }
 
   Widget _transferbankForm() {
@@ -361,22 +349,10 @@ class ItemsFormState extends State<ItemsForm> {
 
                         DropdownButtonFormField<TransferBankTypeEnum?>(
                             value: _transferbank_type,
-                            decoration: const InputDecoration(
-                              filled: true,
-                              counterText: "",
-                              label: Text("Tipo"),
-                              isDense: false,
-                              isCollapsed: true,
-                              focusColor: Colors.white,
-                              constraints: BoxConstraints(minHeight: 50.0),
-                              // hoverColor: Colors.blue
-                            ),
-                            // itemHeight: 50,
-                            dropdownColor:
-                                const Color.fromARGB(255, 191, 234, 255),
-                            style: inputTextStyle(),
-                            isDense: false,
-                            isExpanded: true,
+                            decoration: (const InputDecoration())
+                                .applyDefaults(
+                                    Theme.of(context).inputDecorationTheme)
+                                .copyWith(labelText: "Tipo", counterText: ""),
                             items: TransferBankTypeEnum.values
                                 .map((tb_types) =>
                                     DropdownMenuItem<TransferBankTypeEnum?>(
@@ -384,7 +360,7 @@ class ItemsFormState extends State<ItemsForm> {
                                       child: Text(
                                         tb_types.name.toString(),
                                         style: const TextStyle(
-                                            color: Colors.black),
+                                            color: Colors.white),
                                       ),
                                     ))
                                 .toList(),
@@ -399,7 +375,7 @@ class ItemsFormState extends State<ItemsForm> {
                         /// transfer bank description
                         TextFormField(
                           controller: _transferbank_description,
-                          cursorColor: Colors.black,
+                          cursorColor: Colors.white,
                           maxLength: 100,
                           keyboardType: TextInputType.name,
                           style: inputTextStyle(),
@@ -407,11 +383,11 @@ class ItemsFormState extends State<ItemsForm> {
                             FilteringTextInputFormatter.singleLineFormatter,
                             LengthLimitingTextInputFormatter(100),
                           ],
-                          decoration: const InputDecoration(
-                            label: Text("Descrição"),
-                            counterText: "",
-                            constraints: BoxConstraints(minHeight: 50.0),
-                          ),
+                          decoration: (const InputDecoration())
+                              .applyDefaults(
+                                  Theme.of(context).inputDecorationTheme)
+                              .copyWith(
+                                  labelText: "Descrição", counterText: ""),
                         ),
 
                         const SizedBox(
@@ -421,20 +397,12 @@ class ItemsFormState extends State<ItemsForm> {
                         // bank account
                         DropdownButtonFormField<int?>(
                             value: _transferbank_bank_account,
-                            decoration: const InputDecoration(
-                              filled: true,
-                              counterText: "",
-                              label: Text("Conta bancária"),
-                              isDense: false,
-                              isCollapsed: true,
-                              focusColor: Colors.white,
-                              constraints: BoxConstraints(minHeight: 50.0),
-                              // hoverColor: Colors.blue
-                            ),
-                            // itemHeight: 50,
-                            dropdownColor:
-                                const Color.fromARGB(255, 191, 234, 255),
-                            style: inputTextStyle(),
+                            decoration: (const InputDecoration())
+                                .applyDefaults(
+                                    Theme.of(context).inputDecorationTheme)
+                                .copyWith(
+                                    labelText: "Conta Bancária",
+                                    counterText: ""),
                             isDense: false,
                             isExpanded: true,
                             items: bankAccounts
@@ -443,7 +411,7 @@ class ItemsFormState extends State<ItemsForm> {
                                       child: Text(
                                         el.bankName.toString(),
                                         style: const TextStyle(
-                                            color: Colors.black),
+                                            color: Colors.white),
                                       ),
                                     ))
                                 .toList(),
@@ -454,7 +422,7 @@ class ItemsFormState extends State<ItemsForm> {
                     )))
           ])
         : const SizedBox(
-            height: 10,
+            height: 0,
           );
   }
 
@@ -463,17 +431,9 @@ class ItemsFormState extends State<ItemsForm> {
         ? Flex(direction: Axis.vertical, children: [
             DropdownButtonFormField<int?>(
                 value: _card,
-                decoration: const InputDecoration(
-                  filled: true,
-                  counterText: "",
-                  label: Text("Cartão"),
-                  isDense: false,
-                  isCollapsed: true,
-                  focusColor: Colors.white,
-                  constraints: BoxConstraints(minHeight: 50.0),
-                ),
-                dropdownColor: const Color.fromARGB(255, 191, 234, 255),
-                style: inputTextStyle(),
+                decoration: (const InputDecoration())
+                    .applyDefaults(Theme.of(context).inputDecorationTheme)
+                    .copyWith(labelText: "Cartão", counterText: ""),
                 isDense: false,
                 isExpanded: true,
                 items: cards
@@ -481,7 +441,7 @@ class ItemsFormState extends State<ItemsForm> {
                           value: el.id,
                           child: Text(
                             el.brand.toString(),
-                            style: const TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.white),
                           ),
                         ))
                     .toList(),
@@ -490,7 +450,7 @@ class ItemsFormState extends State<ItemsForm> {
                 }),
           ])
         : const SizedBox(
-            height: 30,
+            height: 0,
           );
   }
 
@@ -499,7 +459,9 @@ class ItemsFormState extends State<ItemsForm> {
       direction: Axis.horizontal,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const SizedBox(height: 30,),
+        // const SizedBox(
+        //   height: 40,
+        // ),
         SizedBox(
           height: 50,
           child: ElevatedButton(
@@ -522,34 +484,41 @@ class ItemsFormState extends State<ItemsForm> {
                 if (_formKey.currentState!.validate()) {
                   dynamic ret;
                   if (widget.data?.id != null) {
-                    ret = await ItemsService().update(
-                      ItemDto(
+                    ret = await ItemsService().update(ItemDto(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
-                        category: categories!.firstWhere((el) => el.id == _category),
+                        category:
+                            categories!.firstWhere((el) => el.id == _category),
                         date: dateFormat.parse(_date.text),
                         expense: widget.expense,
-                        card: _transferbank ? null : cards.firstWhere((el)=>el.id == _card),
+                        card: _transferbank
+                            ? null
+                            : cards.firstWhere((el) => el.id == _card),
                         transfer_bank: _transferbank
                             ? TransferBankDto(
                                 id: widget.data?.transfer_bank?.id,
-                                bankAccount: bankAccounts.firstWhere((el)=>el.id == _transferbank_bank_account),
+                                bankAccount: bankAccounts.firstWhere((el) =>
+                                    el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
                                 type: _transferbank_type)
                             : null));
                     // ret = null;
                   } else {
                     ret = await ItemsService().save(ItemDto(
-                        card: _transferbank ? null : cards.firstWhere((el)=>el.id == _card),
+                        card: _transferbank
+                            ? null
+                            : cards.firstWhere((el) => el.id == _card),
                         description: _description.text,
                         date: dateFormat.parse(_date.text),
                         value: _value.numberValue,
-                        category: categories!.firstWhere((el) => el.id == _category),
+                        category:
+                            categories!.firstWhere((el) => el.id == _category),
                         expense: expense,
                         transfer_bank: _transferbank
                             ? TransferBankDto(
-                                bankAccount: bankAccounts.firstWhere((el)=> el.id == _transferbank_bank_account),
+                                bankAccount: bankAccounts.firstWhere((el) =>
+                                    el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
                                 type: _transferbank_type)
                             : null));

@@ -93,7 +93,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                     onFieldSubmitted: (String value) {
                       onFieldSubmitted();
                     },
-                    cursorColor: Colors.black,
+                    cursorColor: Colors.white,
                     maxLength: 100,
                     keyboardType: TextInputType.name,
                     style: inputTextStyle(),
@@ -102,10 +102,15 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                     FilteringTextInputFormatter.singleLineFormatter,
                     LengthLimitingTextInputFormatter(100),
                     ],
-                    decoration: const InputDecoration(
-                        // isCollapsed: true,
-                        labelText: "Nome do banco",
-                        counterText: ""),
+                    // decoration: const InputDecoration(
+                    //     // isCollapsed: true,
+                    //     labelText: "Nome do banco",
+                    //     counterText: ""),
+                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                      labelText: "Nome do banco",
+                      contentPadding: const EdgeInsets.all(15.0),
+                      counterText: ""
+                    ),
                     validator: (value) {
                       if (value!.length < 3 || value.length > 100) {
                         return "O tamano minimo é 1 e o máximo é 100";
@@ -140,14 +145,15 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
               //   child: ,
               // ),
 
+              const SizedBox(height: 20.0),
+
               //// bank code
-              ///
               ConstrainedBox(
                   constraints: const BoxConstraints(maxHeight: 70.0),
                   child: TextFormField(
                     autocorrect: true,
                     controller: _bankCode,
-                    cursorColor: Colors.black,
+                    cursorColor: Colors.white,
                     maxLength: 10,
                     keyboardType: TextInputType.number,
                     style: inputTextStyle(),
@@ -156,8 +162,13 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                       LengthLimitingTextInputFormatter(10),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,10}"))
                     ],
-                    decoration: const InputDecoration(
-                        labelText: "Código do Banco", counterText: ""),
+                    // decoration: const InputDecoration(
+                    //     labelText: "Código do Banco", counterText: ""),
+                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                      labelText: "Código do Banco",
+                      contentPadding: const EdgeInsets.all(15.0),
+                      counterText: ""
+                    ),
                     validator: (value) {
                       if (value!.isEmpty || value.length > 10) {
                         return "O tamano minimo é 1 e o máximo é 10";
@@ -169,6 +180,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                     },
                   )),
 
+              const SizedBox(height: 20.0),
               //// agency
               ///
               ConstrainedBox(
@@ -176,7 +188,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   child: TextFormField(
                     autocorrect: true,
                     controller: _agency,
-                    cursorColor: Colors.black,
+                    cursorColor: Colors.white,
                     maxLength: 8,
                     keyboardType: TextInputType.number,
                     style: inputTextStyle(),
@@ -185,8 +197,13 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                       LengthLimitingTextInputFormatter(8),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,8}"))
                     ],
-                    decoration: const InputDecoration(
-                        labelText: "Agencia", counterText: ""),
+                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                      labelText: "Agencia",
+                      contentPadding: const EdgeInsets.all(15.0),
+                      counterText: ""
+                    ),
+                    // decoration: const InputDecoration(
+                    //     labelText: "Agencia", counterText: ""),
                     validator: (value) {
                       if (value!.isEmpty || value.length > 8) {
                         return "O tamano minimo é 3 e o máximo é 8";
@@ -198,6 +215,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                     },
                   )),
 
+              const SizedBox(height: 20.0),
               /// account number
               ///
               ///
@@ -206,7 +224,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   child: TextFormField(
                     autocorrect: true,
                     controller: _accountNumber,
-                    cursorColor: Colors.black,
+                    cursorColor: Colors.white,
                     maxLength: 10,
                     keyboardType: TextInputType.number,
                     style: inputTextStyle(),
@@ -215,8 +233,11 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                       LengthLimitingTextInputFormatter(10),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,10}"))
                     ],
-                    decoration: const InputDecoration(
-                        labelText: "Número da Conta", counterText: ""),
+                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                      labelText: "Número da Conta",
+                      contentPadding: const EdgeInsets.all(15.0),
+                      counterText: ""
+                    ),
                     validator: (value) {
                       if (value!.length < 2 || value.length > 10) {
                         return "O tamano minimo é 2 e o máximo é 10";
@@ -227,6 +248,8 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                       return null;
                     },
                   )),
+
+              const SizedBox(height: 20.0),
 
               Row(
                 mainAxisSize: MainAxisSize.max,
@@ -273,7 +296,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                             if (ret is BankAccountsDto) {
                               Navigator.pop(context, ret);
                             } else {
-                              print(ret);
+                              // print(ret);
                               SnackBar snackBar = SnackBar(
                                 content: Text(
                                   ret['errors'],

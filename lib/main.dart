@@ -95,23 +95,37 @@ class _MainApp extends State<LFinanca> {
               borderRadius: BorderRadius.all(Radius.circular(50.0)),
               borderSide: BorderSide(
                   strokeAlign: 10, width: 3.0, color: Colors.white)),
-          counterStyle: const TextStyle(color: Colors.black, inherit: false),
-          contentPadding: const EdgeInsets.all(5.0),
+          counterStyle: const TextStyle(color: Colors.white, inherit: false),
+          contentPadding: const EdgeInsets.all(10.0),
           labelStyle: const TextStyle(
               fontFamily: 'OpenSans',
               fontSize: 15,
               color: Color.fromRGBO(222, 157, 50, 1)
               ),
         ),
-        buttonTheme: ButtonThemeData(
-          buttonColor: yellowMainColor,
-          hoverColor: Color.fromRGBO(0, 48, 87, 1)
-        ),
+        // buttonTheme: ButtonThemeData(
+        //   buttonColor: yellowMainColor,
+        //   hoverColor: const Color.fromRGBO(0, 48, 87, 1)
+        // ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           foregroundColor: Colors.white
         ),
         dropdownMenuTheme: DropdownMenuThemeData(
+          inputDecorationTheme: const InputDecorationTheme(
+            fillColor: null,
+          ),
+          textStyle: WidgetStateTextStyle.resolveWith((state){
+            return const TextStyle(
+              color: Colors.white
+            );
+          }),
           menuStyle: MenuStyle(
+            shape: WidgetStateProperty.resolveWith((st)=>
+              const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero
+              )
+            ),
+            
             backgroundColor: WidgetStateProperty.resolveWith<Color>((state){
               if(state.contains(WidgetState.hovered)){
                 return const Color.fromRGBO(222, 157, 50, 1);

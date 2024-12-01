@@ -56,7 +56,7 @@ class CategoriesStateForm extends State<CategoriesForm> {
                 autofocus: true,
                 autocorrect: true,
                 controller: _description,
-                cursorColor: Colors.black,
+                cursorColor: Colors.white,
                 maxLength: 30,
                 keyboardType: TextInputType.name,
                 style: inputTextStyle(),
@@ -64,8 +64,12 @@ class CategoriesStateForm extends State<CategoriesForm> {
                   FilteringTextInputFormatter.singleLineFormatter,
                   LengthLimitingTextInputFormatter(30),
                 ],
-                decoration: const InputDecoration(
-                    label: Text("Descrição"), counterText: ""),
+                // decoration: const InputDecoration(
+                //     label: Text("Descrição"), counterText: ""),
+                decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
+                      labelText: "Descrição",
+                      counterText: ""
+                    ),
                 validator: (value) {
                   if (value!.length < 3 || value.length > 30) {
                     return "O tamano minimo é 3 e o máximo é 30";
@@ -75,6 +79,9 @@ class CategoriesStateForm extends State<CategoriesForm> {
                   }
                   return null;
                 },
+              ),
+              const SizedBox(
+                height: 30,
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
