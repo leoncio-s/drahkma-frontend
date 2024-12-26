@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+// ignore: avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:io' as io show Platform;
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,7 @@ import 'package:requests/requests.dart';
 class AuthService {
 
   static UserDto user = UserDto();
-  static Storage _st = window.localStorage;
+  static final Storage _st = window.localStorage;
 
   static login(String login, String password) async {
     // try{
@@ -18,11 +19,10 @@ class AuthService {
       var req = await Requests.post('${Config.urlApi}auth/login', json: {"email":login, "password": password}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
        
 
-      print(req);
       if(req.statusCode == 500){
         return {"errors" : "Internal server error"};
       }else if(req.statusCode != 200){
-        return jsonDecode(req.body);
+        return req.json();
       }else{
         // dynamic json = jsonDecode(req.body);
 

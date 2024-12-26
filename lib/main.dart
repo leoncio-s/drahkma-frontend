@@ -1,13 +1,13 @@
+import 'package:drahkma/Auth/login_page.dart';
+import 'package:drahkma/User/user_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:drahkma/Auth/auth_view.dart';
-import 'package:drahkma/User/user_service.dart';
 import 'package:drahkma/config.dart';
 import 'package:drahkma/home.dart';
 
 void main() async {
-  String initialRoute;
+  String initialRoute = "/auth/login";
 
   if(kDebugMode){
     Config.setUrlApi = "http://localhost:8081/public/api/v1/";
@@ -19,7 +19,13 @@ void main() async {
   }catch(e){
     initialRoute = "/auth/login";
   }
-  runApp(LFinanca(initialRoute: initialRoute,));
+  
+  try{
+    runApp(LFinanca(initialRoute: initialRoute,));
+
+  }catch(e){
+    print(e);
+  }
 }
 
 // ignore: must_be_immutable
@@ -176,19 +182,9 @@ class _MainApp extends State<LFinanca> {
         )
       ),
       routes: {
-        // '/items' :(context) => Items(),
-        // '/cards' : (context) => Cards(),
-        // '/bank-accounts'  : (context) => BankAccounts(),
-        // '/categories' : (context) => Categories(),
-        '/auth/login': (context) => const Auth(),
+        '/auth/login' : (context) => LoginPage(),
         '/dashboard': (context) => const HomeView(),
-        // '/auth/registry' : (context) => Registry(),
       },
-      // home: const Scaffold(
-      //   body: Center(
-      //     child: Text('Hello World!'),
-      //   ),
-      // ),
     );
   }
 }
