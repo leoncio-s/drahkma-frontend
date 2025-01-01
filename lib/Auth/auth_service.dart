@@ -14,7 +14,6 @@ class AuthService {
   static final Storage _st = window.localStorage;
 
   static login(String login, String password) async {
-    // try{
       
       var req = await Requests.post('${Config.urlApi}auth/login', json: {"email":login, "password": password}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
        
@@ -24,15 +23,8 @@ class AuthService {
       }else if(req.statusCode != 200){
         return req.json();
       }else{
-        // dynamic json = jsonDecode(req.body);
-
         return _storage(req.body);
       }
-    // }on Exception catch(e){
-    //   print(e);
-    // }catch(error){
-    //   print(error);
-    // }
   }
 
   static _storage(String data){
