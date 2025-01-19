@@ -33,8 +33,18 @@ class UserDto{
         email=data['email'];
         phone_number = data['phone_number'];
       }
-      
-
       return this;
     }
+
+    toMap(dynamic data) => {
+      'actived' : actived,
+      'id'  : id,
+      'created_at' : created_at,
+      'updated_at' : updated_at,
+      'email_verified_at' : email_verified_at,
+      'fullname' : fullname,
+      'email' : email,
+      'phone_number' : phone_number,
+      'token' : token
+    };
 }

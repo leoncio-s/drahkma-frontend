@@ -13,6 +13,7 @@ class TextFormFieldComponent extends StatelessWidget{
   String? Function(String?)? validator;
   List<TextInputFormatter>? inputFormatters;
   InputDecoration? decoration;
+  AutovalidateMode? autovalidateMode;
 
   TextFormFieldComponent(
     {super.key,
@@ -25,7 +26,8 @@ class TextFormFieldComponent extends StatelessWidget{
     this.autofocus = false,
     this.validator, 
     this.inputFormatters,
-    this.decoration = const InputDecoration()
+    this.decoration = const InputDecoration(),
+    this.autovalidateMode
     });
   
   @override
@@ -39,6 +41,7 @@ class TextFormFieldComponent extends StatelessWidget{
       autofocus: autofocus,
       inputFormatters: inputFormatters,
       validator: validator,
+      autovalidateMode: autovalidateMode,
       decoration: (decoration)?.applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
         counterText: "", 
         labelText: labelText,

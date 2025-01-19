@@ -53,7 +53,7 @@ class _loginPage extends State<LoginPage> {
                                   thickness: 2,
                                 ),
                               )),
-                          _signinButton()
+                          _registerButton()
                         ],
                       ))
                 ],
@@ -200,12 +200,14 @@ class _loginPage extends State<LoginPage> {
     );
   }
 
-  _signinButton() {
+  _registerButton() {
     return SizedBox(
       // width: double.maxFinite,
       child: TextButton(
         onHover: (value) {},
-        onPressed: () {},
+        onPressed: () {
+          Navigator.maybeOf(context)!.pushNamed("/register");
+        },
         child: const Text(
           "Criar Conta",
           textAlign: TextAlign.right,
