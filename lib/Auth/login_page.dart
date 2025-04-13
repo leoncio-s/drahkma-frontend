@@ -141,7 +141,10 @@ class _loginPage extends State<LoginPage> {
                 "Esqueceu a senha?",
                 textAlign: TextAlign.end,
               ),
-              onPressed: () {}),
+              onPressed: () {
+
+                Navigator.of(context).pushNamed("/forget-password");
+              }),
         ));
   }
 

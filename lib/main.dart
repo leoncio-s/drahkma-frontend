@@ -1,3 +1,4 @@
+import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
 import 'package:drahkma/User/create_user_form.dart';
 import 'package:drahkma/User/user_service.dart';
@@ -186,6 +187,7 @@ class _MainApp extends State<LFinanca> {
         '/auth/login' : (context) => LoginPage(),
         '/dashboard': (context) => const HomeView(),
         '/register' : (context) => const CreateUserForm(),
+        '/forget-password' : (context) => const ForgetPasswordPage(),
       },
     );
   }
