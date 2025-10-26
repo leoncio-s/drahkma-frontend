@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:drahkma/dashboard/data_notifier.dart';
 
 class AppNotifier with ChangeNotifier{
-      DateTimeRange _dateTimeRange = DateTimeRange(start: DateTime.now().subtract(const Duration(days: 30)), end: DateTime.now());
+      DateTimeRange _dateTimeRange = DateTimeRange(start: DateTime(DateTime.now().year, DateTime.now().month, 1), end: DateTime(DateTime.now().year, DateTime.now().month + 1, 1).subtract(const Duration(days: 1)));
 
       DateTimeRange get dateTimeRange => _dateTimeRange;
 
