@@ -65,4 +65,17 @@ class AuthService {
       user = UserDto();
     }
   }
+
+  static forgetPassword(String email) async
+  {
+      var req = await Requests.post('${Config.urlApi}auth/forget-password', json: {"email":email}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
+
+      if(req.statusCode == 500){
+        return {"errors" : "Internal server error"};
+      }else if(req.statusCode != 200){
+        throw Exception(req.json()['message']);
+      }else{
+        return req.json();
+      }
+  }
 }
