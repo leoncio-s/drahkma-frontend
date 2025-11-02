@@ -1,8 +1,10 @@
 import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/Auth/forget_password_codepage.dart';
 import 'package:drahkma/Utils/string_regex_validate.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
 import 'package:drahkma/commonsComponents/default_layout.dart';
 import 'package:drahkma/commonsComponents/elevated_button_component.dart';
+import 'package:drahkma/commonsComponents/modal.dart';
 import 'package:drahkma/commonsComponents/snackbar_component.dart';
 import 'package:drahkma/commonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,11 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
 
   @override
   void initState() {
-    if(widget.email != null) _email.text = widget.email!;
+    if(widget.email != null) {
+      _email.text = widget.email!;
+    } else {
+      _email.text = AuthService.storageGetEmail() ?? '';
+    }
     super.initState();
   }
 
@@ -49,18 +55,22 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
           const SizedBox(height: 30,),
           ElevatedButtonComponent(title: "Redefinir Senha", onPressed: () async {
             if(_formState.currentState!.validate()){
+              var _closeModal = modal(context, "loading");
               try{
                 var ret = await AuthService.forgetPassword(_email.text);
                 var snack;
 
                 if(ret['message'] != null) {
+                  _closeModal();
                   snack = SnackBarComponent(content: Text(ret['message']), backgroundColor: Colors.white, closeIconColor: Colors.black,);
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ForgetPasswordCodepage(email: _email.text)));
                 } else {
-                  snack = SnackBarComponent(content: ret['message']);
+                  snack = SnackBarComponent(content: ret['errors']);
                 }
 
                 ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
               }on Exception catch(ex){
+                _closeModal();
                 var  snack = SnackBarComponent(content: Text(ex.toString()));
                 ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
               }
