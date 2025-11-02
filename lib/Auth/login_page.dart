@@ -16,6 +16,11 @@ class _loginPage extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _email.text = AuthService.storageGetEmail() ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
