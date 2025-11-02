@@ -14,10 +14,9 @@ class AuthService {
   static final Storage _st = window.localStorage;
 
   static login(String login, String password) async {
-      
+      _st['email']=login;
       var req = await Requests.post('${Config.urlApi}auth/login', json: {"email":login, "password": password}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
        
-
       if(req.statusCode == 500){
         return {"errors" : "Internal server error"};
       }else if(req.statusCode != 200){
@@ -40,6 +39,9 @@ class AuthService {
     return jsonDecode(data);
   }
 
+  static String? storageGetEmail(){
+    return _st['email'];
+  }
   static Future<UserDto?> getAuthUser() async {
     if(kIsWeb){
       String? data = _st['auth_token'];
@@ -73,9 +75,25 @@ class AuthService {
       if(req.statusCode == 500){
         return {"errors" : "Internal server error"};
       }else if(req.statusCode != 200){
-        throw Exception(req.json()['message']);
+        throw Exception(req.json()['error']);
       }else{
         return req.json();
       }
+  }
+
+  static forgetPasswordCode(String email, String code, String password, String confPassword) async
+  {
+    var req = await Requests.post('${Config.urlApi}auth/forget-password/$email', headers: {'Content-type': 'application/json'}, timeoutSeconds: 20, verify: false, json: {'code':code, 'password':password, 'confpassword':confPassword});
+    
+    if(req.statusCode == 200)
+    {
+      return req.json();
+    }else{
+      var json = req.json();
+      if (json['message'] != null){
+        return {'error':json['message']};
+      }
+      return json;
+    }
   }
 }
