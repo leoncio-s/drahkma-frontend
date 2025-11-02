@@ -14,6 +14,8 @@ class TextFormFieldComponent extends StatelessWidget{
   List<TextInputFormatter>? inputFormatters;
   InputDecoration? decoration;
   AutovalidateMode? autovalidateMode;
+  bool readOnly;
+  int? maxLength;
 
   TextFormFieldComponent(
     {super.key,
@@ -27,12 +29,15 @@ class TextFormFieldComponent extends StatelessWidget{
     this.validator, 
     this.inputFormatters,
     this.decoration = const InputDecoration(),
-    this.autovalidateMode
+    this.autovalidateMode, 
+    this.readOnly=false,
+    this.maxLength
     });
   
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly,
       controller: controller,
       focusNode: focusNode,
       keyboardType: keyboardType,
@@ -42,6 +47,7 @@ class TextFormFieldComponent extends StatelessWidget{
       inputFormatters: inputFormatters,
       validator: validator,
       autovalidateMode: autovalidateMode,
+      maxLength: maxLength,
       decoration: (decoration)?.applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
         counterText: "", 
         labelText: labelText,
