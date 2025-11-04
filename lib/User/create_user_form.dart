@@ -29,6 +29,12 @@ class _CreateUserFormState extends State<CreateUserForm> {
   late Map? errors;
 
   @override
+  void initState() {
+    errors = null;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) => DefaultLayout(
         child: _form(),
       );
