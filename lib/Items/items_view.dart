@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:drahkma/Items/ItemDto.dart';
+import 'package:drahkma/Items/item_dto.dart';
 import 'package:drahkma/Items/items_form.dart';
 import 'package:drahkma/Items/items_order_enum.dart';
 import 'package:drahkma/Items/items_service.dart';
@@ -289,6 +289,7 @@ class _ItemsViewState extends State<ItemsView>{
                           trailing: IconButton(
                               onPressed: () {
                                 ItemsService().delete(el).then((value) {
+                                  // ignore: no_leading_underscores_for_local_identifiers
                                   SnackBar _snackBar;
                                   if (value) {
                                     _snackBar = const SnackBar(

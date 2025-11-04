@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 import 'package:drahkma/config.dart';
 import 'package:drahkma/dashboard/charts_page.dart';
 import 'package:drahkma/dashboard/dashboard_dto.dart';
 import 'package:drahkma/dashboard/data_notifier.dart';
 import 'package:drahkma/dashboard/date_range.dart';
 
-class Dashboard extends StatefulwidgetDrahkma{
+class Dashboard extends StatefulWidgetDrahkma{
   const Dashboard(
       {super.key,
       super.name = "Dashboard",
@@ -41,7 +41,7 @@ class _DashboardState extends State<Dashboard> {
 
 // ignore: must_be_immutable
 class _Cards extends StatelessWidget {
-  _Cards({super.key, required this.notifier, required dataNotifier});
+  _Cards({required this.notifier, required dataNotifier});
 
   AppNotifier notifier;
   DashboardDto data = dataNotifier.data;

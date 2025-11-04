@@ -8,8 +8,8 @@ import 'package:drahkma/Items/inflow_view.dart';
 import 'package:drahkma/Items/outflow_view.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/User/user_service.dart';
-import 'package:drahkma/commonsComponents/app_bar_navigator.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/app_bar_navigator.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -29,8 +29,8 @@ class HomeViewState extends State<HomeView> {
         // ignore: use_build_context_synchronously
         Navigator.pushReplacementNamed(context, "/auth/login");
       }).timeout(const Duration(seconds: 20), onTimeout: () {
-        // setState(() {});
-
+        
+        if(!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
               "Erro ao se conectar ao Site, tente novamente em outro momento"),
@@ -44,7 +44,7 @@ class HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return const AppBarNavigator(
-      childrens: <StatefulwidgetDrahkma>[
+      childrens: <StatefulWidgetDrahkma>[
         Dashboard(),
         InflowView(),
         OutflowView(),

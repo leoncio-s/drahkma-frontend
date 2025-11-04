@@ -5,9 +5,9 @@ import 'package:drahkma/Cards/cards_dto.dart';
 import 'package:drahkma/Cards/cards_form.dart';
 import 'package:drahkma/Cards/cards_services.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 
-class CardsView extends StatefulwidgetDrahkma {
+class CardsView extends StatefulWidgetDrahkma {
   const CardsView(
       {super.key, super.name = "Cartões",
       super.icon = const Icon(Icons.category, size: 20)});
@@ -128,9 +128,9 @@ class CardsViewState extends State<CardsView> {
                     context: context,
                     tiles: cards!
                         .map((el) => ListTile(
-                              title: Text("${el.brand.toString()} - ${el.last_4_digits}"),
+                              title: Text("${el.brand.toString()} - ${el.last4Digits}"),
                               subtitle: Text(
-                                  """${el.flag!.name} ${el.type!.type}\nVencimento da fatura: ${el.invoice_day}"""),
+                                  """${el.flag!.name} ${el.type!.type}\nVencimento da fatura: ${el.invoiceDay}"""),
                               contentPadding: const EdgeInsets.all(5),
                               titleAlignment: ListTileTitleAlignment.center,
                               isThreeLine: true,
@@ -155,7 +155,7 @@ class CardsViewState extends State<CardsView> {
                                     if (ret == true) {
                                       _getData();
                                     } else {
-                                      if (context.mounted) {
+                                      if (mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                                 _snackBarError(ret['error']));

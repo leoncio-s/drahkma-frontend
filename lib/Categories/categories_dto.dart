@@ -9,7 +9,9 @@ class CategoriesDto implements DtoInterface{
   
   @override
   factory CategoriesDto.toObject(Map<String, dynamic> data){
+    // ignore: no_leading_underscores_for_local_identifiers
     int? _id = data['id'] ?? 0;
+    // ignore: no_leading_underscores_for_local_identifiers
     String? _description = data['description'] ?? "";
 
     return CategoriesDto(id: _id, description: _description);

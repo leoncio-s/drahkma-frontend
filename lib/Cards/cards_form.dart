@@ -8,7 +8,7 @@ import 'package:drahkma/Cards/cards_services.dart';
 import 'package:drahkma/Cards/cards_type_enum.dart';
 import 'package:drahkma/Utils/months.dart';
 import 'package:drahkma/Utils/string_regex_validate.dart';
-import 'package:drahkma/commonsComponents/input_text_style.dart';
+import 'package:drahkma/CommonsComponents/input_text_style.dart';
 
 // ignore: must_be_immutable
 class CardsForm extends StatefulWidget {
@@ -27,8 +27,8 @@ class CardsStateForm extends State<CardsForm> {
   int? _expYear = DateTime.now().year;
   final TextEditingController _last4Digits = TextEditingController();
   int? _invoiceDay;
-  CardsTypeEnum? _type = CardsTypeEnum.Credit;
-  CardFlagsEnum? _flag = CardFlagsEnum.Mastercard;
+  CardsTypeEnum? _type = CardsTypeEnum.credit;
+  CardFlagsEnum? _flag = CardFlagsEnum.mastercard;
 
   @override
   void initState() {
@@ -36,10 +36,10 @@ class CardsStateForm extends State<CardsForm> {
       _brand.text = widget.cards!.brand ?? "";
       // _expiresAt = widget.cards!.expires_at;
       _expMonth = Months.values
-          .firstWhere((el) => el.month == widget.cards!.expires_at!.month);
-      _expYear = widget.cards!.expires_at!.year;
-      _last4Digits.text = widget.cards!.last_4_digits.toString();
-      _invoiceDay = widget.cards!.invoice_day;
+          .firstWhere((el) => el.month == widget.cards!.expiresAt!.month);
+      _expYear = widget.cards!.expiresAt!.year;
+      _last4Digits.text = widget.cards!.last4Digits.toString();
+      _invoiceDay = widget.cards!.invoiceDay;
       _type = widget.cards!.type;
       _flag = widget.cards!.flag;
     }
@@ -374,17 +374,17 @@ class CardsStateForm extends State<CardsForm> {
                               ret = await CardsServices().update(CardsDto(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
-                                  invoice_day: _invoiceDay,
-                                  last_4_digits: _last4Digits.text,
-                                  expires_at: "${_expMonth!.month}/$_expYear",
+                                  invoiceDay: _invoiceDay,
+                                  last4Digits: _last4Digits.text,
+                                  expiresAt: "${_expMonth!.month}/$_expYear",
                                   flag: _flag,
                                   type: _type));
                             } else {
                               ret = await CardsServices().save(CardsDto(
                                   brand: _brand.text,
-                                  invoice_day: _invoiceDay,
-                                  last_4_digits: _last4Digits.text,
-                                  expires_at: "${_expMonth!.month}/$_expYear",
+                                  invoiceDay: _invoiceDay,
+                                  last4Digits: _last4Digits.text,
+                                  expiresAt: "${_expMonth!.month}/$_expYear",
                                   flag: _flag,
                                   type: _type));
                             }

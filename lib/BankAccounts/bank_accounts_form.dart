@@ -6,7 +6,7 @@ import 'package:drahkma/BankAccounts/bank_accounts_dto.dart';
 import 'package:drahkma/BankAccounts/bank_accounts_service.dart';
 import 'package:drahkma/BankAccounts/banks_dto.dart';
 import 'package:drahkma/Utils/string_regex_validate.dart';
-import 'package:drahkma/commonsComponents/input_text_style.dart';
+import 'package:drahkma/CommonsComponents/input_text_style.dart';
 
 // ignore: must_be_immutable
 class BankAccountsForm extends StatefulWidget {
@@ -19,7 +19,7 @@ class BankAccountsForm extends StatefulWidget {
 
 class BankAccountsStateForm extends State<BankAccountsForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
-  TextEditingController _bankName = TextEditingController();
+  final TextEditingController _bankName = TextEditingController();
   final TextEditingController _bankCode = TextEditingController();
   final TextEditingController _agency = TextEditingController();
   final TextEditingController _accountNumber = TextEditingController();
@@ -293,10 +293,12 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                                       agency: _agency.text,
                                       accountNumber: _accountNumber.text));
                             }
+
+                            if (!mounted) return;
+
                             if (ret is BankAccountsDto) {
-                              Navigator.pop(context, ret);
+                              Navigator.of(context).pop(ret);
                             } else {
-                              // print(ret);
                               SnackBar snackBar = SnackBar(
                                 content: Text(
                                   ret['errors'],
@@ -306,7 +308,6 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                                 backgroundColor: Colors.red,
                                 closeIconColor: Colors.white,
                               );
-                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             }

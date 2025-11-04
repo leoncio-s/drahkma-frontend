@@ -2,11 +2,11 @@ import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/Auth/forget_password_codepage.dart';
 import 'package:drahkma/Utils/string_regex_validate.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/commonsComponents/default_layout.dart';
-import 'package:drahkma/commonsComponents/elevated_button_component.dart';
-import 'package:drahkma/commonsComponents/modal.dart';
-import 'package:drahkma/commonsComponents/snackbar_component.dart';
-import 'package:drahkma/commonsComponents/text_form_field_component.dart';
+import 'package:drahkma/CommonsComponents/default_layout.dart';
+import 'package:drahkma/CommonsComponents/elevated_button_component.dart';
+import 'package:drahkma/CommonsComponents/modal.dart';
+import 'package:drahkma/CommonsComponents/snackbar_component.dart';
+import 'package:drahkma/CommonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordPage extends StatefulWidget{
@@ -18,8 +18,8 @@ class ForgetPasswordPage extends StatefulWidget{
 }
 
 class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
-  GlobalKey<FormState> _formState = GlobalKey();
-  TextEditingController _email = TextEditingController();
+  final GlobalKey<FormState> _formState = GlobalKey();
+  final TextEditingController _email = TextEditingController();
 
   @override
   void initState() {
@@ -50,27 +50,31 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
               if(StringValidators.sqlInjection(value)) {
                 return "E-mail inválido";
               }
+              return "";
             },
             ),
           const SizedBox(height: 30,),
           ElevatedButtonComponent(title: "Redefinir Senha", onPressed: () async {
             if(_formState.currentState!.validate()){
-              var _closeModal = modal(context, "loading");
+              final closeModal = modal(context, "loading");
               try{
                 var ret = await AuthService.forgetPassword(_email.text);
-                var snack;
+                late SnackBar snack;
+                
+                if(!mounted) return;
 
                 if(ret['message'] != null) {
-                  _closeModal();
+                  closeModal();
                   snack = SnackBarComponent(content: Text(ret['message']), backgroundColor: Colors.white, closeIconColor: Colors.black,);
                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ForgetPasswordCodepage(email: _email.text)));
                 } else {
                   snack = SnackBarComponent(content: ret['errors']);
                 }
 
-                ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
+                ScaffoldMessenger.of(context).showSnackBar(snack);
+
               }on Exception catch(ex){
-                _closeModal();
+                closeModal();
                 var  snack = SnackBarComponent(content: Text(ex.toString()));
                 ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
               }

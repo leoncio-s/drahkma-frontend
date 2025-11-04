@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:drahkma/Items/items_service.dart';
 import 'package:drahkma/Items/items_view.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 
-class OutflowView extends StatefulwidgetDrahkma {
+class OutflowView extends StatefulWidgetDrahkma {
   const OutflowView(
       {super.key,
       super.name = "Despesas",

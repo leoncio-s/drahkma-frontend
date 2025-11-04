@@ -5,13 +5,13 @@ import 'package:drahkma/Categories/categories_dto.dart';
 import 'package:drahkma/Categories/categories_form.dart';
 import 'package:drahkma/Categories/categories_service.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 
 import 'categories_sort.dart';
 
-class CategoriesView extends StatefulwidgetDrahkma {
+class CategoriesView extends StatefulWidgetDrahkma {
   const CategoriesView(
-      {super.name = "Categorias",
+      {super.key, super.name = "Categorias",
       super.icon = const Icon(Icons.category, size: 20)});
 
   @override
@@ -141,14 +141,17 @@ class CategoriesViewState extends State<CategoriesView> {
                               },
                               trailing: IconButton(
                                 splashRadius: 20.0,
-                                // visualDensity: const VisualDensity(horizontal: 0.0),
                                 hoverColor: Colors.white,
                                 onPressed: () async {
                                 dynamic ret = await CategoriesService().delete(el);
                                 if(ret == true){
                                   _getData();
                                 }else{
-                                  ScaffoldMessenger.of(context).showSnackBar(_snackBarError(ret['error']));
+                                  if(mounted){
+                                    ScaffoldMessenger.of(context).showSnackBar(_snackBarError(ret['error']));
+                                  } else {
+                                    return;
+                                  }
                                 }
                               }, icon: const Icon(Icons.delete, color: Colors.red,)),
                             ))

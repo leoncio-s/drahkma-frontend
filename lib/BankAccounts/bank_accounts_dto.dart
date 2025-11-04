@@ -14,13 +14,6 @@ class BankAccountsDto implements DtoInterface {
       this.agency,
       this.bankName});
 
-  set Id(int? id) => this.id = id;
-  set BankCode(String? bankCode) => this.bankCode = bankCode;
-  set BankName(String? bankName) => this.bankName = bankName;
-  set Agency(String? agency) => this.agency = agency;
-  set AccountNumber(String? accountNumber) =>
-      this.accountNumber = accountNumber;
-
   @override
   factory BankAccountsDto.toObject(Map<String, dynamic> data) {
     int? id = data['id'] ?? 0;

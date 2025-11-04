@@ -32,8 +32,8 @@ class AuthDto implements DtoInterface{
   // String? get Email => _email;
   // String? get Password => _password;
 
-  set Email(String? value)  => _email = value;
-  set Password(String? value)  => _password = value;
+  set email(String? value)  => _email = value;
+  set password(String? value)  => _password = value;
   
   @override
   toMap() {

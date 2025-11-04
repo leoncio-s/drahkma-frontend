@@ -60,7 +60,7 @@ class AuthService {
   }
 
   static logout(){
-    user = new UserDto();
+    user = UserDto();
     if(kIsWeb){
       _st.clear();
     }else if(io.Platform.isWindows){

@@ -6,11 +6,7 @@ class _DataNotifier with ChangeNotifier {
   DashboardDto _data = DashboardDto();
   DashboardDto get data => _data;
 
-  _DataNotifier(){
-    // appNotifier.addListener((){
-    //   getData(appNotifier.dateTimeRange);
-    // });
-  }
+  _DataNotifier();
 
   void _setData(DashboardDto value){
     _data = value;
@@ -21,13 +17,10 @@ class _DataNotifier with ChangeNotifier {
 
     DashServices().getAmounts(dateRange.start, dateRange.end).then((DashboardDto? onValue) {
         _setData(onValue ?? DashboardDto());
-    }).onError((e, s) {
-      print(e);
-    }).timeout(const Duration(seconds: 30), onTimeout: () {
-      print("timeout");
     });
   }
 
 }
 
+// ignore: library_private_types_in_public_api
 _DataNotifier dataNotifier = _DataNotifier();

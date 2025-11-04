@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:drahkma/Auth/auth_service.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 
 // ignore: must_be_immutable
 class AppBarNavigator extends StatelessWidget {
-  final List<StatefulwidgetDrahkma> childrens;
+  final List<StatefulWidgetDrahkma> childrens;
 
   const AppBarNavigator({super.key, required this.childrens});
 

@@ -71,19 +71,19 @@ class DashboardDto{
   @override
   String toString() {
     return {
-      'inflow' : this.inflow,
-      'outflow' : this.outflow,
-      'amount' : this.amount,
-      'totalAmountInflowCards' : this.totalAmountInflowCards,
-      'totalAmountInflowTransferBank' : this.totalAmountInflowTransferBank,
-      'totalAmountOutflowCards' : this.totalAmountOutflowCards,
-      'totalAmountOutflowTransferBank' : this.totalAmountOutflowTransferBank,
-      'amountInflowCard' : this.amountInflowCard,
-      'amountInflowCategory' : this.amountInflowCategory,
-      'amountInflowTransferBank' : this.amountInflowTransferBank, 
-      'amountOutflowCard' : this.amountOutflowCard,
-      'amountOutflowCategory' : this.amountOutflowCategory,
-      'amountOutflowTransferBank' : this.amountOutflowTransferBank
+      'inflow' : inflow,
+      'outflow' : outflow,
+      'amount' : amount,
+      'totalAmountInflowCards' : totalAmountInflowCards,
+      'totalAmountInflowTransferBank' : totalAmountInflowTransferBank,
+      'totalAmountOutflowCards' : totalAmountOutflowCards,
+      'totalAmountOutflowTransferBank' : totalAmountOutflowTransferBank,
+      'amountInflowCard' : amountInflowCard,
+      'amountInflowCategory' : amountInflowCategory,
+      'amountInflowTransferBank' : amountInflowTransferBank, 
+      'amountOutflowCard' : amountOutflowCard,
+      'amountOutflowCategory' : amountOutflowCategory,
+      'amountOutflowTransferBank' : amountOutflowTransferBank
     }.toString();
   }
 }
@@ -103,8 +103,8 @@ class AmountGroupDto{
   @override
   String toString(){
     return {
-      'total' : this.total,
-      'description' : this.description,
+      'total' : total,
+      'description' : description,
     }.toString();
   }
 }
@@ -129,9 +129,9 @@ class AmountTransferBankGroupDto{
   @override
   String toString() {
     return {
-      'total' : this.total,
-      'description' : this.description,
-      'type' : this.type!.name
+      'total' : total,
+      'description' : description,
+      'type' : type!.name
     }.toString();
   }
 }

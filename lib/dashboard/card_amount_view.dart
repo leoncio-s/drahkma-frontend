@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:drahkma/Dashboard/dash_services.dart';
 
 class CardAmountView extends StatefulWidget {
-  CardAmountView({super.key});
+  const CardAmountView({super.key});
 
   @override
-  State<StatefulWidget> createState() => _cardAmountViewState();
+  State<StatefulWidget> createState() => _CardAmountViewState();
 }
 
-class _cardAmountViewState extends State<CardAmountView> {
+class _CardAmountViewState extends State<CardAmountView> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Card(
         child: ConstrainedBox(
       constraints: const BoxConstraints(
@@ -27,7 +26,7 @@ class _cardAmountViewState extends State<CardAmountView> {
                   child: Text(snapshot.data.toString()),
                 ));
               }
-              return CircularProgressIndicator();
+              return const CircularProgressIndicator();
             }),
       ),
     ));

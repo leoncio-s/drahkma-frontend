@@ -1,6 +1,6 @@
 import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/Interfaces/services.dart';
-import 'package:drahkma/Items/ItemDto.dart';
+import 'package:drahkma/Items/item_dto.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/config.dart';
 import 'package:http/http.dart';
@@ -59,10 +59,10 @@ class ItemsService extends Services<ItemDto> {
   }
   
   @override
-  Future delete(ItemDto item) async {
+  Future delete(ItemDto data) async {
       UserDto? user = await AuthService.getAuthUser();
       Response response = await Requests.delete(
-      "$url/${item.id}",
+      "$url/${data.id}",
       headers: {'Authorization' :  " Bearer ${user?.token ?? ''}"});
 
       if(response.success){
@@ -74,7 +74,6 @@ class ItemsService extends Services<ItemDto> {
   
   @override
   Future get() {
-    // TODO: implement get
     throw UnimplementedError();
   }
   
