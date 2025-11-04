@@ -1,5 +1,6 @@
 import 'package:drahkma/Auth/auth_dto.dart';
 import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/CommonsComponents/modal.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/commonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
@@ -160,11 +161,15 @@ class _LoginPage extends State<LoginPage> {
       child: ElevatedButton(
         child: const Text("Login"),
         onPressed: () async {
+          var closeModal = modal(context, "loading");
           if (_formKey.currentState!.validate()) {
             try {
               var ret = await AuthService.login(_email.text, _password.text);
+
+              if(!mounted) return;
+
               if (ret is UserDto) {
-                // ignore: use_build_context_synchronously
+                closeModal();
                 Navigator.of(context).pushReplacementNamed("/dashboard");
               } else {
                 final snackBar = SnackBar(
@@ -172,15 +177,14 @@ class _LoginPage extends State<LoginPage> {
                   backgroundColor: Colors.red,
                   elevation: 10.0,
                   showCloseIcon: true,
-                  // ignore: use_build_context_synchronously
                   closeIconColor:
-                      // ignore: use_build_context_synchronously
                       Theme.of(context).primaryColor,
                   duration: const Duration(seconds: 5),
                   behavior: SnackBarBehavior.floating,
                   dismissDirection: DismissDirection.startToEnd,
                 );
-                // ignore: use_build_context_synchronously
+                
+                closeModal();
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
 
@@ -191,17 +195,17 @@ class _LoginPage extends State<LoginPage> {
                 backgroundColor: Colors.red,
                 elevation: 10.0,
                 showCloseIcon: true,
-                // ignore: use_build_context_synchronously
                 closeIconColor:
-                    // ignore: use_build_context_synchronously
                     Theme.of(context).primaryColor,
                 duration: const Duration(seconds: 5),
                 behavior: SnackBarBehavior.floating,
                 dismissDirection: DismissDirection.startToEnd,
               );
-              // ignore: use_build_context_synchronously
+              closeModal();
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
+          }else{
+            closeModal();
           }
         },
       ),
