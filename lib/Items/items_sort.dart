@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:drahkma/Items/ItemDto.dart';
+import 'package:drahkma/Items/item_dto.dart';
 
 
 class ItemsSorts{

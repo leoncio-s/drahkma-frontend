@@ -1,10 +1,10 @@
 
 enum CardsTypeEnum{
-  Credit('Credito'),
-  Debit('Debito'),
-  VR('Vale Refeição'),
-  VA('Vale Alimentação'),
-  Others('Outros');
+  credit('Credito'),
+  debit('Debito'),
+  vR('Vale Refeição'),
+  vA('Vale Alimentação'),
+  others('Outros');
 
   
   const CardsTypeEnum(this.type);

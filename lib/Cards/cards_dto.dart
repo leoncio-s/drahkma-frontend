@@ -9,41 +9,41 @@ class CardsDto implements DtoInterface{
     CardsTypeEnum? _type;
     String? _brand;
     CardFlagsEnum? _flag;
-    DateTime? _expires_at;
-    String? _last_4_digits;
-    int? _invoice_day;
+    DateTime? _expiresAt;
+    String? _last4Digits;
+    int? _invoiceDay;
 
 
     CardsDto({
       int? id, 
       CardsTypeEnum? type,
       String? brand,
-      String? expires_at,
+      String? expiresAt,
       CardFlagsEnum? flag,
-      int? invoice_day,
-      String? last_4_digits
+      int? invoiceDay,
+      String? last4Digits
     }){
       setId = id;
       setBrand = brand;
-      setExpires_at = expires_at.toString();
+      setExpiresAt = expiresAt.toString();
       setFlag = flag;
-      setInvoice_day = invoice_day;
-      setLast_4_digits = last_4_digits;
+      setInvoice_day = invoiceDay;
+      setLast_4_digits = last4Digits;
       setType = type;
     }
 
-    set setId(int? id) => this._id = id;
-    set setType(CardsTypeEnum? type) => this._type = type;
-    set setBrand(String? brand) => this._brand = brand;
-    set setFlag(CardFlagsEnum? flag) => this._flag = flag;
-    // ignore: non_constant_identifier_names
-    set setExpires_at(String? exp){
+    set setId(int? id) => _id = id;
+    set setType(CardsTypeEnum? type) => _type = type;
+    set setBrand(String? brand) => _brand = brand;
+    set setFlag(CardFlagsEnum? flag) => _flag = flag;
+  
+    set setExpiresAt(String? exp){
 
       try{
         DateTime dt = DateFormat('MM/yyyy').parse(exp!);
-        _expires_at = dt;
+        _expiresAt = dt;
       }catch(e){
-        _expires_at = null;
+        _expiresAt = null;
       }
       
       // if(exp!.length == 4){
@@ -58,14 +58,14 @@ class CardsDto implements DtoInterface{
       // }
     }
     // ignore: non_constant_identifier_names
-    set setLast_4_digits(String? lst) => _last_4_digits = lst;
+    set setLast_4_digits(String? lst) => _last4Digits = lst;
     // ignore: non_constant_identifier_names
     set setInvoice_day(int? invoice){
       // var val = DateTime.parse(invoice!);
       if((invoice! > 0 && invoice < 31)){
-        _invoice_day = invoice;
+        _invoiceDay = invoice;
       }else{
-        _invoice_day = null;
+        _invoiceDay = null;
       }
     }
 
@@ -73,15 +73,15 @@ class CardsDto implements DtoInterface{
     String? get brand => _brand;
     int? get id => _id;
     CardsTypeEnum? get type => _type;
-    DateTime? get expires_at => _expires_at;
+    DateTime? get expiresAt => _expiresAt;
     CardFlagsEnum? get flag => _flag;
 
-    String? get last_4_digits => _last_4_digits;
-    int? get invoice_day => _invoice_day;
+    String? get last4Digits => _last4Digits;
+    int? get invoiceDay => _invoiceDay;
 
 
     get nextInvoiceDate{
-      DateTime date = DateTime(DateTime.now().year, DateTime.now().month, int.parse(_invoice_day.toString()));
+      DateTime date = DateTime(DateTime.now().year, DateTime.now().month, int.parse(_invoiceDay.toString()));
       DateTime now = DateTime.now();
       if(date.isBefore(now)){
         date = DateUtils.addMonthsToMonthDate(date, 1);
@@ -96,23 +96,23 @@ class CardsDto implements DtoInterface{
 
   @override
   factory CardsDto.toObject(Map<String, dynamic> data) {
-    String? data_brand = data['brand'] ?? "";
-    int? data_id = data['id'] ?? 0;
+    String? dataBrand = data['brand'] ?? "";
+    int? dataId = data['id'] ?? 0;
     // setUser = data['user'] ?? 0;
-    CardsTypeEnum? data_type = CardsTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
-    CardFlagsEnum? data_flag = CardFlagsEnum.values.firstWhere((val) => val.name == data['flag'].toString());
-    String? data_expires_at = data['expires_at'] ?? "";
-    int? data_invoice_day = data['invoice_day'] ?? 1;
-    String? data_last_4_digits = data['last_4_digits'] ?? "";
+    CardsTypeEnum? dataType = CardsTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
+    CardFlagsEnum? dataFlag = CardFlagsEnum.values.firstWhere((val) => val.name == data['flag'].toString());
+    String? dataExpiresAt = data['expires_at'] ?? "";
+    int? dataInvoiceDay = data['invoice_day'] ?? 1;
+    String? dataLast4Digits = data['last_4_digits'] ?? "";
 
     return CardsDto(
-      id: data_id, 
-      brand: data_brand,
-      type: data_type,
-      flag: data_flag,
-      expires_at: data_expires_at,
-      invoice_day: data_invoice_day,
-      last_4_digits: data_last_4_digits
+      id: dataId, 
+      brand: dataBrand,
+      type: dataType,
+      flag: dataFlag,
+      expiresAt: dataExpiresAt,
+      invoiceDay: dataInvoiceDay,
+      last4Digits: dataLast4Digits
     );
   }
 
@@ -122,10 +122,10 @@ class CardsDto implements DtoInterface{
       'id' : _id,
       'type' : _type!.name,
       'brand' : _brand,
-      'expires_at' : DateFormat('MMyy').format(_expires_at!),
+      'expires_at' : DateFormat('MMyy').format(_expiresAt!),
       'flag' : _flag!.name,
-      'invoice_day' : _invoice_day,
-      'last_4_digits' : _last_4_digits
+      'invoice_day' : _invoiceDay,
+      'last_4_digits' : _last4Digits
     };
   }
   

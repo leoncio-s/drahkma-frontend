@@ -225,7 +225,7 @@ class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
     Color color = Colors.primaries[random.nextInt(Colors.primaries.length)];
     Color lastColor = color;
 
-    categories.forEach((el) {
+    for (var el in categories) {
       color = Colors.primaries[random.nextInt(Colors.primaries.length)];
 
       if (color == lastColor) {
@@ -247,7 +247,7 @@ class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
         width: 0.2,
         color: color,
       ));
-    });
+    }
 
     return series;
   }

@@ -7,11 +7,11 @@ import 'package:drahkma/Cards/cards_dto.dart';
 import 'package:drahkma/Cards/cards_services.dart';
 import 'package:drahkma/Categories/categories_dto.dart';
 import 'package:drahkma/Categories/categories_service.dart';
-import 'package:drahkma/Items/ItemDto.dart';
+import 'package:drahkma/Items/item_dto.dart';
 import 'package:drahkma/Items/items_service.dart';
 import 'package:drahkma/Tranferbank/transfer_bank_type_enum.dart';
 import 'package:drahkma/Tranferbank/transferbank_dto.dart';
-import 'package:drahkma/commonsComponents/input_text_style.dart';
+import 'package:drahkma/CommonsComponents/input_text_style.dart';
 import 'package:drahkma/config.dart';
 import 'package:intl/intl.dart';
 
@@ -80,12 +80,12 @@ class ItemsFormState extends State<ItemsForm> {
         _date.text = dateFormat.format(widget.data?.date ?? DateTime.now());
         _category = widget.data?.category?.id;
         _card = widget.data?.card?.id;
-        _transferbank = widget.data?.transfer_bank != null ? true : false;
-        _transferbank_type = widget.data?.transfer_bank?.type;
+        _transferbank = widget.data?.transferBank != null ? true : false;
+        _transferbank_type = widget.data?.transferBank?.type;
         _transferbank_description.text =
-            (_transferbank) ? widget.data!.transfer_bank!.description! : "";
+            (_transferbank) ? widget.data!.transferBank!.description! : "";
         _transferbank_bank_account = (_transferbank)
-            ? widget.data!.transfer_bank!.bankAccount!.id
+            ? widget.data!.transferBank!.bankAccount!.id
             : null;
       } catch (e) {
         rethrow;
@@ -354,11 +354,11 @@ class ItemsFormState extends State<ItemsForm> {
                                     Theme.of(context).inputDecorationTheme)
                                 .copyWith(labelText: "Tipo", counterText: ""),
                             items: TransferBankTypeEnum.values
-                                .map((tb_types) =>
+                                .map((tbTypes) =>
                                     DropdownMenuItem<TransferBankTypeEnum?>(
-                                      value: tb_types,
+                                      value: tbTypes,
                                       child: Text(
-                                        tb_types.name.toString(),
+                                        tbTypes.name.toString(),
                                         style: const TextStyle(
                                             color: Colors.white),
                                       ),
@@ -495,9 +495,9 @@ class ItemsFormState extends State<ItemsForm> {
                         card: _transferbank
                             ? null
                             : cards.firstWhere((el) => el.id == _card),
-                        transfer_bank: _transferbank
+                        transferBank: _transferbank
                             ? TransferBankDto(
-                                id: widget.data?.transfer_bank?.id,
+                                id: widget.data?.transferBank?.id,
                                 bankAccount: bankAccounts.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
@@ -515,7 +515,7 @@ class ItemsFormState extends State<ItemsForm> {
                         category:
                             categories!.firstWhere((el) => el.id == _category),
                         expense: expense,
-                        transfer_bank: _transferbank
+                        transferBank: _transferbank
                             ? TransferBankDto(
                                 bankAccount: bankAccounts.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),

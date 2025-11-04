@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
 import 'package:drahkma/User/create_user_form.dart';
@@ -26,7 +28,7 @@ void main() async {
     runApp(LFinanca(initialRoute: initialRoute,));
 
   }catch(e){
-    print(e);
+    log(e.toString());
   }
 }
 

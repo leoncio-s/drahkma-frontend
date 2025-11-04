@@ -49,6 +49,8 @@ class CategoriesService implements Services<CategoriesDto>{
 
     return cat;
   }
+
+  @override
   Future update(CategoriesDto data) async {
       UserDto? user = await AuthService.getAuthUser();
       var request = await Requests.put(url,
@@ -71,7 +73,7 @@ class CategoriesService implements Services<CategoriesDto>{
   @override
   Future delete(CategoriesDto data) async {
       UserDto? user = await AuthService.getAuthUser();
-      var request = await Requests.delete("${url}/${data.id}",
+      var request = await Requests.delete("$url/${data.id}",
       headers: {'Authorization' :  " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'},
       );
 

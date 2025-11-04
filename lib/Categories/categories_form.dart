@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:drahkma/Categories/categories_dto.dart';
 import 'package:drahkma/Categories/categories_service.dart';
 import 'package:drahkma/Utils/string_regex_validate.dart';
-import 'package:drahkma/commonsComponents/input_text_style.dart';
+import 'package:drahkma/CommonsComponents/input_text_style.dart';
 
 // ignore: must_be_immutable
 class CategoriesForm extends StatefulWidget {
@@ -115,8 +115,9 @@ class CategoriesStateForm extends State<CategoriesForm> {
                                     description:
                                         _description.text.toUpperCase()));
                             }
+                            if(!mounted) return;
                             if (ret is CategoriesDto) {
-                              if(context.mounted) Navigator.pop(context, ret);
+                              Navigator.of(context).pop(ret);
                             } else {
                               SnackBar snackBar = SnackBar(
                                   content: Text(
@@ -126,7 +127,6 @@ class CategoriesStateForm extends State<CategoriesForm> {
                                   closeIconColor: Colors.white, 
                                   
                                   );
-                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                             }

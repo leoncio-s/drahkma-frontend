@@ -2,9 +2,9 @@ import 'package:drahkma/Auth/auth_dto.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/User/user_service.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/commonsComponents/default_layout.dart';
-import 'package:drahkma/commonsComponents/elevated_button_component.dart';
-import 'package:drahkma/commonsComponents/text_form_field_component.dart';
+import 'package:drahkma/CommonsComponents/default_layout.dart';
+import 'package:drahkma/CommonsComponents/elevated_button_component.dart';
+import 'package:drahkma/CommonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
@@ -26,7 +26,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
   final TextEditingController _confPasswordController = TextEditingController();
   final TextEditingController _phoneNumberController =
       MaskedTextController(mask: "(00) 0 0000-0000");
-  Map? errors = null;
+  late Map? errors;
 
   @override
   Widget build(BuildContext context) => DefaultLayout(

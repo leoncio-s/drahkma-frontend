@@ -25,7 +25,7 @@ class TransferBankDto extends DtoInterface {
       @override
       factory TransferBankDto.toObject(Map<String, dynamic> data) {
         BankAccountsDto? bankAccountsDto = BankAccountsDto.toObject(data['bank_account']);
-        TransferBankTypeEnum? _type = TransferBankTypeEnum.values.firstWhere((val) => val.name.contains(data['type']));
-        return TransferBankDto(id: data['id'], description: data['description'], type: _type, bankAccount: bankAccountsDto);
+        TransferBankTypeEnum? type = TransferBankTypeEnum.values.firstWhere((val) => val.name.contains(data['type']));
+        return TransferBankDto(id: data['id'], description: data['description'], type: type, bankAccount: bankAccountsDto);
       }
 }

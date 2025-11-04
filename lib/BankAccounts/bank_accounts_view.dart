@@ -5,11 +5,11 @@ import 'package:drahkma/BankAccounts/bank_accounts_dto.dart';
 import 'package:drahkma/BankAccounts/bank_accounts_form.dart';
 import 'package:drahkma/BankAccounts/bank_accounts_service.dart';
 import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/commonsComponents/statefullwidget.dart';
+import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 
-class BankAccountsView extends StatefulwidgetDrahkma {
+class BankAccountsView extends StatefulWidgetDrahkma {
   const BankAccountsView(
-      {super.name = "Contas Bancárias",
+      {super.key, super.name = "Contas Bancárias",
       super.icon = const Icon(Icons.category, size: 20)});
 
   @override
@@ -17,7 +17,7 @@ class BankAccountsView extends StatefulwidgetDrahkma {
 }
 
 class BankAccountsViewState extends State<BankAccountsView> {
-  List<BankAccountsDto>? bank_accounts;
+  List<BankAccountsDto>? bankAccounts;
   String? _message;
   double _turns = 0.0;
 
@@ -25,7 +25,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
     return BankAccountsService().get().then((value) {
       if(mounted){
         setState(() {
-        bank_accounts = value;
+        bankAccounts = value;
         _message = null;
       });
       }
@@ -73,7 +73,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                 textScaler: TextScaler.linear(
                     principalCardScaller(MediaQuery.of(context).size.width)),
               ) : const SizedBox(),
-              bank_accounts != null && bank_accounts!.isNotEmpty
+              bankAccounts != null && bankAccounts!.isNotEmpty
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -82,7 +82,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                           child: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  bank_accounts!.sort(BankAccountsSort.asc);
+                                  bankAccounts!.sort(BankAccountsSort.asc);
                                 });
                               },
                               icon: const Icon(Icons.arrow_upward)),
@@ -94,9 +94,9 @@ class BankAccountsViewState extends State<BankAccountsView> {
                           message: "Ordem Decrescente",
                           child: IconButton(
                               onPressed: () {
-                                bank_accounts != null
+                                bankAccounts != null
                                     ? setState(() {
-                                        bank_accounts!
+                                        bankAccounts!
                                             .sort(BankAccountsSort.desc);
                                       })
                                     : null;
@@ -127,14 +127,14 @@ class BankAccountsViewState extends State<BankAccountsView> {
   }
 
   Widget listTileCategories() {
-    return bank_accounts != null
+    return bankAccounts != null
         ? Column(
             // scrollDirection: Axis.vertical,
             // shrinkWrap: true,
             // padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
             children: ListTile.divideTiles(
                     context: context,
-                    tiles: bank_accounts!
+                    tiles: bankAccounts!
                         .map((el) => ListTile(
                               title: Text(el.bankName.toString()),
                               subtitle: Text(

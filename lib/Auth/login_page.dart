@@ -9,10 +9,10 @@ class LoginPage extends StatefulWidget {
   bool notShowPassword = true;
   LoginPage({super.key});
   @override
-  State<StatefulWidget> createState() => _loginPage();
+  State<StatefulWidget> createState() => _LoginPage();
 }
 
-class _loginPage extends State<LoginPage> {
+class _LoginPage extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();

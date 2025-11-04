@@ -1,10 +1,9 @@
-import 'dart:async';
 import 'package:drahkma/Auth/auth_service.dart';
-import 'package:drahkma/commonsComponents/default_layout.dart';
-import 'package:drahkma/commonsComponents/elevated_button_component.dart';
-import 'package:drahkma/commonsComponents/modal.dart';
-import 'package:drahkma/commonsComponents/snackbar_component.dart';
-import 'package:drahkma/commonsComponents/text_form_field_component.dart';
+import 'package:drahkma/CommonsComponents/default_layout.dart';
+import 'package:drahkma/CommonsComponents/elevated_button_component.dart';
+import 'package:drahkma/CommonsComponents/modal.dart';
+import 'package:drahkma/CommonsComponents/snackbar_component.dart';
+import 'package:drahkma/CommonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordCodepage extends StatefulWidget{
@@ -17,14 +16,13 @@ class ForgetPasswordCodepage extends StatefulWidget{
 
 class ForgetPasswordCodepageState extends State<ForgetPasswordCodepage>{
   bool notShowPassword = true;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController code = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController confPassword = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     notShowPassword = true;
     email.text = widget.email;
@@ -54,23 +52,23 @@ class ForgetPasswordCodepageState extends State<ForgetPasswordCodepage>{
         const SizedBox(height: 20,),
         ElevatedButtonComponent(title: "Alterar Senha", onPressed: ()async{
           if(_formKey.currentState!.validate()){
-            var _modal = modal(context, "loading", barrierDismissible: false);
+            var closeModal = modal(context, "loading", barrierDismissible: false);
             // showDialog(context: context, builder: showModal);
             try{
               var ret = await AuthService.forgetPasswordCode(email.text, code.text, password.value.text, confPassword.value.text);
-              _modal();
+              closeModal();
+              if(!mounted) return;
               if(ret['message'] != null)
               {
                 SnackBar snackBar= SnackBarComponent(content: Text(ret['message']), backgroundColor: Colors.green[600]!);
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                await Future.delayed(const Duration(microseconds: 300));
                 Navigator.of(context).pushReplacementNamed('/auth/login');
               }else{
                 SnackBar snackBar = SnackBarComponent(content: Text(ret['error']));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
             }on Exception catch(ex){
-              _modal();
+              closeModal();
               SnackBar snackBar = SnackBarComponent(content: Text(ex.toString()));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             }
