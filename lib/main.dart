@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
 import 'package:drahkma/User/create_user_form.dart';
-import 'package:drahkma/User/user_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,12 +16,7 @@ void main() async {
     Config.setUrlApi = "http://localhost:8081/public/api/v1/";
   }
 
-  try{
-    await UserService.profile();
-    initialRoute = "/dashboard";
-  }catch(e){
-    initialRoute = "/auth/login";
-  }
+  initialRoute = "/dashboard";
   
   try{
     runApp(LFinanca(initialRoute: initialRoute,));
@@ -32,19 +26,16 @@ void main() async {
   }
 }
 
-// ignore: must_be_immutable
+
 class LFinanca extends StatefulWidget {
-  String initialRoute;
-  LFinanca({super.key, required this.initialRoute});
+  final String initialRoute;
+  const LFinanca({super.key, required this.initialRoute});
 
   @override
   State<StatefulWidget> createState() => _MainApp();
 }
 
 class _MainApp extends State<LFinanca> {
-  // const MainApp({super.key});
-
-  // late String initialRoute = Wid;
 
   Color yellowMainColor = const Color(0xFFDE9D32);
   Color backgroundColorBlue = const Color(0xFF00101D);
@@ -113,10 +104,6 @@ class _MainApp extends State<LFinanca> {
               color: Color.fromRGBO(222, 157, 50, 1)
               ),
         ),
-        // buttonTheme: ButtonThemeData(
-        //   buttonColor: yellowMainColor,
-        //   hoverColor: const Color.fromRGBO(0, 48, 87, 1)
-        // ),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           foregroundColor: Colors.white
         ),
