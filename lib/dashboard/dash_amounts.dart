@@ -34,7 +34,6 @@ class _DashboardState extends State<Dashboard> {
       notifier: _notifier,
       dataNotifier: dataNotifier,
     )
-        // child: _Cards(data: data, notifier: _notifier),
         );
   }
 }
