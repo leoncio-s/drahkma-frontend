@@ -3,21 +3,23 @@ import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
 class TextFormFieldComponent extends StatelessWidget{
-  String? labelText;
-  TextEditingController? controller;
-  FocusNode? focusNode;
-  TextInputType? keyboardType;
-  bool obscureText;
-  String obscuringCharacter;
-  bool autofocus;
-  String? Function(String?)? validator;
-  List<TextInputFormatter>? inputFormatters;
-  InputDecoration? decoration;
-  AutovalidateMode? autovalidateMode;
-  bool readOnly;
-  int? maxLength;
+  final String? labelText;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final String obscuringCharacter;
+  final bool autofocus;
+  final FormFieldValidator<String>? validator;
+  final List<TextInputFormatter>? inputFormatters;
+  final InputDecoration? decoration;
+  final AutovalidateMode? autovalidateMode;
+  final bool readOnly;
+  final int? maxLength;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmited;
 
-  TextFormFieldComponent(
+  const TextFormFieldComponent(
     {super.key,
     required this.labelText,
     this.controller,
@@ -31,7 +33,9 @@ class TextFormFieldComponent extends StatelessWidget{
     this.decoration = const InputDecoration(),
     this.autovalidateMode, 
     this.readOnly=false,
-    this.maxLength
+    this.maxLength,
+    this.onFieldSubmited,
+    this.textInputAction
     });
   
   @override
@@ -48,14 +52,14 @@ class TextFormFieldComponent extends StatelessWidget{
       validator: validator,
       autovalidateMode: autovalidateMode,
       maxLength: maxLength,
+      onFieldSubmitted: onFieldSubmited,
+      textInputAction: textInputAction,
       decoration: (decoration)?.applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
         counterText: "", 
         labelText: labelText,
         alignLabelWithHint: false,
         hintText: labelText,
-        // errorMaxLines: 1
         errorStyle: Theme.of(context).inputDecorationTheme.errorStyle!.copyWith(
-          // height: 4,
           overflow: TextOverflow.clip,
           leadingDistribution: TextLeadingDistribution.proportional,
           fontSize: 13,
