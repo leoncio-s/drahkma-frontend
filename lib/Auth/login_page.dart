@@ -17,10 +17,20 @@ class _LoginPage extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
     _email.text = AuthService.storageGetEmail() ?? '';
+  }
+
+  @override
+  void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -39,7 +49,6 @@ class _LoginPage extends State<LoginPage> {
                   _image(),
                   Form(
                       key: _formKey,
-                      autovalidateMode: AutovalidateMode.onUnfocus,
                       child: Column(
                         children: [
                           _emailField(),
@@ -77,9 +86,6 @@ class _LoginPage extends State<LoginPage> {
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
-          // border: MediaQuery.of(context).size.width > 500
-          //     ? Border.all(width: 2.0, color: Colors.white)
-          //     : null,
           borderRadius: BorderRadius.circular(20.0)),
       child: child,
     );
@@ -93,23 +99,30 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  _emailField() {
+  Widget _emailField() {
     return TextFormFieldComponent(
         controller: _email,
         labelText: "E-mail",
         keyboardType: TextInputType.emailAddress,
+        focusNode: _emailFocusNode,
         validator: (value) {
           var validate = AuthDto.validateEmail(value);
           if (validate is Map) {
             return validate['error'];
           }
           return null;
-        });
+        },
+        onFieldSubmited: (value){
+          FocusScope.of(context).requestFocus(_passwordFocusNode);
+        },
+        textInputAction: TextInputAction.next,
+        );
   }
 
-  _passwordField() {
+  Widget _passwordField() {
     return TextFormFieldComponent(
       controller: _password,
+      focusNode: _passwordFocusNode,
       labelText: "Senha",
       obscureText: widget.notShowPassword,
       obscuringCharacter: "*",
@@ -128,15 +141,18 @@ class _LoginPage extends State<LoginPage> {
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined))),
       validator: (value) {
-        if (value != null && (value.length < 8 || value.length > 20)) {
+        if (value != null && (value.length < 8 || value.length > 20) || value!.isEmpty) {
           return "Tamanho mínimo é 8 e o máximo é 20 para a senha";
         }
         return null;
       },
+      onFieldSubmited: (value){
+        _formSubmit();
+      },
     );
   }
 
-  _forgetPasswordButton() {
+  Widget _forgetPasswordButton() {
     return SizedBox(
         height: 60,
         width: double.maxFinite,
@@ -154,14 +170,21 @@ class _LoginPage extends State<LoginPage> {
         ));
   }
 
-  _loginButton() {
+  Widget _loginButton() {
     return SizedBox(
       width: double.maxFinite,
       height: 50,
       child: ElevatedButton(
-        child: const Text("Login"),
-        onPressed: () async {
+        onPressed: _formSubmit,
+        child: const Text("Login")
+      ),
+    );
+  }
+
+  void _formSubmit() async {
+    
           var closeModal = modal(context, "loading");
+
           if (_formKey.currentState!.validate()) {
             try {
               var ret = await AuthService.login(_email.text, _password.text);
@@ -173,7 +196,7 @@ class _LoginPage extends State<LoginPage> {
                 Navigator.of(context).pushReplacementNamed("/dashboard");
               } else {
                 final snackBar = SnackBar(
-                  content: Text(ret['errors'] ?? "Problema para efetuar login, tente novamente!"),
+                  content: Text(ret['message'] ?? "Problema para efetuar login, tente novamente!"),
                   backgroundColor: Colors.red,
                   elevation: 10.0,
                   showCloseIcon: true,
@@ -206,13 +229,11 @@ class _LoginPage extends State<LoginPage> {
             }
           }else{
             closeModal();
+            _passwordFocusNode.requestFocus();
           }
-        },
-      ),
-    );
   }
 
-  _registerButton() {
+  Widget _registerButton() {
     return SizedBox(
       // width: double.maxFinite,
       child: TextButton(
