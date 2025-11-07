@@ -38,12 +38,11 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-// ignore: must_be_immutable
 class _Cards extends StatelessWidget {
   _Cards({required this.notifier, required dataNotifier});
 
-  AppNotifier notifier;
-  DashboardDto data = dataNotifier.data;
+  final AppNotifier notifier;
+  final DashboardDto data = dataNotifier.data;
 
   @override
   StatelessElement createElement() {
@@ -78,41 +77,40 @@ class _Cards extends StatelessWidget {
                   return _balance(context, dataNotifier.data.amount);
                 }),
 
-            // _balanceInflow(context, value),
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
                   return _balanceInflow(context, dataNotifier.data.inflow);
                 }),
 
-            // _balanceOutflow(context),
+            
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
                   return _balanceOutflow(context, dataNotifier.data.outflow);
                 }),
-            // _balanceInflowCards(context),
+            
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
                   return _balanceInflowCards(
                       context, dataNotifier.data.totalAmountInflowCards);
                 }),
-            // _balanceOutflowCards(context),
+            
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
                   return _balanceOutflowCards(
                       context, dataNotifier.data.totalAmountOutflowCards);
                 }),
-            // _balanceInflowTransferBank(context),
+            
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
                   return _balanceInflowTransferBank(
                       context, dataNotifier.data.totalAmountInflowTransferBank);
                 }),
-            // _balanceOutflowTransferBank(context),
+            
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
@@ -122,7 +120,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountGroup(
                     data: dataNotifier.data.amountInflowCategory,
                     title: "Receitas por Categoria",
@@ -131,7 +128,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountGroup(
                     data: dataNotifier.data.amountInflowCard,
                     title: "Receitas por Cartão",
@@ -140,7 +136,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountGroup(
                     data: dataNotifier.data.amountOutflowCategory,
                     title: "Despesas por Categoria",
@@ -149,7 +144,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountGroup(
                     data: dataNotifier.data.amountOutflowCard,
                     title: "Despesas por Cartão",
@@ -158,7 +152,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountTranferBank(
                     data: dataNotifier.data.amountInflowTransferBank,
                     title: "Receita por Tranferência Bancária",
@@ -167,7 +160,6 @@ class _Cards extends StatelessWidget {
             ListenableBuilder(
                 listenable: dataNotifier,
                 builder: (c, w) {
-                  // print("AQUI ALTEROU: ${dataNotifier.data}");
                   return ChartsWidgetTotalAmountTranferBank(
                     data: dataNotifier.data.amountOutflowTransferBank,
                     title: "Despesa por Tranferência Bancária",
@@ -188,7 +180,6 @@ class _Cards extends StatelessWidget {
           direction: MediaQuery.of(context).size.width < 375
               ? Axis.vertical
               : Axis.horizontal,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -276,7 +267,6 @@ class _Cards extends StatelessWidget {
         child: Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.0)),
-            // color: Theme.of(context).primaryColorLight,
             shadowColor: Colors.blueGrey,
             child: Center(
               child: Padding(
