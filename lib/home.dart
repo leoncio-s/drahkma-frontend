@@ -11,6 +11,7 @@ import 'package:drahkma/User/user_service.dart';
 import 'package:drahkma/CommonsComponents/app_bar_navigator.dart';
 import 'package:drahkma/CommonsComponents/statefullwidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -20,30 +21,31 @@ class HomeView extends StatefulWidget {
 }
 
 class HomeViewState extends State<HomeView> {
-  late UserDto? authUser;
 
-  @override
-  void initState() {
-    Timer(const Duration(seconds: 2), () {
-      UserService.profile().then((n) => null).onError((e, s) {
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, "/auth/login");
-      }).timeout(const Duration(seconds: 20), onTimeout: () {
-        
-        if(!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              "Erro ao se conectar ao Site, tente novamente em outro momento"),
-          showCloseIcon: true,
-        ));
-      });
+  void _toLogin(){
+    SchedulerBinding.instance.addPostFrameCallback((_){
+      if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
     });
-    super.initState();
+  }
+
+  Future<UserDto?> _profile()async{
+    Future.delayed(const Duration(milliseconds: 200));
+    return await UserService.profile();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const AppBarNavigator(
+    return FutureBuilder(future: _profile(), builder: (context, snapshot){
+      if(snapshot.connectionState == ConnectionState.waiting)
+      {
+        return const Center(child: CircularProgressIndicator(),);
+      }
+      if(snapshot.hasError)
+      {
+        _toLogin();
+        return const Center(child: CircularProgressIndicator(),);
+      }
+      return const AppBarNavigator(
       childrens: <StatefulWidgetDrahkma>[
         Dashboard(),
         InflowView(),
@@ -53,5 +55,6 @@ class HomeViewState extends State<HomeView> {
         CardsView()
       ],
     );
+    });
   }
 }
