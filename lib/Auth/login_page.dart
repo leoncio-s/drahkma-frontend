@@ -2,13 +2,14 @@ import 'package:drahkma/Auth/auth_dto.dart';
 import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/CommonsComponents/modal.dart';
 import 'package:drahkma/User/user_dto.dart';
+import 'package:drahkma/User/user_service.dart';
 import 'package:drahkma/commonsComponents/text_form_field_component.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
-// ignore: must_be_immutable
+
 class LoginPage extends StatefulWidget {
-  bool notShowPassword = true;
-  LoginPage({super.key});
+  const LoginPage({super.key});
   @override
   State<StatefulWidget> createState() => _LoginPage();
 }
@@ -19,11 +20,13 @@ class _LoginPage extends State<LoginPage> {
   final TextEditingController _password = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
+  late bool notShowPassword;
 
   @override
   void initState() {
     super.initState();
     _email.text = AuthService.storageGetEmail() ?? '';
+    notShowPassword = true;
   }
 
   @override
@@ -33,9 +36,33 @@ class _LoginPage extends State<LoginPage> {
     super.dispose();
   }
 
+  void _toDashboard(){
+    SchedulerBinding.instance.addPostFrameCallback((_){
+      if(mounted) Navigator.of(context).pushReplacementNamed("/dashboard");
+    });
+  }
+
+  Future<UserDto?> _verifyIfUserLogged() async
+  {
+    Future.delayed(const Duration(milliseconds: 200));
+    return await UserService.profile();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return FutureBuilder(future: _verifyIfUserLogged(), builder: (context, snap){
+      if(snap.connectionState == ConnectionState.waiting)
+      {
+        return const Center(child: CircularProgressIndicator(value: 8.0,),);
+      }
+      
+      if(snap.data is UserDto)
+      {
+        _toDashboard();
+        return const Center();
+      }
+
+      return Scaffold(
       backgroundColor: Theme.of(context).primaryColorDark,
       body: Center(
         child: SingleChildScrollView(
@@ -79,6 +106,7 @@ class _LoginPage extends State<LoginPage> {
       ),
       extendBody: true,
     );
+    });
   }
 
   _containerBorder({required Widget child}) {
@@ -124,7 +152,7 @@ class _LoginPage extends State<LoginPage> {
       controller: _password,
       focusNode: _passwordFocusNode,
       labelText: "Senha",
-      obscureText: widget.notShowPassword,
+      obscureText: notShowPassword,
       obscuringCharacter: "*",
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
@@ -134,10 +162,10 @@ class _LoginPage extends State<LoginPage> {
               isSelected: false,
               onPressed: () {
                 setState(() {
-                  widget.notShowPassword = !widget.notShowPassword;
+                  notShowPassword = !notShowPassword;
                 });
               },
-              icon: Icon(widget.notShowPassword
+              icon: Icon(notShowPassword
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined))),
       validator: (value) {
@@ -193,7 +221,7 @@ class _LoginPage extends State<LoginPage> {
 
               if (ret is UserDto) {
                 closeModal();
-                Navigator.of(context).pushReplacementNamed("/dashboard");
+                _toDashboard();
               } else {
                 final snackBar = SnackBar(
                   content: Text(ret['message'] ?? "Problema para efetuar login, tente novamente!"),
@@ -235,7 +263,6 @@ class _LoginPage extends State<LoginPage> {
 
   Widget _registerButton() {
     return SizedBox(
-      // width: double.maxFinite,
       child: TextButton(
         onHover: (value) {},
         onPressed: () {
