@@ -173,7 +173,7 @@ class _MainApp extends State<LFinanca> {
         )
       ),
       routes: {
-        '/auth/login' : (context) => LoginPage(),
+        '/auth/login' : (context) => const LoginPage(),
         '/dashboard': (context) => const HomeView(),
         '/register' : (context) => const CreateUserForm(),
         '/forget-password' : (context) => const ForgetPasswordPage(),
