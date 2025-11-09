@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:drahkma/BankAccounts/bank_accounts_view.dart';
 import 'package:drahkma/Cards/cards_view.dart';
 import 'package:drahkma/Categories/categories_view.dart';
-import 'package:drahkma/Dashboard/dash_amounts.dart';
+import 'package:drahkma/Dashboard/dashboard.dart';
 import 'package:drahkma/Items/inflow_view.dart';
 import 'package:drahkma/Items/outflow_view.dart';
 import 'package:drahkma/User/user_dto.dart';
