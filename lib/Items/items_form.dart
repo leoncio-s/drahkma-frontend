@@ -256,7 +256,7 @@ class ItemsFormState extends State<ItemsForm> {
                 child: CircularProgressIndicator.adaptive(),
               )
             : DropdownButtonFormField<int>(
-                value: _category,
+                initialValue: _category,
                 decoration: (const InputDecoration())
                     .applyDefaults(Theme.of(context).inputDecorationTheme)
                     .copyWith(labelText: "Categoria", counterText: ""),
@@ -314,7 +314,7 @@ class ItemsFormState extends State<ItemsForm> {
 
   Switch _switchTransferCard() {
     return Switch(
-        activeColor: Theme.of(context).colorScheme.secondary,
+        activeThumbColor: Theme.of(context).colorScheme.secondary,
         activeTrackColor: Theme.of(context).colorScheme.primary,
         inactiveTrackColor: Theme.of(context).colorScheme.primary,
         inactiveThumbColor: Theme.of(context).colorScheme.secondary,
@@ -348,7 +348,7 @@ class ItemsFormState extends State<ItemsForm> {
                         ),
 
                         DropdownButtonFormField<TransferBankTypeEnum?>(
-                            value: _transferbank_type,
+                            initialValue: _transferbank_type,
                             decoration: (const InputDecoration())
                                 .applyDefaults(
                                     Theme.of(context).inputDecorationTheme)
@@ -396,7 +396,7 @@ class ItemsFormState extends State<ItemsForm> {
 
                         // bank account
                         DropdownButtonFormField<int?>(
-                            value: _transferbank_bank_account,
+                            initialValue: _transferbank_bank_account,
                             decoration: (const InputDecoration())
                                 .applyDefaults(
                                     Theme.of(context).inputDecorationTheme)
@@ -430,7 +430,7 @@ class ItemsFormState extends State<ItemsForm> {
     return !_transferbank
         ? Flex(direction: Axis.vertical, children: [
             DropdownButtonFormField<int?>(
-                value: _card,
+                initialValue: _card,
                 decoration: (const InputDecoration())
                     .applyDefaults(Theme.of(context).inputDecorationTheme)
                     .copyWith(labelText: "Cartão", counterText: ""),
