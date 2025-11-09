@@ -1,3 +1,6 @@
+import 'package:drahkma/CommonsComponents/elevated_button_component.dart';
+import 'package:drahkma/CommonsComponents/text_form_field_component.dart';
+import 'package:drahkma/User/create_user_form.dart';
 import 'package:flutter/material.dart';
 
 class DrawerProfileComponent extends StatefulWidget {
@@ -57,15 +60,41 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
                       ),
                       child: ClipOval(
                         child: TapRegion(
-                          onTapInside: (ev){
-                            print("Imagem");
-                          },
-                          child: Image.asset("images/logo_yellow.png")),
+                            onTapInside: (ev) {
+                              return;
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image.asset("images/logo_yellow.png"),
+                            )),
                       ),
                     ),
-                  ))
+                  )),
+                  _userForm()
                 ],
               );
             }));
+  }
+
+  _userForm(){
+    // return Form(
+    //     child: Column(
+    //     children: [
+    //       TextFormFieldComponent(labelText: "Nome Completo"),
+    //       TextFormFieldComponent(labelText: "E-mail", readOnly: true,),
+    //       TextFormFieldComponent(labelText: "Telefone"),
+    //       TextFormFieldComponent(labelText: "Senha atual", obscureText: true),
+    //       TextFormFieldComponent(labelText: "Nova Senha", obscureText: true),
+    //       TextFormFieldComponent(labelText: "Confirmar Nova Senha", obscureText: true),
+    //       ElevatedButtonComponent(title: "Alterar", onPressed: (){
+    //         _submitForm();
+    //       })
+    //     ],
+    //       ));
+    return CreateUserForm();
+  }
+
+  _submitForm(){
+    return;
   }
 }
