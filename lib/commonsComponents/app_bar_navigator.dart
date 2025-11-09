@@ -47,7 +47,7 @@ class AppBarNavigator extends StatelessWidget {
                             ) :
                       Tooltip(
                             // icon: el.icon,
-                            height: 50,
+                            constraints: BoxConstraints.expand(height: 50),
                             message: el.name,
                             // child: Text(el.name),
                             child: Tab(

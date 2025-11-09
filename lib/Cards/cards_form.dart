@@ -112,7 +112,7 @@ class CardsStateForm extends State<CardsForm> {
               /// type
               ///
               DropdownButtonFormField(
-                  value: _type,
+                  initialValue: _type,
                   decoration: (const InputDecoration())
                       .applyDefaults(Theme.of(context).inputDecorationTheme)
                       .copyWith(
@@ -141,7 +141,7 @@ class CardsStateForm extends State<CardsForm> {
               /// flag
               ///
               DropdownButtonFormField(
-                  value: _flag,
+                  initialValue: _flag,
                   decoration: (const InputDecoration())
                       .applyDefaults(Theme.of(context).inputDecorationTheme)
                       .copyWith(
@@ -217,7 +217,7 @@ class CardsStateForm extends State<CardsForm> {
                   //// invoice Day
                   ///
                   DropdownButtonFormField<int>(
-                    value: _invoiceDay,
+                    initialValue: _invoiceDay,
                     decoration: (const InputDecoration())
                         .applyDefaults(Theme.of(context).inputDecorationTheme)
                         .copyWith(
@@ -258,7 +258,7 @@ class CardsStateForm extends State<CardsForm> {
                   Row(
                     children: [
                       DropdownButtonFormField<Months>(
-                        value: _expMonth,
+                        initialValue: _expMonth,
                         decoration: (const InputDecoration())
                             .applyDefaults(
                                 Theme.of(context).inputDecorationTheme)
@@ -302,7 +302,7 @@ class CardsStateForm extends State<CardsForm> {
                         ),
                       ),
                       DropdownButtonFormField<int?>(
-                        value: _expYear,
+                        initialValue: _expYear,
                         decoration: (const InputDecoration())
                             .applyDefaults(
                                 Theme.of(context).inputDecorationTheme)
