@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:web/web.dart' as html;
 
 class Config{
   static String urlApi= "${html.window.location.origin}/public/api/v1/";
