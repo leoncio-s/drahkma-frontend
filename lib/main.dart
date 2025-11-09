@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
+import 'package:drahkma/Dashboard/dashboard.dart';
 import 'package:drahkma/User/create_user_form.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,7 @@ class _MainApp extends State<LFinanca> {
         ),
         cardColor: Colors.black,
         secondaryHeaderColor: Colors.white,
+        primaryTextTheme: const TextTheme(titleLarge: TextStyle(fontWeight: FontWeight.bold)),
         textSelectionTheme: const TextSelectionThemeData(
             cursorColor: Colors.white, selectionColor: Color(0xFFDE9D32)),
         inputDecorationTheme: InputDecorationTheme(
@@ -174,7 +176,8 @@ class _MainApp extends State<LFinanca> {
       ),
       routes: {
         '/auth/login' : (context) => const LoginPage(),
-        '/dashboard': (context) => const HomeView(),
+        // '/dashboard': (context) => const HomeView(),
+        '/dashboard': (context) => const Dashboard(),
         '/register' : (context) => const CreateUserForm(),
         '/forget-password' : (context) => const ForgetPasswordPage(),
       },
