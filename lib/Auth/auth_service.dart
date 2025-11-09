@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 // ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
+// import 'dart:html';
+import 'package:web/web.dart';
 import 'dart:io' as io show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:drahkma/User/user_dto.dart';
@@ -14,7 +15,7 @@ class AuthService {
   static final Storage _st = window.localStorage;
 
   static login(String login, String password) async {
-      _st['email']=login;
+      _st.setItem("email", login);
       var req = await Requests.post('${Config.urlApi}auth/login', json: {"email":login, "password": password}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
        
       if(req.statusCode == 500){
@@ -28,7 +29,7 @@ class AuthService {
 
   static _storage(String data){
     if(kIsWeb){
-      _st['auth_token'] = data;
+      _st.setItem('auth_token', data);
       user = user.toObject(jsonDecode(data));
       return user;
     }else if(io.Platform.isWindows){
@@ -40,11 +41,11 @@ class AuthService {
   }
 
   static String? storageGetEmail(){
-    return _st['email'];
+    return _st.getItem('email');
   }
   static Future<UserDto?> getAuthUser() async {
     if(kIsWeb){
-      String? data = _st['auth_token'];
+      String? data = _st.getItem('auth_token');
 
       if(data == null){
         return null;
