@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drahkma/Auth/auth_service.dart';
+import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/config.dart';
 import 'package:requests/requests.dart';
@@ -14,7 +15,7 @@ class UserService {
     });
 
     if (request.statusCode != 200) {
-      throw Exception('Token inválido ou usuário não autorizado');
+      throw UnauthenticatedException();
     }
     var user = UserDto();
     user = user.toObject(jsonDecode(request.body));
