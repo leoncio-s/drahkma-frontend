@@ -5,15 +5,25 @@ class ElevatedButtonComponent extends StatelessWidget{
 
   final void Function()? onPressed;
   final String title;
-  const ElevatedButtonComponent({super.key, required this.title, required this.onPressed});
+  final double width;
+  final double height;
+  final Color?  backgroundColor;
+  final Color?  hoverColor;
+  const ElevatedButtonComponent({super.key, required this.title, required this.onPressed, this.width=double.infinity, this.height=50, this.backgroundColor, this.hoverColor});
 
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: double.maxFinite,
-      height: 50,
+      width: width,
+      height: height,
       child: ElevatedButton(
+        style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
+          backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> state){
+            if(state.contains(WidgetState.hovered) && hoverColor != null) return hoverColor!;
+            return backgroundColor ?? Theme.of(context).elevatedButtonTheme.style!.backgroundColor!.resolve(state);
+          })
+        ),
         onPressed: onPressed,
-        child: Text(title),
+        child: Text(title, textScaler: TextScaler.linear(0.8), overflow: TextOverflow.fade, textAlign: TextAlign.center,),
       ),
     );
 }
