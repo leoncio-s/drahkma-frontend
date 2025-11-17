@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/User/user_dto.dart';
@@ -36,6 +35,34 @@ class UserService {
       }
     } catch (e) {
       return {"error": "Erro ao processar solicitação."};
+    }
+  }
+
+  static Future<dynamic> update(UserDto user) async
+  {
+    try{
+      UserDto? userAuth = await AuthService.getAuthUser();
+      var request = await Requests.put(
+        "${Config.urlApi}user", 
+        json: user.toMap(user), 
+        headers: {
+          'Content-type': 'application/json', 
+          'Authorization' :  " Bearer ${userAuth?.token ?? ''}",
+        }
+        );
+
+      if(request.statusCode == 401){
+        throw UnauthenticatedException();
+      }else if(request.statusCode == 200){
+         return true;
+      }
+      else{
+        return request.json();
+      }
+    }on UnauthenticatedException{
+      rethrow;
+    }catch(e){
+      rethrow;
     }
   }
 }
