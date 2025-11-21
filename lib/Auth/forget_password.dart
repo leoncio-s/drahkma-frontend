@@ -36,7 +36,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
     body: DefaultLayout(child: _form(),),
     );
 
-  _form(){
+  Widget _form(){
     return Form(
       key: _formState,
       child: Column(

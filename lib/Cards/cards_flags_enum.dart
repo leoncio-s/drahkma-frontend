@@ -8,7 +8,7 @@ enum CardFlagsEnum{
 
     const CardFlagsEnum(String type);
 
-    parse(String? data){
+    CardFlagsEnum? parse(String? data){
       CardFlagsEnum? value;
       switch (data){
         case "visa":

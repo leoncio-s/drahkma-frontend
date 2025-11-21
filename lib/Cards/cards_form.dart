@@ -55,7 +55,7 @@ class CardsStateForm extends State<CardsForm> {
     ));
   }
 
-  _form() {
+  Widget _form() {
     return Center(
         child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),

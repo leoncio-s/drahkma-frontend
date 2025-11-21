@@ -14,7 +14,7 @@ class AuthService {
   static UserDto user = UserDto();
   static final Storage _st = window.localStorage;
 
-  static login(String login, String password) async {
+  static Future<Map> login(String login, String password) async {
       _st.setItem("email", login);
       var req = await Requests.post('${Config.urlApi}auth/login', json: {"email":login, "password": password}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
        
@@ -27,7 +27,7 @@ class AuthService {
       }
   }
 
-  static _storage(String data){
+  static dynamic _storage(String data){
     if(kIsWeb){
       _st.setItem('auth_token', data);
       user = user.toObject(jsonDecode(data));
@@ -56,7 +56,7 @@ class AuthService {
       var jsonD = jsonDecode(data.toString());
 
       user = user.toObject(jsonD);
-      
+
       return user;
       
     }else if(io.Platform.isWindows){
@@ -74,7 +74,7 @@ class AuthService {
     }
   }
 
-  static logout(){
+  static void logout(){
     user = UserDto();
     if(kIsWeb){
       _st.clear();

@@ -25,7 +25,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
   final TextEditingController _accountNumber = TextEditingController();
   List<BanksDto> _banks = [];
 
-  _getBanks() async {
+  void _getBanks() async {
     var banks = await BankAccountsService().getBanks();
     if (banks != null) {
       setState(() {
@@ -57,7 +57,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
     ));
   }
 
-  _form() {
+  Widget _form() {
     return Center(
         child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),

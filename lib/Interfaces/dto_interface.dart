@@ -3,5 +3,5 @@ abstract class DtoInterface {
   factory DtoInterface.toObject(Map<String, dynamic> data){
     throw UnimplementedError();
   }
-  toMap();
+  Map toMap();
 }

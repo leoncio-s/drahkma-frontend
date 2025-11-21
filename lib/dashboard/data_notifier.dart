@@ -13,7 +13,7 @@ class _DataNotifier with ChangeNotifier {
     notifyListeners();
   }
 
-  getData(DateTimeRange dateRange) {
+  void getData(DateTimeRange dateRange) {
 
     DashServices().getAmounts(dateRange.start, dateRange.end).then((DashboardDto? onValue) {
         _setData(onValue ?? DashboardDto());
