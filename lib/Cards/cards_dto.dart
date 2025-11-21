@@ -80,7 +80,7 @@ class CardsDto implements DtoInterface{
     int? get invoiceDay => _invoiceDay;
 
 
-    get nextInvoiceDate{
+    DateTime get nextInvoiceDate{
       DateTime date = DateTime(DateTime.now().year, DateTime.now().month, int.parse(_invoiceDay.toString()));
       DateTime now = DateTime.now();
       if(date.isBefore(now)){

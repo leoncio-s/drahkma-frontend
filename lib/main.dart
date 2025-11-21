@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
 import 'package:drahkma/CommonsComponents/alert_modal_dialog.dart';
-import 'package:drahkma/CommonsComponents/modal.dart';
 import 'package:drahkma/Dashboard/dashboard.dart';
 import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/Exceptions/update_password_exception.dart';

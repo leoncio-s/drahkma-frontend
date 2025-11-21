@@ -12,7 +12,7 @@ class UserDto{
     UserDto({this.id, this.fullname, this.email, this.actived, this.phoneNumber, this.emailVerifiedAt, this.createdAt, this.updatedAt});
 
 
-    toObject(Map data){
+    UserDto toObject(Map data){
       if(data['user'] != null){
         actived = data['user']['actived'];
         id= data['user']['id'];
@@ -36,7 +36,7 @@ class UserDto{
       return this;
     }
 
-    toMap(dynamic data) => {
+    Map toMap(dynamic data) => {
       'actived' : actived,
       'id'  : id,
       'created_at' : createdAt,

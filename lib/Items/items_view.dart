@@ -36,7 +36,7 @@ class _ItemsViewState extends State<ItemsView>{
   String? _message;
   double _turns = 0.0;
 
-  _getData() {
+  void _getData() {
     widget.getData(startDate, finishDate).then((data) {
       setState(() {
         _items = data;
@@ -102,7 +102,7 @@ class _ItemsViewState extends State<ItemsView>{
     );
   }
 
-  _controllers() {
+  SizedBox _controllers() {
     return SizedBox.fromSize(
         size: const Size.fromHeight(100.0),
         child: Flex(
@@ -210,12 +210,8 @@ class _ItemsViewState extends State<ItemsView>{
         ));
   }
 
-  _listViewItems() {
+  Column _listViewItems() {
     return Column(
-        // scrollDirection: Axis.vertical,
-        // shrinkWrap: false,
-        // itemExtent: 50.0,
-        // padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
         children: ListTile.divideTiles(
                 context: context,
                 tiles: _items!
@@ -338,7 +334,7 @@ class _ItemsViewState extends State<ItemsView>{
             .toList());
   }
 
-  _replayData() {
+  SizedBox _replayData() {
     return SizedBox.fromSize(
         size: const Size.fromHeight(100.0),
         child: Flex(

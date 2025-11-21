@@ -21,7 +21,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
   String? _message;
   double _turns = 0.0;
 
-  _getData() {
+  dynamic _getData() {
     return BankAccountsService().get().then((value) {
       if(mounted){
         setState(() {
@@ -186,7 +186,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
               );
   }
 
-  _snackBarError(String message) {
+  SnackBar _snackBarError(String message) {
     return SnackBar(
       content: Text(message),
       backgroundColor: Colors.red,
@@ -195,7 +195,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
     );
   }
 
-  _replayData() {
+  Widget _replayData() {
     return SizedBox.fromSize(
         size: const Size.fromHeight(100.0),
         child: Flex(

@@ -32,7 +32,7 @@ class CategoriesStateForm extends State<CategoriesForm> {
         body: Padding(padding: const EdgeInsets.all(15.0), child: _form(),));
   }
 
-  _form(){
+  Widget _form(){
     return Center(
             child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),

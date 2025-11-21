@@ -31,7 +31,7 @@ class ForgetPasswordCodepageState extends State<ForgetPasswordCodepage>{
   Widget build(BuildContext context) => Scaffold(body: DefaultLayout(child: _form(),),);
 
 
-  _form(){
+  Widget _form(){
 
     return Form(
       key: _formKey,
@@ -78,7 +78,7 @@ class ForgetPasswordCodepageState extends State<ForgetPasswordCodepage>{
     ));
   }
 
-  _passwordField(String label, TextEditingController controller){
+  Widget _passwordField(String label, TextEditingController controller){
     return TextFormFieldComponent(
       maxLength: 20,
       labelText: label,

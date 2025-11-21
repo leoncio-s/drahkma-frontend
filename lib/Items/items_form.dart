@@ -110,7 +110,7 @@ class ItemsFormState extends State<ItemsForm> {
     ));
   }
 
-  _itemsForm() {
+  Center _itemsForm() {
     return Center(
       child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 500),

@@ -72,7 +72,7 @@ class _NewPassWordFormPage extends State<NewPasswordFormPage>{
   {
     if(_formKey.currentState!.validate())
     {
-      var snack;
+      SnackBarComponent snack;
       var ret = await UserService.updatePassword(_curPasswd.text, _newPasswd.text, _confNewPasswd.text);
       if(ret['success'])
       {

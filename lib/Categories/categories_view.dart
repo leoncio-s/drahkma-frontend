@@ -25,7 +25,7 @@ class CategoriesViewState extends State<CategoriesView> {
   double _turns = 0.0;
 
 
-  _getData(){
+  void _getData(){
     CategoriesService().get().then((value) {
       if(mounted){
         setState(() {
@@ -161,14 +161,14 @@ class CategoriesViewState extends State<CategoriesView> {
             size: const Size(50, 50), child: const CircularProgressIndicator()) : Center(child:_replayData());
   }
 
-  _snackBarError(String message){
+  SnackBar _snackBarError(String message){
     return SnackBar(
       content: Text(message), backgroundColor: Colors.red, closeIconColor: Colors.white,
       showCloseIcon: true,
       );
   }
 
-  _replayData() {
+  SizedBox _replayData() {
     return SizedBox.fromSize(size: const Size.fromHeight(100.0), child: Flex(direction: Axis.vertical, children: [
       Flexible(child: Text(_message!.isEmpty ? "Erro ao processar dados" : _message!)),
       const SizedBox(height: 30,),

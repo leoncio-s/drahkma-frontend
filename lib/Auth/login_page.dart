@@ -109,7 +109,7 @@ class _LoginPage extends State<LoginPage> {
     });
   }
 
-  _containerBorder({required Widget child}) {
+  Widget _containerBorder({required Widget child}) {
     return Container(
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
@@ -119,7 +119,7 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  _image() {
+  Image _image() {
     return Image.asset(
       "images/logo_yellow.png",
       width: 250,

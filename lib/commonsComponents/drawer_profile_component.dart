@@ -114,7 +114,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
             }));
   }
 
-  _userForm() {
+  Form _userForm() {
     return Form(
         key: _formKey,
         child: Column(

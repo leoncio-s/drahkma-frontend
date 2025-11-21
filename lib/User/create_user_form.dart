@@ -94,7 +94,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         ),
       ));
 
-  _containerBorder({required Widget child}) {
+  Container _containerBorder({required Widget child}) {
     return Container(
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
@@ -103,7 +103,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
     );
   }
 
-  _fullNameField() => TextFormFieldComponent(
+  TextFormFieldComponent _fullNameField() => TextFormFieldComponent(
         controller: _fullNameController,
         labelText: "Nome Completo",
         autovalidateMode: AutovalidateMode.onUnfocus,
@@ -117,7 +117,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         },
       );
 
-  _emailField() => TextFormFieldComponent(
+  TextFormFieldComponent _emailField() => TextFormFieldComponent(
       controller: _emailController,
       labelText: "E-mail",
       keyboardType: TextInputType.emailAddress,
@@ -133,7 +133,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         return null;
       });
 
-  _passwordField() => TextFormFieldComponent(
+  TextFormFieldComponent _passwordField() => TextFormFieldComponent(
         controller: _passwordController,
         labelText: "Senha",
         obscureText: notShowPassword,
@@ -161,7 +161,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         },
       );
 
-  _confPasswordField() => TextFormFieldComponent(
+  TextFormFieldComponent _confPasswordField() => TextFormFieldComponent(
         controller: _confPasswordController,
         labelText: "Confirme a Senha",
         obscureText: notShowPassword2,
@@ -191,7 +191,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         },
       );
 
-  _phoneNumberField() => TextFormFieldComponent(
+  TextFormFieldComponent _phoneNumberField() => TextFormFieldComponent(
         controller: _phoneNumberController,
         labelText: "Número de Telefone",
         keyboardType: TextInputType.phone,
@@ -205,7 +205,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         },
       );
 
-  _signinButton() => SizedBox(
+  SizedBox _signinButton() => SizedBox(
         // width: double.maxFinite,
         child: TextButton.icon(
           icon: const Icon(Icons.login),
@@ -227,7 +227,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
         ),
       );
 
-  _formSubmit() async {
+  void _formSubmit() async {
     Map<String, String> user = {};
     if (_formKey.currentState!.validate()) {
       var phoneNumber = _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
@@ -254,7 +254,7 @@ class _CreateUserFormState extends State<CreateUserForm> {
     }
   }
 
-  _errors() {
+  RenderObjectWidget _errors() {
     TextStyle errorStyle = const TextStyle(
         color: Colors.red,
         height: 2,

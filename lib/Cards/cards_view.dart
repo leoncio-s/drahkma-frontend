@@ -21,7 +21,7 @@ class CardsViewState extends State<CardsView> {
   String? _message;
   double _turns = 0.0;
 
-  _getData() {
+  Future<Null> _getData() {
     return CardsServices().get().then((value) {
       if(mounted){
         setState(() {
@@ -173,7 +173,7 @@ class CardsViewState extends State<CardsView> {
             size: const Size(50, 50), child: const CircularProgressIndicator()) : Center(child: _replayData(),);
   }
 
-  _snackBarError(String message) {
+  SnackBar _snackBarError(String message) {
     return SnackBar(
       content: Text(message),
       backgroundColor: Colors.red,
@@ -182,7 +182,7 @@ class CardsViewState extends State<CardsView> {
     );
   }
 
-  _replayData() {
+  Widget _replayData() {
     return SizedBox.fromSize(size: const Size.fromHeight(100.0), child: Flex(direction: Axis.vertical, children: [
       Flexible(child: Text(_message!.isEmpty ? "Erro ao processar dados" : _message!)),
       const SizedBox(height: 30,),
