@@ -1,10 +1,14 @@
 import 'package:drahkma/Auth/auth_dto.dart';
+import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/CommonsComponents/elevated_button_component.dart';
+import 'package:drahkma/Dashboard/new_password_form_page.dart';
+import 'package:drahkma/CommonsComponents/snackbar_component.dart';
 import 'package:drahkma/CommonsComponents/text_form_field_component.dart';
 import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/User/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class DrawerProfileComponent extends StatefulWidget {
@@ -21,6 +25,12 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
   final TextEditingController _fullName = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _phone = MaskedTextController(mask: "(00) 000 000 000");
+  
+  void _toLogin(){
+    SchedulerBinding.instance.addPostFrameCallback((_){
+      if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +45,18 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
         width: widthDrawer,
         backgroundColor: Theme.of(context).primaryColorDark,
         child: FutureBuilder<UserDto?>(
-            future: Future.delayed(const Duration(seconds: 1), ()=>UserDto(fullname: "Leoncio", email: 'souzaleo015oo@gmail.com', phoneNumber: '119999999991')),
+            future: AuthService.getAuthUser(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
-              _fullName.text=snap.data!.fullname ?? '';
-              _email.text = snap.data!.email ?? '';
-              _phone.text = snap.data!.phoneNumber ?? '';
+              if(snap.hasData)
+              {
+                _fullName.text=snap.data!.fullname ?? '';
+                _email.text = snap.data!.email ?? '';
+                _phone.text = snap.data!.phoneNumber ?? '';
 
               return Column(
                 children: [
@@ -95,7 +107,10 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
                     ),
                   )
                 ],
-              );
+              );}
+
+            _toLogin();
+            return Center(child: Text("Não foi possível obter dados do usuário, faça o login novamente."),);
             }));
   }
 
@@ -159,7 +174,11 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
           children: [
             ElevatedButtonComponent(
               title: "Alterar Senha",
-              onPressed: _submitForm,
+              onPressed: ()async{
+                await showDialog(
+                  context: context,
+                  builder: (context)=> NewPasswordFormPage());
+              },
               width: (widthDrawer / 2) * 0.9,
               backgroundColor: Colors.grey,
             ),
@@ -174,24 +193,39 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
     ));
   }
 
-  _submitForm() async{
-
+  Future<void> _submitForm() async{
     if(_formKey.currentState!.validate()){
       UserDto user = UserDto(
         fullname: _fullName.text,
         email: _email.text,
         phoneNumber: _phone.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "")
       );
-
+      SnackBarComponent snack = SnackBarComponent(content: Text(""));
       try{
         var service = await UserService.update(user);
-        print(service);
-      }on UnauthenticatedException
+        if(service is bool)
+        {
+          snack = SnackBarComponent(content: Text("Dados Atualizados!"), backgroundColor: Colors.green,);
+        }else{
+          if(service['message'] != null)
+          {
+            snack = SnackBarComponent(content: Text(service['message'].toString()), backgroundColor: Colors.redAccent,);
+          }
+        }
+        if(mounted) Navigator.of(context).pop([true]);
+      }on UnauthenticatedException catch (e)
       {
+        snack = SnackBarComponent(content: Text(e.message), backgroundColor: Colors.redAccent,);
         if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
-      }catch(e){
-        print(e);
+      }on Exception catch(e){
+        snack = SnackBarComponent(content: Text(e.toString()), backgroundColor: Colors.redAccent,);
+      }finally{
+        if(mounted){
+          ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
+        }
       }
+      return;
     }
+    return;
   }
 }

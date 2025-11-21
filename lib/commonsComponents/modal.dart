@@ -7,7 +7,6 @@ VoidCallback modal(BuildContext context, String content, {double width=300.0, do
     context: context,
     barrierLabel: 'Loading',
     barrierDismissible: barrierDismissible,
-    // barrierColor: Colors.blueGrey,
     builder: (context)=>SimpleDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(

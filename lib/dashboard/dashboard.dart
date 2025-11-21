@@ -25,7 +25,7 @@ class _DashboardState extends State<Dashboard> {
       drawerDragStartBehavior: DragStartBehavior.down,
       drawerEnableOpenDragGesture: true,
       drawerEdgeDragWidth: 30.0,
-      body: Center(child: CircularProgressIndicator.adaptive(backgroundColor: Colors.white),),
+      body: Center(child: CircularProgressIndicator(constraints: BoxConstraints.expand(width: 100, height: 100), backgroundColor: Colors.white),),
     );
   }
 }
