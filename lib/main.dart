@@ -1,14 +1,39 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:drahkma/Auth/forget_password.dart';
 import 'package:drahkma/Auth/login_page.dart';
+import 'package:drahkma/CommonsComponents/alert_modal_dialog.dart';
+import 'package:drahkma/CommonsComponents/modal.dart';
 import 'package:drahkma/Dashboard/dashboard.dart';
+import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/Exceptions/update_password_exception.dart';
 import 'package:drahkma/User/create_user_form.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:drahkma/config.dart';
-import 'package:drahkma/home.dart';
+
+
+final GlobalKey<NavigatorState> _navState = GlobalKey();
+void exceptionHandler(Object e, StackTrace s)
+{
+  BuildContext? context = _navState.currentContext;
+  if(context != null)
+  {
+    if(e is UnauthenticatedException)
+    {
+      Navigator.of(context).pushReplacementNamed("/auth/login");
+    }else if(e is UpdatePasswordException){
+      alertModalDialog<String>(context, e.message, title: "Erro ao atualizar senha");
+    }
+    else
+    {
+      alertModalDialog<String>(context, e.toString(), title: "Format Invalid Error");
+    }
+  }
+}
+
 
 void main() async {
   String initialRoute = "/auth/login";
@@ -19,12 +44,8 @@ void main() async {
 
   initialRoute = "/dashboard";
   
-  try{
-    runApp(LFinanca(initialRoute: initialRoute,));
 
-  }catch(e){
-    log(e.toString());
-  }
+  runZonedGuarded<void>(()=>runApp(LFinanca(initialRoute: initialRoute,)), exceptionHandler);
 }
 
 
@@ -55,6 +76,7 @@ class _MainApp extends State<LFinanca> {
       ],
       supportedLocales: const [Locale('pt', 'BR')],
       color: yellowMainColor,
+      navigatorKey: _navState,
       theme: ThemeData(
         fontFamily: "OpenSans",
         brightness: Brightness.dark,

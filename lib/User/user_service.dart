@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:drahkma/Auth/auth_service.dart';
 import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/Exceptions/update_password_exception.dart';
 import 'package:drahkma/User/user_dto.dart';
 import 'package:drahkma/config.dart';
 import 'package:requests/requests.dart';
@@ -18,7 +19,8 @@ class UserService {
     }
     var user = UserDto();
     user = user.toObject(jsonDecode(request.body));
-
+    user.token = data!.token;
+    AuthService.updateAuthUser(user);
     return user;
   }
 
@@ -54,7 +56,9 @@ class UserService {
       if(request.statusCode == 401){
         throw UnauthenticatedException();
       }else if(request.statusCode == 200){
-         return true;
+        user.token = userAuth!.token;
+        AuthService.updateAuthUser(user);
+        return true;
       }
       else{
         return request.json();
@@ -63,6 +67,37 @@ class UserService {
       rethrow;
     }catch(e){
       rethrow;
+    }
+  }
+
+  static Future<Map> updatePassword(String password, String newPassword, String confNewPassword) async
+  {
+    UserDto? authUser = await AuthService.getAuthUser();
+    var data = {
+      'password': password,
+      'new_password': newPassword,
+      'conf_new_password': confNewPassword
+    };
+    var request = await Requests.put(
+        "${Config.urlApi}user/password", 
+        json: data, 
+        headers: {
+          'Content-type': 'application/json', 
+          'Authorization' :  " Bearer ${authUser?.token ?? ''}",
+        }
+    );
+
+    if(request.statusCode == 401)
+    {
+      throw UnauthenticatedException();
+    }
+    if(request.statusCode == 200)
+    {
+      return {"success": true};
+    }else if(request.statusCode==422){
+      return {"success": false, "message":request.json()['message']};
+    }else{
+      throw UpdatePasswordException(request.json().toString());
     }
   }
 }

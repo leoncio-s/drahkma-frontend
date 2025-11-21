@@ -43,14 +43,20 @@ class AuthService {
   static String? storageGetEmail(){
     return _st.getItem('email');
   }
+
   static Future<UserDto?> getAuthUser() async {
+
     if(kIsWeb){
       String? data = _st.getItem('auth_token');
 
       if(data == null){
         return null;
       }
-      user = user.toObject(jsonDecode(data));
+
+      var jsonD = jsonDecode(data.toString());
+
+      user = user.toObject(jsonD);
+      
       return user;
       
     }else if(io.Platform.isWindows){
@@ -58,6 +64,14 @@ class AuthService {
     }
 
     return null;
+  }
+
+  static Future<void> updateAuthUser(UserDto user) async
+  {
+    if(kIsWeb)
+    {
+      _st.setItem('auth_token', jsonEncode(user.toMap(user)));
+    }
   }
 
   static logout(){
@@ -69,7 +83,7 @@ class AuthService {
     }
   }
 
-  static forgetPassword(String email) async
+  static Future<Map> forgetPassword(String email) async
   {
       var req = await Requests.post('${Config.urlApi}auth/forget-password', json: {"email":email}, headers: {'Content-type': 'application/json'}, timeoutSeconds: 60, verify: false);
 
@@ -82,7 +96,7 @@ class AuthService {
       }
   }
 
-  static forgetPasswordCode(String email, String code, String password, String confPassword) async
+  static Future<Map> forgetPasswordCode(String email, String code, String password, String confPassword) async
   {
     var req = await Requests.post('${Config.urlApi}auth/forget-password/$email', headers: {'Content-type': 'application/json'}, timeoutSeconds: 20, verify: false, json: {'code':code, 'password':password, 'confpassword':confPassword});
     

@@ -12,7 +12,7 @@ class UserDto{
     UserDto({this.id, this.fullname, this.email, this.actived, this.phoneNumber, this.emailVerifiedAt, this.createdAt, this.updatedAt});
 
 
-    toObject(dynamic data){
+    toObject(Map data){
       if(data['user'] != null){
         actived = data['user']['actived'];
         id= data['user']['id'];
@@ -21,7 +21,7 @@ class UserDto{
         emailVerifiedAt = data['user']['email_verified_at'] == null ? null : DateTime.tryParse(data['user']['email_verified_at']['date']);
         fullname = data['user']['fullname'];
         email=data['user']['email'];
-        phoneNumber = data['phone_number'];
+        phoneNumber = data['user']['phone_number'];
         token = data['token'];
       }else{
         actived = data['actived'];
