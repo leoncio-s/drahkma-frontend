@@ -1,6 +1,6 @@
 
 import 'package:drahkma/Interfaces/services.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:drahkma/features/items/data/models/item.dart';
 import 'package:drahkma/features/users/data/models/user.dart';
 import 'package:http/http.dart';

@@ -10,7 +10,7 @@ import 'package:drahkma/presentation/dialogs/alert_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 
 
 final GlobalKey<NavigatorState> _navState = GlobalKey();

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:drahkma/Interfaces/services.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
 import 'package:drahkma/features/users/data/models/user.dart';

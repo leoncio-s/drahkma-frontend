@@ -4,7 +4,7 @@ import 'package:drahkma/features/users/data/models/user.dart';
 import 'package:web/web.dart';
 import 'dart:io' as io show Platform;
 import 'package:flutter/foundation.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:requests/requests.dart';
 
 class AuthRemoteDatasource {
