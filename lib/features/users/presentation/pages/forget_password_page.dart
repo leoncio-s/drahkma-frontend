@@ -1,8 +1,8 @@
-import 'package:drahkma/Services/auth_service.dart';
-import 'package:drahkma/Views/forget_password_code_view.dart';
-import 'package:drahkma/Utils/string_regex_validate.dart';
-import 'package:drahkma/Utils/text_scaler.dart';
-import 'package:drahkma/presentation/dialogs/modalDialog.dart';
+import 'package:drahkma/core/utils/string_regex_validate.dart';
+import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
+import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
@@ -26,7 +26,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
     if(widget.email != null) {
       _email.text = widget.email!;
     } else {
-      _email.text = AuthService.storageGetEmail() ?? '';
+      _email.text = AuthRemoteDatasource.storageGetEmail() ?? '';
     }
     super.initState();
   }
@@ -58,7 +58,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
             if(_formState.currentState!.validate()){
               final closeModal = modalDialog(context, "loading");
               try{
-                var ret = await AuthService.forgetPassword(_email.text);
+                var ret = await AuthRemoteDatasource.forgetPassword(_email.text);
                 late SnackBar snack;
                 
                 if(!mounted) return;

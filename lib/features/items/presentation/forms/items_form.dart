@@ -1,17 +1,18 @@
-import 'package:drahkma/Components/input_text_style.dart';
+
+import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
+import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
 import 'package:drahkma/features/cards/data/models/card.dart';
 import 'package:drahkma/features/categories/data/models/category.dart';
+import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
 import 'package:drahkma/features/items/data/models/item.dart';
 import 'package:drahkma/features/items/data/models/transferbank.dart';
 import 'package:drahkma/features/items/domain/enums/transfer_bank_type_enum.dart';
+import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:drahkma/Services/bank_accounts_service.dart';
-import 'package:drahkma/Services/cards_services.dart';
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
-import 'package:drahkma/Services/items_service.dart';
 import 'package:drahkma/config.dart';
 import 'package:intl/intl.dart';
 
@@ -56,8 +57,8 @@ class ItemsFormState extends State<ItemsForm> {
   void initState() {
     Future.wait([
       CategoriesRemoteDatasource().get(),
-      BankAccountsService().get(),
-      CardsServices().get()
+      BankAccountsRemoteDatasource().get(),
+      CardsRemoteDatasource().get()
     ]).then((value) {
       setState(() {
         categories = value[0];
@@ -484,7 +485,7 @@ class ItemsFormState extends State<ItemsForm> {
                 if (_formKey.currentState!.validate()) {
                   dynamic ret;
                   if (widget.data?.id != null) {
-                    ret = await ItemsService().update(Item(
+                    ret = await ItemsRemoteDatasource().update(Item(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
@@ -505,7 +506,7 @@ class ItemsFormState extends State<ItemsForm> {
                             : null));
                     // ret = null;
                   } else {
-                    ret = await ItemsService().save(Item(
+                    ret = await ItemsRemoteDatasource().save(Item(
                         card: _transferbank
                             ? null
                             : cards.firstWhere((el) => el.id == _card),

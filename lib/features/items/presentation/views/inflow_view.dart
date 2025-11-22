@@ -1,6 +1,6 @@
+import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/Services/items_service.dart';
 import 'package:drahkma/features/items/presentation/views/items_view.dart';
 
 class InflowView extends DrahkmaStatefulWidget {
@@ -21,7 +21,7 @@ class InflowState extends State<InflowView> {
   Widget build(BuildContext context) {
     return ItemsView(
       title: "Receitas",
-      getData: ItemsService().getInflow,
+      getData: ItemsRemoteDatasource().getInflow,
       expense: false,
     );
   }

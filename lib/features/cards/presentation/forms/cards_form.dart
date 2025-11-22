@@ -1,11 +1,12 @@
 import 'dart:ui';
 
-import 'package:drahkma/Components/input_text_style.dart';
+
+import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
+import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:drahkma/features/cards/data/models/card.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
-import 'package:drahkma/Services/cards_services.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
 import 'package:drahkma/core/utils/months.dart';
 import 'package:drahkma/core/utils/string_regex_validate.dart';
@@ -371,7 +372,7 @@ class CardsStateForm extends State<CardsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.cards?.id != null) {
-                              ret = await CardsServices().update(Card(
+                              ret = await CardsRemoteDatasource().update(Card(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
@@ -380,7 +381,7 @@ class CardsStateForm extends State<CardsForm> {
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await CardsServices().save(Card(
+                              ret = await CardsRemoteDatasource().save(Card(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,

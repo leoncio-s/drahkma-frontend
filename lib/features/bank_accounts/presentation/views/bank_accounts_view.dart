@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_accounts/presentation/forms/bank_accounts_form.dart';
-import 'package:drahkma/Services/bank_accounts_service.dart';
-import 'package:drahkma/Utils/text_scaler.dart';
 
 class BankAccountsView extends DrahkmaStatefulWidget {
   const BankAccountsView(
@@ -22,7 +22,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
   double _turns = 0.0;
 
   dynamic _getData() {
-    return BankAccountsService().get().then((value) {
+    return BankAccountsRemoteDatasource().get().then((value) {
       if(mounted){
         setState(() {
         bankAccounts = value;
@@ -158,7 +158,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     dynamic ret =
-                                        await BankAccountsService().delete(el);
+                                        await BankAccountsRemoteDatasource().delete(el);
                                     if (ret == true) {
                                       _getData();
                                     } else {

@@ -1,11 +1,11 @@
-import 'package:drahkma/Notifiers/app_notifier.dart';
+import 'package:drahkma/core/notifiers/app_notifier.dart';
+import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
 import 'package:drahkma/features/items/data/models/item.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/items/presentation/forms/items_form.dart';
 import 'package:drahkma/features/items/domain/enums/items_order_enum.dart';
-import 'package:drahkma/Services/items_service.dart';
 import 'package:drahkma/features/items/domain/items_sort.dart';
-import 'package:drahkma/Utils/text_scaler.dart';
 import 'package:drahkma/config.dart';
 import 'package:intl/intl.dart';
 
@@ -284,7 +284,7 @@ class _ItemsViewState extends State<ItemsView>{
                           ),
                           trailing: IconButton(
                               onPressed: () {
-                                ItemsService().delete(el).then((value) {
+                                ItemsRemoteDatasource().delete(el).then((value) {
                                   // ignore: no_leading_underscores_for_local_identifiers
                                   SnackBar _snackBar;
                                   if (value) {

@@ -1,9 +1,9 @@
+import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/data/models/auth.dart';
-import 'package:drahkma/Services/auth_service.dart';
-import 'package:drahkma/Dashboard/new_password_form_page.dart';
-import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/features/users/data/models/user.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
+import 'package:drahkma/features/users/presentation/pages/new_password_form_page.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
@@ -45,7 +45,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
         width: widthDrawer,
         backgroundColor: Theme.of(context).primaryColorDark,
         child: FutureBuilder<User?>(
-            future: AuthService.getAuthUser(),
+            future: AuthRemoteDatasource.getAuthUser(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
