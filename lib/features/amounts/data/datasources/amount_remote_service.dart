@@ -1,5 +1,5 @@
 
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:drahkma/features/amounts/data/models/dashboard.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';

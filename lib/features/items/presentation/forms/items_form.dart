@@ -13,7 +13,7 @@ import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 class ItemsForm extends StatefulWidget {

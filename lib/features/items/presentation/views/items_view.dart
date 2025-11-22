@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:drahkma/features/items/presentation/forms/items_form.dart';
 import 'package:drahkma/features/items/domain/enums/items_order_enum.dart';
 import 'package:drahkma/features/items/domain/items_sort.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable

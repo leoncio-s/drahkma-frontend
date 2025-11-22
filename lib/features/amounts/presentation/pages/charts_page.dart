@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:drahkma/features/amounts/data/models/amount.dart';
 import 'package:drahkma/features/amounts/data/models/transfer_bank_amount.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/notifiers/data_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 

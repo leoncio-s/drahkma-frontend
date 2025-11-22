@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/core/exceptions/update_password_exception.dart';
 import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:drahkma/config.dart';
+import 'package:drahkma/core/config.dart';
 import 'package:drahkma/features/users/data/models/user.dart';
 import 'package:requests/requests.dart';
 
