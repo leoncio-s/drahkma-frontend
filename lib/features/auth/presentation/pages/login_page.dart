@@ -2,7 +2,7 @@ import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.da
 import 'package:drahkma/features/auth/data/models/auth.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
 import 'package:drahkma/features/users/data/models/user.dart';
-import 'package:drahkma/presentation/dialogs/modalDialog.dart';
+import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';

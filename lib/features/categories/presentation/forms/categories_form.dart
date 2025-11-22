@@ -1,6 +1,7 @@
-import 'package:drahkma/Components/input_text_style.dart';
+
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
 import 'package:drahkma/features/categories/data/models/category.dart';
+import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:drahkma/core/utils/string_regex_validate.dart';

@@ -1,8 +1,9 @@
 
-import 'package:drahkma/Components/drawer_menu_component.dart';
+
 import 'package:drahkma/features/users/presentation/widgets/drawer_profile_component.dart';
 import 'package:drahkma/presentation/widgets/app_bar_widget.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/presentation/widgets/drawer_menu_component.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class _DashboardState extends State<AmountsPage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: AppBarWidget(title: "DASHBOARD"),
-      drawer: DrawerMenuComponent(),
+      drawer: DrawerMenuWidget(),
       endDrawer: DrawerProfileComponent(),
       drawerDragStartBehavior: DragStartBehavior.down,
       drawerEnableOpenDragGesture: true,

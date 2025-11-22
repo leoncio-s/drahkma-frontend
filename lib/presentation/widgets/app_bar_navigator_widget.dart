@@ -1,5 +1,5 @@
+import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/Services/auth_service.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 
 class AppBarNavigatorWidget extends StatelessWidget {
@@ -23,7 +23,7 @@ class AppBarNavigatorWidget extends StatelessWidget {
               actions: [
                 ElevatedButton.icon(
                     onPressed: () {
-                      AuthService.logout();
+                      AuthRemoteDatasource.logout();
                       Navigator.of(context).pushReplacementNamed("/auth/login");
                     }, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
               ],

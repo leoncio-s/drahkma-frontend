@@ -1,12 +1,12 @@
 import 'dart:ui';
 
-import 'package:drahkma/Components/input_text_style.dart';
+import 'package:drahkma/core/utils/string_regex_validate.dart';
+import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
+import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:drahkma/Services/bank_accounts_service.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank.dart';
-import 'package:drahkma/Utils/string_regex_validate.dart';
 
 
 class BankAccountsForm extends StatefulWidget {
@@ -26,7 +26,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
   List<Banks> _banks = [];
 
   void _getBanks() async {
-    var banks = await BankAccountsService().getBanks();
+    var banks = await BankAccountsRemoteDatasource().getBanks();
     if (banks != null) {
       setState(() {
         _banks = banks;
@@ -118,7 +118,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   ),
                   optionsBuilder: (TextEditingValue txt) async {
                     if (txt.text == "") {
-                      return await BankAccountsService().getBanks() ?? Iterable<Banks>.generate(1, (int i)=>Banks(null, 'Itau', 341, 'BCO Itau S.A'));
+                      return await BankAccountsRemoteDatasource().getBanks() ?? Iterable<Banks>.generate(1, (int i)=>Banks(null, 'Itau', 341, 'BCO Itau S.A'));
                     }
                     return _banks.where((Banks? obj) =>
                         obj!.fullName.toString().toUpperCase().contains(txt.text.toUpperCase()));
@@ -262,7 +262,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.bankAccounts?.id != null) {
-                              ret = await BankAccountsService().update(
+                              ret = await BankAccountsRemoteDatasource().update(
                                   BankAccounts(
                                       id: widget.bankAccounts!.id,
                                       bankCode: _bankCode.text,
@@ -270,7 +270,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                                       agency: _agency.text,
                                       accountNumber: _accountNumber.text));
                             } else {
-                              ret = await BankAccountsService().save(
+                              ret = await BankAccountsRemoteDatasource().save(
                                   BankAccounts(
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,

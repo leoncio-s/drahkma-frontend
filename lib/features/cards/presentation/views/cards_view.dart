@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
 import 'package:drahkma/features/cards/data/models/card.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:drahkma/features/cards/presentation/forms/cards_form.dart';
-import 'package:drahkma/Services/cards_services.dart';
-import 'package:drahkma/Utils/text_scaler.dart';
 
 class CardsView extends DrahkmaStatefulWidget {
   const CardsView(
@@ -22,7 +22,7 @@ class CardsViewState extends State<CardsView> {
   double _turns = 0.0;
 
   Future<Null> _getData() {
-    return CardsServices().get().then((value) {
+    return CardsRemoteDatasource().get().then((value) {
       if(mounted){
         setState(() {
         cards = value;
@@ -151,7 +151,7 @@ class CardsViewState extends State<CardsView> {
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     dynamic ret =
-                                        await CardsServices().delete(el);
+                                        await CardsRemoteDatasource().delete(el);
                                     if (ret == true) {
                                       _getData();
                                     } else {

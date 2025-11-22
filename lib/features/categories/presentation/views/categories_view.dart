@@ -1,10 +1,10 @@
+import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
 import 'package:drahkma/features/categories/data/models/category.dart';
 import 'package:drahkma/features/categories/domain/categories_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/categories/presentation/forms/categories_form.dart';
-import 'package:drahkma/Utils/text_scaler.dart';
 
 class CategoriesView extends DrahkmaStatefulWidget {
   const CategoriesView(
