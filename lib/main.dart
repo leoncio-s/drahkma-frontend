@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:drahkma/Auth/forget_password.dart';
-import 'package:drahkma/Auth/login_page.dart';
-import 'package:drahkma/CommonsComponents/alert_modal_dialog.dart';
-import 'package:drahkma/Dashboard/dashboard.dart';
+import 'package:drahkma/features/users/presentation/pages/forget_password_page.dart';
+import 'package:drahkma/features/auth/presentation/pages/login_page.dart';
+import 'package:drahkma/features/amounts/presentation/pages/dashboard_page.dart';
 import 'package:drahkma/Exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/Exceptions/update_password_exception.dart';
-import 'package:drahkma/User/create_user_form.dart';
+import 'package:drahkma/features/users/presentation/pages/create_user_page.dart';
+import 'package:drahkma/presentation/dialogs/alert_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -23,11 +23,11 @@ void exceptionHandler(Object e, StackTrace s)
     {
       Navigator.of(context).pushReplacementNamed("/auth/login");
     }else if(e is UpdatePasswordException){
-      alertModalDialog<String>(context, e.message, title: "Erro ao atualizar senha");
+      alertDialog<String>(context, e.message, title: "Erro ao atualizar senha");
     }
     else
     {
-      alertModalDialog<String>(context, e.toString(), title: "Format Invalid Error");
+      alertDialog<String>(context, e.toString(), title: "Format Invalid Error");
     }
   }
 }
@@ -197,8 +197,8 @@ class _MainApp extends State<LFinanca> {
       routes: {
         '/auth/login' : (context) => const LoginPage(),
         // '/dashboard': (context) => const HomeView(),
-        '/dashboard': (context) => const Dashboard(),
-        '/register' : (context) => const CreateUserForm(),
+        '/dashboard': (context) => const AmountsPage(),
+        '/register' : (context) => const CreateUserPage(),
         '/forget-password' : (context) => const ForgetPasswordPage(),
       },
     );
