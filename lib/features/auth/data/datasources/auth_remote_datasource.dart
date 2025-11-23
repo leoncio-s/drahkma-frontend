@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:web/web.dart';
 import 'dart:io' as io show Platform;
 import 'package:flutter/foundation.dart';
@@ -9,7 +9,7 @@ import 'package:requests/requests.dart';
 
 class AuthRemoteDatasource {
 
-  static User user = User();
+  static UserModel user = UserModel();
   static final Storage _st = window.localStorage;
 
   static Future<Map> login(String login, String password) async {
@@ -28,10 +28,10 @@ class AuthRemoteDatasource {
   static dynamic _storage(String data){
     if(kIsWeb){
       _st.setItem('auth_token', data);
-      user = user.toObject(jsonDecode(data));
+      user = UserModel.toObject(jsonDecode(data));
       return user;
     }else if(io.Platform.isWindows){
-      user = user.toObject(jsonDecode(data));
+      user = UserModel.toObject(jsonDecode(data));
       return user;
     }
     
@@ -42,7 +42,7 @@ class AuthRemoteDatasource {
     return _st.getItem('email');
   }
 
-  static Future<User?> getAuthUser() async {
+  static Future<UserModel?> getAuthUser() async {
 
     if(kIsWeb){
       String? data = _st.getItem('auth_token');
@@ -53,7 +53,7 @@ class AuthRemoteDatasource {
 
       var jsonD = jsonDecode(data.toString());
 
-      user = user.toObject(jsonD);
+      user = UserModel.toObject(jsonD);
 
       return user;
       
@@ -64,7 +64,7 @@ class AuthRemoteDatasource {
     return null;
   }
 
-  static Future<void> updateAuthUser(User user) async
+  static Future<void> updateAuthUser(UserModel user) async
   {
     if(kIsWeb)
     {
@@ -73,11 +73,11 @@ class AuthRemoteDatasource {
   }
 
   static void logout(){
-    user = User();
+    user = UserModel();
     if(kIsWeb){
       _st.clear();
     }else if(io.Platform.isWindows){
-      user = User();
+      user = UserModel();
     }
   }
 

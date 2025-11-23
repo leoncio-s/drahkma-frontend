@@ -1,7 +1,7 @@
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:drahkma/features/auth/data/models/auth.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/auth/data/models/auth_model.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
 import 'package:drahkma/features/users/presentation/pages/new_password_form_page.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
@@ -44,7 +44,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
     return Drawer(
         width: widthDrawer,
         backgroundColor: Theme.of(context).primaryColorDark,
-        child: FutureBuilder<User?>(
+        child: FutureBuilder<UserModel?>(
             future: AuthRemoteDatasource.getAuthUser(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
@@ -142,7 +142,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
             if (value!.isEmpty) {
               return "Campo Obrigatório";
             }
-            var validate = Auth.validateEmail(value);
+            var validate = AuthModel.validateEmail(value);
             if (validate is Map) {
               return validate['error'];
             }
@@ -195,7 +195,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
 
   Future<void> _submitForm() async{
     if(_formKey.currentState!.validate()){
-      User user = User(
+      UserModel user = UserModel(
         fullname: _fullName.text,
         email: _email.text,
         phoneNumber: _phone.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "")

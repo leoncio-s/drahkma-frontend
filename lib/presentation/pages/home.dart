@@ -4,7 +4,7 @@ import 'package:drahkma/features/bank_accounts/presentation/views/bank_accounts_
 import 'package:drahkma/features/cards/presentation/views/cards_view.dart';
 import 'package:drahkma/features/categories/presentation/views/categories_view.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/features/amounts/presentation/pages/dashboard_page.dart';
 import 'package:drahkma/features/items/presentation/views/inflow_view.dart';
 import 'package:drahkma/features/items/presentation/views/outflow_view.dart';
@@ -28,7 +28,7 @@ class HomeViewState extends State<HomeView> {
     });
   }
 
-  Future<User?> _profile()async{
+  Future<UserModel?> _profile()async{
     Future.delayed(const Duration(milliseconds: 200));
     return await UserRemoteDatasource.profile();
   }

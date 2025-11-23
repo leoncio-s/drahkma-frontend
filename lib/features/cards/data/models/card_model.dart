@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:drahkma/features/cards/domain/entities/card.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
+import 'package:flutter/material.dart' hide Card;
 import 'package:intl/intl.dart';
 
-class Card{
+class CardModel{
     int? _id;
     CardsTypeEnum? _type;
     String? _brand;
@@ -13,7 +14,7 @@ class Card{
     int? _invoiceDay;
 
 
-    Card({
+    CardModel({ 
       int? id, 
       CardsTypeEnum? type,
       String? brand,
@@ -26,8 +27,8 @@ class Card{
       setBrand = brand;
       setExpiresAt = expiresAt.toString();
       setFlag = flag;
-      setInvoice_day = invoiceDay;
-      setLast_4_digits = last4Digits;
+      setInvoiceDay = invoiceDay;
+      setLastFourDigits = last4Digits;
       setType = type;
     }
 
@@ -46,11 +47,10 @@ class Card{
       }
       
     }
-    // ignore: non_constant_identifier_names
-    set setLast_4_digits(String? lst) => _last4Digits = lst;
-    // ignore: non_constant_identifier_names
-    set setInvoice_day(int? invoice){
-      // var val = DateTime.parse(invoice!);
+    
+    set setLastFourDigits(String? lst) => _last4Digits = lst;
+    
+    set setInvoiceDay(int? invoice){
       if((invoice! > 0 && invoice < 31)){
         _invoiceDay = invoice;
       }else{
@@ -84,17 +84,16 @@ class Card{
     }
 
   @override
-  factory Card.toObject(Map<String, dynamic> data) {
+  factory CardModel.toObject(Map<String, dynamic> data) {
     String? dataBrand = data['brand'] ?? "";
     int? dataId = data['id'] ?? 0;
-    // setUser = data['user'] ?? 0;
     CardsTypeEnum? dataType = CardsTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
     CardFlagsEnum? dataFlag = CardFlagsEnum.values.firstWhere((val) => val.name == data['flag'].toString());
     String? dataExpiresAt = data['expires_at'] ?? "";
     int? dataInvoiceDay = data['invoice_day'] ?? 1;
     String? dataLast4Digits = data['last_4_digits'] ?? "";
 
-    return Card(
+    return CardModel(
       id: dataId, 
       brand: dataBrand,
       type: dataType,
@@ -117,11 +116,17 @@ class Card{
       'last_4_digits' : _last4Digits
     };
   }
+
+  Card toEntity(){
+    return Card(
+      id: _id,
+      brand: _brand,
+      type: _type,
+      expiresAt: _expiresAt,
+      flag: _flag,
+      invoiceDay: _invoiceDay,
+      last4Digits: _last4Digits
+    );
+  }
   
-}
-
-class CardsSort{
-  static Comparator<Card> asc = (Card it1, Card it2) =>  it1.brand!.compareTo(it2.brand.toString());
-
-  static Comparator<Card> desc = (Card it1, Card it2) => it2.brand!.compareTo(it1.brand.toString());
 }

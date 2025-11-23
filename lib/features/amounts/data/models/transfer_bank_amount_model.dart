@@ -1,17 +1,14 @@
 
+import 'package:drahkma/features/amounts/domain/entities/transfer_bank_amount.dart';
 import 'package:drahkma/features/items/domain/enums/transfer_bank_type_enum.dart';
 
-class TransferBankAmount{
-  double? total = 0.0;
-  String? description = "";
-  TransferBankTypeEnum? type = TransferBankTypeEnum.OTHERS;
+class TransferBankAmountModel extends TransferBankAmount {
 
-  TransferBankAmount({this.total, this.description, this.type});
+  TransferBankAmountModel({super.total, super.description, super.type});
 
-  factory TransferBankAmount.fromJson(Map<String, dynamic> data){
-
+  factory TransferBankAmountModel.fromJson(Map<String, dynamic> data){
     
-    return TransferBankAmount(
+    return TransferBankAmountModel(
       total: data['total'],
       description: data['description'],
       type: TransferBankTypeEnum.values.where((el) => el.name == data['type']).first

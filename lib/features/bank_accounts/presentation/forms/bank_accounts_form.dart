@@ -2,15 +2,15 @@ import 'dart:ui';
 
 import 'package:drahkma/core/utils/string_regex_validate.dart';
 import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_model.dart';
 
 
 class BankAccountsForm extends StatefulWidget {
-  final BankAccounts? bankAccounts;
+  final BankAccountModel? bankAccounts;
   const BankAccountsForm({super.key, this.bankAccounts});
 
   @override
@@ -23,7 +23,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
   final TextEditingController _bankCode = TextEditingController();
   final TextEditingController _agency = TextEditingController();
   final TextEditingController _accountNumber = TextEditingController();
-  List<Banks> _banks = [];
+  List<BankModel> _banks = [];
 
   void _getBanks() async {
     var banks = await BankAccountsRemoteDatasource().getBanks();
@@ -34,7 +34,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
     }
   }
 
-  static String _displayStringForBanksOption(Banks bank) => bank.fullName ?? "";
+  static String _displayStringForBanksOption(BankModel bank) => bank.fullName ?? "";
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
 
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 70.0),
-                child: Autocomplete<Banks>(
+                child: Autocomplete<BankModel>(
                   displayStringForOption: _displayStringForBanksOption,
                   initialValue: _bankName.value,
                   fieldViewBuilder: (context, controller, focusNode,
@@ -118,12 +118,12 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   ),
                   optionsBuilder: (TextEditingValue txt) async {
                     if (txt.text == "") {
-                      return await BankAccountsRemoteDatasource().getBanks() ?? Iterable<Banks>.generate(1, (int i)=>Banks(null, 'Itau', 341, 'BCO Itau S.A'));
+                      return await BankAccountsRemoteDatasource().getBanks() ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
                     }
-                    return _banks.where((Banks? obj) =>
+                    return _banks.where((BankModel? obj) =>
                         obj!.fullName.toString().toUpperCase().contains(txt.text.toUpperCase()));
                   },
-                  onSelected: (Banks? bank) {
+                  onSelected: (BankModel? bank) {
                     setState(() {
                       _bankCode.text = bank!.code.toString();
                       _bankName.text = bank.fullName!;
@@ -263,7 +263,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                             dynamic ret;
                             if (widget.bankAccounts?.id != null) {
                               ret = await BankAccountsRemoteDatasource().update(
-                                  BankAccounts(
+                                  BankAccountModel(
                                       id: widget.bankAccounts!.id,
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
@@ -271,7 +271,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                                       accountNumber: _accountNumber.text));
                             } else {
                               ret = await BankAccountsRemoteDatasource().save(
-                                  BankAccounts(
+                                  BankAccountModel(
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
                                       agency: _agency.text,
@@ -280,7 +280,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
 
                             if (!mounted) return;
 
-                            if (ret is BankAccounts) {
+                            if (ret is BankAccountModel) {
                               Navigator.of(context).pop(ret);
                             } else {
                               SnackBar snackBar = SnackBar(

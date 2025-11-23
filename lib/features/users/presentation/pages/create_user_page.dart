@@ -1,8 +1,8 @@
 
 import 'package:drahkma/core/utils/text_scaler.dart';
-import 'package:drahkma/features/auth/data/models/auth.dart';
+import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
@@ -127,7 +127,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         if (value!.isEmpty) {
           return "Campo Obrigatório";
         }
-        var validate = Auth.validateEmail(value);
+        var validate = AuthModel.validateEmail(value);
         if (validate is Map) {
           return validate['error'];
         }
@@ -240,7 +240,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
       dynamic ret = await UserRemoteDatasource.register(user);
 
-      if (ret.runtimeType == User) {
+      if (ret.runtimeType == UserModel) {
         context.mounted
             // ignore: use_build_context_synchronously
             ? Navigator.maybeOf(context)?.pushReplacement(

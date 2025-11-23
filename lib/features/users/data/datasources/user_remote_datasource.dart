@@ -3,11 +3,11 @@ import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/core/exceptions/update_password_exception.dart';
 import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:requests/requests.dart';
 
 class UserRemoteDatasource {
-  static Future<User?> profile() async {
+  static Future<UserModel?> profile() async {
     var data = await AuthRemoteDatasource.getAuthUser();
     var request = await Requests.get("${Config.urlApi}user", headers: {
       'Authorization': " Bearer ${data?.token ?? ''}",
@@ -17,8 +17,8 @@ class UserRemoteDatasource {
     if (request.statusCode != 200) {
       throw UnauthenticatedException();
     }
-    var user = User();
-    user = user.toObject(jsonDecode(request.body));
+    var user = UserModel();
+    user = UserModel.toObject(jsonDecode(request.body));
     user.token = data!.token;
     AuthRemoteDatasource.updateAuthUser(user);
     return user;
@@ -31,7 +31,7 @@ class UserRemoteDatasource {
           headers: {'Content-type': 'application/json'});
 
       if (request.statusCode == 201) {
-        return User().toObject(request.json());
+        return UserModel.toObject(request.json());
       } else {
         return request.json();
       }
@@ -40,10 +40,10 @@ class UserRemoteDatasource {
     }
   }
 
-  static Future<dynamic> update(User user) async
+  static Future<dynamic> update(UserModel user) async
   {
     try{
-      User? userAuth = await AuthRemoteDatasource.getAuthUser();
+      UserModel? userAuth = await AuthRemoteDatasource.getAuthUser();
       var request = await Requests.put(
         "${Config.urlApi}user", 
         json: user.toMap(user), 
@@ -72,7 +72,7 @@ class UserRemoteDatasource {
 
   static Future<Map> updatePassword(String password, String newPassword, String confNewPassword) async
   {
-    User? authUser = await AuthRemoteDatasource.getAuthUser();
+    UserModel? authUser = await AuthRemoteDatasource.getAuthUser();
     var data = {
       'password': password,
       'new_password': newPassword,

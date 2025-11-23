@@ -1,18 +1,23 @@
-class User{
-    int? id;
-    String? fullname;
-    String? email;
-    String? phoneNumber;
-    bool? actived;
-    DateTime? emailVerifiedAt;
-    DateTime? createdAt;
-    DateTime? updatedAt ;
+import 'package:drahkma/features/users/domain/entities/user.dart';
+
+class UserModel extends User {
     String? token;
 
-    User({this.id, this.fullname, this.email, this.actived, this.phoneNumber, this.emailVerifiedAt, this.createdAt, this.updatedAt});
+    UserModel({super.id, super.fullname, super.email, super.actived, super.phoneNumber, super.emailVerifiedAt, super.createdAt, super.updatedAt, this.token});
 
 
-    User toObject(Map data){
+    @override
+    factory UserModel.toObject(Map data){
+      final int? id;
+      final String? fullname;
+      final String? email;
+      final String? phoneNumber;
+      final bool? actived;
+      final DateTime? emailVerifiedAt;
+      final DateTime? createdAt;
+      final DateTime? updatedAt;
+      String? token = '';
+
       if(data['user'] != null){
         actived = data['user']['actived'];
         id= data['user']['id'];
@@ -33,7 +38,17 @@ class User{
         email=data['email'];
         phoneNumber = data['phone_number'];
       }
-      return this;
+      return UserModel(
+        id: id,
+        fullname: fullname,
+        email: email,
+        actived: actived,
+        phoneNumber: phoneNumber,
+        emailVerifiedAt: emailVerifiedAt,
+        createdAt: createdAt,
+        updatedAt: updatedAt,
+        token: token
+      );
     }
 
     Map toMap(dynamic data) => {
