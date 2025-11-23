@@ -1,7 +1,7 @@
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
-import 'package:drahkma/features/categories/data/models/category.dart';
-import 'package:drahkma/features/categories/domain/categories_sort.dart';
+import 'package:drahkma/features/categories/data/models/category_model.dart';
+import 'package:drahkma/features/categories/domain/util/category_model_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/categories/presentation/forms/categories_form.dart';
@@ -16,7 +16,7 @@ class CategoriesView extends DrahkmaStatefulWidget {
 }
 
 class CategoriesViewState extends State<CategoriesView> {
-  List<Category>? categories;
+  List<CategoryModel>? categories;
   // Timer? _timer;
   String? _message;
   double _turns = 0.0;
@@ -79,7 +79,7 @@ class CategoriesViewState extends State<CategoriesView> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              categories!.sort(CategoriesSort.asc);
+                              categories!.sort(CategoryModelSort.asc);
                             });
                           },
                           icon: const Icon(Icons.arrow_upward)),
@@ -91,7 +91,7 @@ class CategoriesViewState extends State<CategoriesView> {
                           onPressed: () {
                             categories != null
                                 ? setState(() {
-                                    categories!.sort(CategoriesSort.desc);
+                                    categories!.sort(CategoryModelSort.desc);
                                   })
                                 : null;
                           },
@@ -110,7 +110,7 @@ class CategoriesViewState extends State<CategoriesView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            Category? data = await Navigator.of(context).push(
+            CategoryModel? data = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => CategoriesForm()));
             if (data != null){
               _getData();
@@ -131,7 +131,7 @@ class CategoriesViewState extends State<CategoriesView> {
                               contentPadding: const EdgeInsets.all(5),
                               titleAlignment: ListTileTitleAlignment.center,
                               onTap: () async {
-                                Category? data = await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CategoriesForm(category: el)));
+                                CategoryModel? data = await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>CategoriesForm(category: el)));
                                 if(data != null){
                                   _getData();
                                 }

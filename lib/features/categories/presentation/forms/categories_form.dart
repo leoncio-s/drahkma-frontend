@@ -1,6 +1,6 @@
 
 import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
-import 'package:drahkma/features/categories/data/models/category.dart';
+import 'package:drahkma/features/categories/data/models/category_model.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +8,7 @@ import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CategoriesForm extends StatefulWidget {
-  Category? category;
+  CategoryModel? category;
   CategoriesForm({super.key, this.category});
 
   @override
@@ -109,15 +109,15 @@ class CategoriesStateForm extends State<CategoriesForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if(widget.category?.id != null){
-                              ret = await CategoriesRemoteDatasource().update(Category(id: widget.category!.id, description: _description.text.toUpperCase()));
+                              ret = await CategoriesRemoteDatasource().update(CategoryModel(id: widget.category!.id, description: _description.text.toUpperCase()));
                             }else{
                               ret = await CategoriesRemoteDatasource().save(
-                                Category(
+                                CategoryModel(
                                     description:
                                         _description.text.toUpperCase()));
                             }
                             if(!mounted) return;
-                            if (ret is Category) {
+                            if (ret is CategoryModel) {
                               Navigator.of(context).pop(ret);
                             } else {
                               SnackBar snackBar = SnackBar(

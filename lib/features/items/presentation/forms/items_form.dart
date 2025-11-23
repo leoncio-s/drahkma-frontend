@@ -1,12 +1,12 @@
 
 import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
 import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
-import 'package:drahkma/features/cards/data/models/card.dart';
-import 'package:drahkma/features/categories/data/models/category.dart';
+import 'package:drahkma/features/cards/data/models/card_model.dart';
+import 'package:drahkma/features/categories/data/models/category_model.dart';
 import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
-import 'package:drahkma/features/items/data/models/item.dart';
-import 'package:drahkma/features/items/data/models/transferbank.dart';
+import 'package:drahkma/features/items/data/models/item_model.dart';
+import 'package:drahkma/features/items/data/models/transferbank_model.dart';
 import 'package:drahkma/features/items/domain/enums/transfer_bank_type_enum.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
@@ -17,7 +17,7 @@ import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 class ItemsForm extends StatefulWidget {
-  final Item? data;
+  final ItemModel? data;
   final bool expense;
   const ItemsForm({super.key, this.data, this.expense = true});
 
@@ -47,9 +47,9 @@ class ItemsFormState extends State<ItemsForm> {
   DateFormat dateFormat = Config.dateFormat;
   // NumberFormat currencyFormat = Config.currencyFormat;
 
-  List<Category>? categories;
-  List<BankAccounts> bankAccounts = [];
-  List<Card> cards = [];
+  List<CategoryModel>? categories;
+  List<BankAccountModel> bankAccounts = [];
+  List<CardModel> cards = [];
   dynamic data;
   bool expense = false;
 
@@ -485,7 +485,7 @@ class ItemsFormState extends State<ItemsForm> {
                 if (_formKey.currentState!.validate()) {
                   dynamic ret;
                   if (widget.data?.id != null) {
-                    ret = await ItemsRemoteDatasource().update(Item(
+                    ret = await ItemsRemoteDatasource().update(ItemModel(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
@@ -497,7 +497,7 @@ class ItemsFormState extends State<ItemsForm> {
                             ? null
                             : cards.firstWhere((el) => el.id == _card),
                         transferBank: _transferbank
-                            ? TransferBank(
+                            ? TransferBankModel(
                                 id: widget.data?.transferBank?.id,
                                 bankAccount: bankAccounts.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
@@ -506,7 +506,7 @@ class ItemsFormState extends State<ItemsForm> {
                             : null));
                     // ret = null;
                   } else {
-                    ret = await ItemsRemoteDatasource().save(Item(
+                    ret = await ItemsRemoteDatasource().save(ItemModel(
                         card: _transferbank
                             ? null
                             : cards.firstWhere((el) => el.id == _card),
@@ -517,7 +517,7 @@ class ItemsFormState extends State<ItemsForm> {
                             categories!.firstWhere((el) => el.id == _category),
                         expense: expense,
                         transferBank: _transferbank
-                            ? TransferBank(
+                            ? TransferBankModel(
                                 bankAccount: bankAccounts.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
@@ -525,7 +525,7 @@ class ItemsFormState extends State<ItemsForm> {
                             : null));
                   }
 
-                  if (ret is Item) {
+                  if (ret is ItemModel) {
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context, ret);
                   } else {

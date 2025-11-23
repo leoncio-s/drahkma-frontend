@@ -1,6 +1,6 @@
 
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/features/amounts/data/models/dashboard.dart';
+import 'package:drahkma/features/amounts/data/models/dashboard_model.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:requests/requests.dart';
@@ -8,7 +8,7 @@ import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.da
 
 class AmountRemoteDatasource {
   
-  Future<Dashboard?> getAmounts(DateTime st, DateTime fn) async {
+  Future<DashboardModel?> getAmounts(DateTime st, DateTime fn) async {
     var user = await AuthRemoteDatasource.getAuthUser();
     var start = DateFormat('yyyyMMdd').format(st);
     var end = DateFormat('yyyyMMdd').format(fn);
@@ -19,7 +19,7 @@ class AmountRemoteDatasource {
     });
 
     if(response.statusCode == 200){
-      Dashboard dash = Dashboard.fromJson(response.json());
+      DashboardModel dash = DashboardModel.fromJson(response.json());
  
       return dash;
     }

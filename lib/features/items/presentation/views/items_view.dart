@@ -1,18 +1,18 @@
 import 'package:drahkma/core/notifiers/app_notifier.dart';
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
-import 'package:drahkma/features/items/data/models/item.dart';
+import 'package:drahkma/features/items/data/models/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/items/presentation/forms/items_form.dart';
 import 'package:drahkma/features/items/domain/enums/items_order_enum.dart';
-import 'package:drahkma/features/items/domain/items_sort.dart';
+import 'package:drahkma/features/items/util/item_model_sort.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class ItemsView extends StatefulWidget{
   final String title;
-  final Future<List<Item>?> Function(DateTime, DateTime) getData;
+  final Future<List<ItemModel>?> Function(DateTime, DateTime) getData;
   final bool expense;
   const ItemsView(
       {super.key,
@@ -27,7 +27,7 @@ class ItemsView extends StatefulWidget{
 class _ItemsViewState extends State<ItemsView>{
   DateTime startDate = appNotifier.dateTimeRange.start;
   DateTime finishDate = appNotifier.dateTimeRange.end;
-  List<Item>? _items;
+  List<ItemModel>? _items;
 
   ItemsOrderEnum orderEnum = ItemsOrderEnum.DataDecrescente;
 
@@ -93,7 +93,7 @@ class _ItemsViewState extends State<ItemsView>{
                 .push(MaterialPageRoute(
                     builder: (context) => ItemsForm(expense: widget.expense)))
                 .then((data) {
-              if (data is Item) {
+              if (data is ItemModel) {
                 _getData();
               }
             });
@@ -138,37 +138,37 @@ class _ItemsViewState extends State<ItemsView>{
                           switch (value) {
                             case ItemsOrderEnum.DataAscendente:
                               setState(() {
-                                _items!.sort(ItemsSorts.dateAsc);
+                                _items!.sort(ItemModelSort.dateAsc);
                               });
                               break;
                             case ItemsOrderEnum.DataDecrescente:
                               setState(() {
-                                _items!.sort(ItemsSorts.dateDesc);
+                                _items!.sort(ItemModelSort.dateDesc);
                               });
                               break;
                             case ItemsOrderEnum.ValorAscendente:
                               setState(() {
-                                _items!.sort(ItemsSorts.valueAsc);
+                                _items!.sort(ItemModelSort.valueAsc);
                               });
                               break;
                             case ItemsOrderEnum.ValorDecrescente:
                               setState(() {
-                                _items!.sort(ItemsSorts.valueDesc);
+                                _items!.sort(ItemModelSort.valueDesc);
                               });
                               break;
                             case ItemsOrderEnum.DescricaoAscendente:
                               setState(() {
-                                _items!.sort(ItemsSorts.descrAsc);
+                                _items!.sort(ItemModelSort.descrAsc);
                               });
                               break;
                             case ItemsOrderEnum.DescricaoDecrescente:
                               setState(() {
-                                _items!.sort(ItemsSorts.descrDesc);
+                                _items!.sort(ItemModelSort.descrDesc);
                               });
                               break;
                             default:
                               setState(() {
-                                _items!.sort(ItemsSorts.dateAsc);
+                                _items!.sort(ItemModelSort.dateAsc);
                               });
                               break;
                           }
@@ -323,7 +323,7 @@ class _ItemsViewState extends State<ItemsView>{
                                           expense: widget.expense,
                                         )))
                                 .then((data) {
-                              if (data is Item) {
+                              if (data is ItemModel) {
                                 // setState(() {});
                                 _getData();
                               }

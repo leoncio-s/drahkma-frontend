@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
-import 'package:drahkma/features/cards/data/models/card.dart';
+import 'package:drahkma/features/cards/data/models/card_model.dart';
+import 'package:drahkma/features/cards/utils/card_model_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:drahkma/features/cards/presentation/forms/cards_form.dart';
@@ -17,7 +18,7 @@ class CardsView extends DrahkmaStatefulWidget {
 }
 
 class CardsViewState extends State<CardsView> {
-  List<Card>? cards;
+  List<CardModel>? cards;
   String? _message;
   double _turns = 0.0;
 
@@ -77,7 +78,7 @@ class CardsViewState extends State<CardsView> {
                         child: IconButton(
                             onPressed: () {
                               setState(() {
-                                cards!.sort(CardsSort.asc);
+                                cards!.sort(CardModelSort.asc);
                               });
                             },
                             icon: const Icon(Icons.arrow_upward)),
@@ -92,7 +93,7 @@ class CardsViewState extends State<CardsView> {
                               cards != null
                                   ? setState(() {
                                       cards!
-                                          .sort(CardsSort.desc);
+                                          .sort(CardModelSort.desc);
                                     })
                                   : null;
                             },
@@ -111,7 +112,7 @@ class CardsViewState extends State<CardsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            Card? data = await Navigator.of(context).push(
+            CardModel? data = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => CardsForm()));
             if (data != null) {
               _getData();
@@ -135,7 +136,7 @@ class CardsViewState extends State<CardsView> {
                               titleAlignment: ListTileTitleAlignment.center,
                               isThreeLine: true,
                               onTap: () async {
-                                Card? data =
+                                CardModel? data =
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>

@@ -1,7 +1,7 @@
 import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:drahkma/features/auth/data/models/auth.dart';
+import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +42,7 @@ class _LoginPage extends State<LoginPage> {
     });
   }
 
-  Future<User?> _verifyIfUserLogged() async
+  Future<UserModel?> _verifyIfUserLogged() async
   {
     Future.delayed(const Duration(milliseconds: 200));
     return await UserRemoteDatasource.profile();
@@ -56,7 +56,7 @@ class _LoginPage extends State<LoginPage> {
         return const Center(child: CircularProgressIndicator(value: 8.0,),);
       }
       
-      if(snap.data is User)
+      if(snap.data is UserModel)
       {
         _toDashboard();
         return const Center();
@@ -134,7 +134,7 @@ class _LoginPage extends State<LoginPage> {
         keyboardType: TextInputType.emailAddress,
         focusNode: _emailFocusNode,
         validator: (value) {
-          var validate = Auth.validateEmail(value);
+          var validate = AuthModel.validateEmail(value);
           if (validate is Map) {
             return validate['error'];
           }
@@ -219,7 +219,7 @@ class _LoginPage extends State<LoginPage> {
 
               if(!mounted) return;
 
-              if (ret is User) {
+              if (ret is UserModel) {
                 closeModal();
                 _toDashboard();
               } else {

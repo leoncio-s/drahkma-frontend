@@ -3,29 +3,29 @@ import 'dart:convert';
 import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:drahkma/Interfaces/services.dart';
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/features/categories/data/models/category.dart';
-import 'package:drahkma/features/users/data/models/user.dart';
+import 'package:drahkma/features/categories/data/models/category_model.dart';
+import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:requests/requests.dart';
 
-class CategoriesRemoteDatasource implements Services<Category>{
+class CategoriesRemoteDatasource implements Services<CategoryModel>{
 
   
   final String url = "${Config.urlApi}categories";
 
   @override
-  Future<List<Category>> get() async {
-    User? user = await AuthRemoteDatasource.getAuthUser();
+  Future<List<CategoryModel>> get() async {
+    UserModel? user = await AuthRemoteDatasource.getAuthUser();
     var request = await Requests.get(url,
     headers: {'Authorization' :  " Bearer ${user?.token ?? ''}"},
     );
 
-    List<Category>? toRet = [];
+    List<CategoryModel>? toRet = [];
 
     if(request.statusCode == 200){
       List<dynamic> data = jsonDecode(request.body);
       for (var el in data) {
         toRet.add(
-          Category.toObject(el)
+          CategoryModel.toObject(el)
         );
       }
     }
@@ -34,25 +34,25 @@ class CategoriesRemoteDatasource implements Services<Category>{
   }
   
   @override
-  Future save(Category data) async {
-    User? user = await AuthRemoteDatasource.getAuthUser();
+  Future save(CategoryModel data) async {
+    UserModel? user = await AuthRemoteDatasource.getAuthUser();
     var request = await Requests.post(url,
     json: data.toMap(),
     headers: {'Authorization' :  " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'},
     );
 
-    Category? cat;
+    CategoryModel? cat;
 
     if(request.statusCode == 201){
-      cat = Category.toObject(jsonDecode(request.body));
+      cat = CategoryModel.toObject(jsonDecode(request.body));
     }
 
     return cat;
   }
 
   @override
-  Future update(Category data) async {
-      User? user = await AuthRemoteDatasource.getAuthUser();
+  Future update(CategoryModel data) async {
+      UserModel? user = await AuthRemoteDatasource.getAuthUser();
       var request = await Requests.put(url,
       json: data.toMap(),
       headers: {'Authorization' :  " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json',},
@@ -63,7 +63,7 @@ class CategoriesRemoteDatasource implements Services<Category>{
         if(data['error'] != null){
           return data;
         }
-        return Category.toObject(data);
+        return CategoryModel.toObject(data);
       }else{
         var dt = jsonDecode(request.body);
         return dt;
@@ -71,8 +71,8 @@ class CategoriesRemoteDatasource implements Services<Category>{
   }
 
   @override
-  Future delete(Category data) async {
-      User? user = await AuthRemoteDatasource.getAuthUser();
+  Future delete(CategoryModel data) async {
+      UserModel? user = await AuthRemoteDatasource.getAuthUser();
       var request = await Requests.delete("$url/${data.id}",
       headers: {'Authorization' :  " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'},
       );

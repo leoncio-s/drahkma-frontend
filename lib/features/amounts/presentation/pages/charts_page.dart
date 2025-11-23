@@ -2,15 +2,15 @@ import 'dart:collection';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:drahkma/features/amounts/data/models/amount.dart';
-import 'package:drahkma/features/amounts/data/models/transfer_bank_amount.dart';
+import 'package:drahkma/features/amounts/data/models/amount_model.dart';
+import 'package:drahkma/features/amounts/data/models/transfer_bank_amount_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/notifiers/data_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartsWidgetTotalAmountGroup extends StatelessWidget {
-  final List<Amount>? data;
+  final List<AmountModel>? data;
   final String title;
 
   const ChartsWidgetTotalAmountGroup(
@@ -63,11 +63,11 @@ class ChartsWidgetTotalAmountGroup extends StatelessWidget {
       tooltipBehavior: TooltipBehavior(enable: true),
     );
   }
-  List<XyDataSeries<Amount, String>> _series() {
-    List<ColumnSeries<Amount, String>> series = [];
+  List<XyDataSeries<AmountModel, String>> _series() {
+    List<ColumnSeries<AmountModel, String>> series = [];
     HashSet categories = HashSet();
 
-    for (Amount dt in data!) {
+    for (AmountModel dt in data!) {
       categories.add(dt.description);
     }
 
@@ -85,9 +85,9 @@ class ChartsWidgetTotalAmountGroup extends StatelessWidget {
         dataSource: data,
         // dataLabelMapper: (AmountGroupDto amount, _) =>
         //     amount.description,
-        xValueMapper: (Amount amounts, _) =>
+        xValueMapper: (AmountModel amounts, _) =>
             amounts.description,
-        yValueMapper: (Amount amount, _) =>
+        yValueMapper: (AmountModel amount, _) =>
             amount.total as double,
         // sortingOrder: SortingOrder.ascending,
         // sortFieldValueMapper: (datum, index) => datum.description,
@@ -106,7 +106,7 @@ class ChartsWidgetTotalAmountGroup extends StatelessWidget {
 ///
 ///
 class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
-  final List<TransferBankAmount>? data;
+  final List<TransferBankAmountModel>? data;
   final String title;
 
   const ChartsWidgetTotalAmountTranferBank(
@@ -158,11 +158,11 @@ class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
     );
   }
 
-  List<XyDataSeries<TransferBankAmount, String>> _series() {
-    List<ColumnSeries<TransferBankAmount, String>> series = [];
+  List<XyDataSeries<TransferBankAmountModel, String>> _series() {
+    List<ColumnSeries<TransferBankAmountModel, String>> series = [];
     HashSet categories = HashSet();
 
-    for (TransferBankAmount dt in data!) {
+    for (TransferBankAmountModel dt in data!) {
       categories.add(dt.description);
     }
 
@@ -179,11 +179,11 @@ class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
 
       series.add(ColumnSeries(
         dataSource: data,
-        dataLabelMapper: (TransferBankAmount amount, _) =>
+        dataLabelMapper: (TransferBankAmountModel amount, _) =>
             amount.description,
-        xValueMapper: (TransferBankAmount amounts, _) =>
+        xValueMapper: (TransferBankAmountModel amounts, _) =>
             amounts.description == el ? amounts.type?.name as String : null,
-        yValueMapper: (TransferBankAmount amount, _) =>
+        yValueMapper: (TransferBankAmountModel amount, _) =>
             amount.total as double,
         sortingOrder: SortingOrder.ascending,
         sortFieldValueMapper: (datum, index) => datum.type?.name.hashCode,

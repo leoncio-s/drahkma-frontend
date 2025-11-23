@@ -1,19 +1,19 @@
 
-class Category{
-  int? id;
-  String? description;
+import 'package:drahkma/features/categories/domain/entities/category.dart';
 
-  Category({this.id, this.description});
+class CategoryModel extends Category{
+
+  CategoryModel({super.id, super.description});
 
   
   @override
-  factory Category.toObject(Map<String, dynamic> data){
+  factory CategoryModel.toObject(Map<String, dynamic> data){
     // ignore: no_leading_underscores_for_local_identifiers
     int? _id = data['id'] ?? 0;
     // ignore: no_leading_underscores_for_local_identifiers
     String? _description = data['description'] ?? "";
 
-    return Category(id: _id, description: _description);
+    return CategoryModel(id: _id, description: _description);
   }
 
   @override

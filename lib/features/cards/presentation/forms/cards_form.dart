@@ -5,7 +5,7 @@ import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
-import 'package:drahkma/features/cards/data/models/card.dart';
+import 'package:drahkma/features/cards/data/models/card_model.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
 import 'package:drahkma/core/utils/months.dart';
@@ -13,7 +13,7 @@ import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CardsForm extends StatefulWidget {
-  Card? cards;
+  CardModel? cards;
   CardsForm({super.key, this.cards});
 
   @override
@@ -372,7 +372,7 @@ class CardsStateForm extends State<CardsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.cards?.id != null) {
-                              ret = await CardsRemoteDatasource().update(Card(
+                              ret = await CardsRemoteDatasource().update(CardModel(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
@@ -381,7 +381,7 @@ class CardsStateForm extends State<CardsForm> {
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await CardsRemoteDatasource().save(Card(
+                              ret = await CardsRemoteDatasource().save(CardModel(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
@@ -389,7 +389,7 @@ class CardsStateForm extends State<CardsForm> {
                                   flag: _flag,
                                   type: _type));
                             }
-                            if (ret is Card) {
+                            if (ret is CardModel) {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context, ret);
                             } else {

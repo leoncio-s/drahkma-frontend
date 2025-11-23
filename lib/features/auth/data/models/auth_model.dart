@@ -1,14 +1,11 @@
 
-class Auth{
-  
-  // ignore: unused_field
-  late String? _email;
-  // ignore: unused_field
-  late String? _password;
+import 'package:drahkma/features/auth/domain/entities/auth.dart';
 
-  Auth({String? login, String? password}){
-    _email = login;
-    _password = password;
+class AuthModel extends Auth{
+
+  AuthModel({String? login, String? password}){
+    super.email = login;
+    super.password = password;
   }
 
 
@@ -27,14 +24,11 @@ class Auth{
 
     return {"error": "Senha inválido ou incorreto, verifique"};
   }
-
-  set email(String? value)  => _email = value;
-  set password(String? value)  => _password = value;
   
   Map<String, String?>toMap() {
     return {
-      "email": _email,
-      "password" : _password
+      "email": super.email,
+      "password" : super.password
     };
   }
 }

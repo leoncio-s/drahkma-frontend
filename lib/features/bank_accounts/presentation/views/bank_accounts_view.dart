@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
+import 'package:drahkma/features/bank_accounts/utils/bank_accounts_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_accounts/presentation/forms/bank_accounts_form.dart';
@@ -17,7 +18,7 @@ class BankAccountsView extends DrahkmaStatefulWidget {
 }
 
 class BankAccountsViewState extends State<BankAccountsView> {
-  List<BankAccounts>? bankAccounts;
+  List<BankAccountModel>? bankAccounts;
   String? _message;
   double _turns = 0.0;
 
@@ -44,11 +45,6 @@ class BankAccountsViewState extends State<BankAccountsView> {
     super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   // _timer?.cancel();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +112,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            BankAccounts? data = await Navigator.of(context).push(
+            BankAccountModel? data = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => BankAccountsForm()));
             if (data != null) {
               _getData();
@@ -142,7 +138,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                               contentPadding: const EdgeInsets.all(5),
                               titleAlignment: ListTileTitleAlignment.center,
                               onTap: () async {
-                                BankAccounts? data =
+                                BankAccountModel? data =
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
