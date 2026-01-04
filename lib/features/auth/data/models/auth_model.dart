@@ -4,8 +4,8 @@ import 'package:drahkma/features/auth/domain/entities/auth.dart';
 class AuthModel extends Auth{
 
   AuthModel({String? login, String? password}){
-    super.email = login;
-    super.password = password;
+    super.setEmail = login;
+    super.setPassword = password;
   }
 
 
@@ -27,8 +27,8 @@ class AuthModel extends Auth{
   
   Map<String, String?>toMap() {
     return {
-      "email": super.email,
-      "password" : super.password
+      "email": super.getEmail,
+      "password" : super.getPassword
     };
   }
 }

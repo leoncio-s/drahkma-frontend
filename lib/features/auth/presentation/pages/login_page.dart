@@ -1,5 +1,9 @@
-import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:drahkma/core/exceptions/invalid_credentials_exception.dart';
+import 'package:drahkma/core/exceptions/user_not_allowed_exception.dart';
+import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
+import 'package:drahkma/features/auth/data/source/local/auth_local_datasource_impl.dart';
+import 'package:drahkma/features/auth/domain/usecases/login_use_case.dart';
 import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
@@ -25,7 +29,9 @@ class _LoginPage extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    _email.text = AuthRemoteDatasource.storageGetEmail() ?? '';
+    getIt<AuthLocalDatasourceImpl>().getStorageEmail().then((value){
+      _email.text = value ?? '';
+    });
     notShowPassword = true;
   }
 
@@ -215,7 +221,8 @@ class _LoginPage extends State<LoginPage> {
 
           if (_formKey.currentState!.validate()) {
             try {
-              var ret = await AuthRemoteDatasource.login(_email.text, _password.text);
+              var auth = AuthModel(login: _email.text, password: _password.text);
+              var ret = await getIt<LoginUseCase>().call(auth: auth);
 
               if(!mounted) return;
 
@@ -224,7 +231,7 @@ class _LoginPage extends State<LoginPage> {
                 _toDashboard();
               } else {
                 final snackBar = SnackBar(
-                  content: Text(ret['message'] ?? "Problema para efetuar login, tente novamente!"),
+                  content: Text("Problema para efetuar login, tente novamente!"),
                   backgroundColor: Colors.red,
                   elevation: 10.0,
                   showCloseIcon: true,
@@ -239,6 +246,35 @@ class _LoginPage extends State<LoginPage> {
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
               }
 
+            }on InvalidCredentialsException catch (e)
+            {
+                final snackBar = SnackBar(
+                  content: Text(e.message),
+                  backgroundColor: Colors.red,
+                  elevation: 10.0,
+                  showCloseIcon: true,
+                  closeIconColor:
+                      Theme.of(context).primaryColor,
+                  duration: const Duration(seconds: 5),
+                  behavior: SnackBarBehavior.floating,
+                  dismissDirection: DismissDirection.startToEnd,
+                );
+                closeModal();
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }on UserNotAllowedException catch (e){
+                final snackBar = SnackBar(
+                  content: Text(e.message),
+                  backgroundColor: Colors.red,
+                  elevation: 10.0,
+                  showCloseIcon: true,
+                  closeIconColor:
+                      Theme.of(context).primaryColor,
+                  duration: const Duration(seconds: 5),
+                  behavior: SnackBarBehavior.floating,
+                  dismissDirection: DismissDirection.startToEnd,
+                );
+                closeModal();
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } on Exception catch (e) {
               debugPrint(e.toString());
               final snackBar = SnackBar(
