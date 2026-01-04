@@ -1,9 +1,16 @@
 class Auth {
-  final String? email;
-  final String? password;
+  String? _email;
+  String? _password;
 
-  Auth({this.email, this.password});
+  Auth({String? email, String? password})
+  {
+    setEmail = email;
+    setPassword = password;
+  }
 
-  set email(String? value)  => email = value;
-  set password(String? value)  => password = value;
+  set setEmail(String? value)  => _email = value;
+  set setPassword(String? value)  => _password = value;
+
+  String? get getEmail => _email;
+  String? get getPassword => _password;
 }

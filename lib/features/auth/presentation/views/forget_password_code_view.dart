@@ -1,5 +1,6 @@
 
-import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
@@ -56,7 +57,7 @@ class ForgetPasswordCodeViewState extends State<ForgetPasswordCodeView>{
             var closeModal = modalDialog(context, "loading", barrierDismissible: false);
             // showDialog(context: context, builder: showModal);
             try{
-              var ret = await AuthRemoteDatasource.forgetPasswordCode(email.text, code.text, password.value.text, confPassword.value.text);
+              var ret = await getIt<AuthRemoteDatasourceImpl>().forgetPasswordCode(email.text, code.text, password.value.text, confPassword.value.text);
               closeModal();
               if(!mounted) return;
               if(ret['message'] != null)
