@@ -25,7 +25,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
     if(loggedUser == null) return null;
 
     var request = await http.get(_url, headers: {
-      'Authorization': " Bearer ${loggedUser?.token ?? ''}",
+      'Authorization': " Bearer ${loggedUser.token ?? ''}",
       'Content-type': 'application/json',
     }).timeout(Duration(seconds: 10));
 
@@ -35,7 +35,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
     var user = UserModel();
     var json = jsonDecode(request.body);
     user = UserModel.toObject(json);
-    user.token = loggedUser!.token;
+    user.token = loggedUser.token;
     return user;
   }
 
@@ -67,12 +67,14 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
     try{
       UserModel? loggedUser = await _authLocalSource.getAuthToken();
 
+      if(loggedUser == null) throw UnauthenticatedException();
+
       var request = await http.put(
         _url, 
         body: jsonEncode((user as UserModel).toJson()),
         headers: {
           'Content-type': 'application/json', 
-          'Authorization' :  " Bearer ${loggedUser?.token ?? ''}",
+          'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
         }
         )
         .timeout(Duration(seconds: 10));
@@ -80,7 +82,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
       if(request.statusCode == 401){
         throw UnauthenticatedException();
       }else if(request.statusCode == 200){
-        user.token = loggedUser!.token;
+        user.token = loggedUser.token;
         getIt<AuthLocalDatasource>().saveAuthToken(user);
         return;
       }
@@ -107,6 +109,8 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   {
 
     UserModel? loggedUser = await _authLocalSource.getAuthToken();
+
+    if(loggedUser == null) throw UnauthenticatedException();
 
     var data = {
       'password': currentPassword,
