@@ -8,7 +8,7 @@ class UserDto extends UserModel
 
 
   @override
-  Map<String, dynamic> toJson()=>
+  Map<String, dynamic> toMap()=>
   {
       'fullname' : fullname,
       'email' : email,

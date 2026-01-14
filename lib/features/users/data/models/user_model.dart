@@ -52,7 +52,7 @@ class UserModel extends User {
       );
     }
 
-    Map toJson() => {
+    Map toMap() => {
       'actived' : actived,
       'id'  : id,
       'created_at' : createdAt?.toIso8601String(),

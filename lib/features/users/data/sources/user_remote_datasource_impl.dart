@@ -43,7 +43,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   Future<UserModel?> save(User data) async {
     try {
       var request = await http.post(_url,
-          body: jsonEncode((data as UserDto).toJson()),
+          body: jsonEncode((data as UserDto).toMap()),
           headers: {'Content-type': 'application/json'})
           .timeout(Duration(seconds: 20));
 
@@ -71,7 +71,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
 
       var request = await http.put(
         _url, 
-        body: jsonEncode((user as UserModel).toJson()),
+        body: jsonEncode((user as UserModel).toMap()),
         headers: {
           'Content-type': 'application/json', 
           'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
