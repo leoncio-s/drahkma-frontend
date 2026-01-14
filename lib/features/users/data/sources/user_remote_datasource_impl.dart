@@ -123,7 +123,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
         body: jsonEncode(data), 
         headers: {
           'Content-type': 'application/json', 
-          'Authorization' :  " Bearer ${loggedUser?.token ?? ''}",
+          'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
         }
     ).timeout(Duration(seconds: 20));
     var json;
