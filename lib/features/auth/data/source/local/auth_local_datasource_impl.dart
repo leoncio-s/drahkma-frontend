@@ -16,7 +16,8 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
     String? token = await storage.getString(Config.keyStorageAuthToken);
     if (token != null) {
       var json = JsonDecoder().convert(token);
-      return UserModel.toObject(json);
+      UserModel user = UserModel.toObject(json);
+      return user;
     }
     return null;
   }
@@ -25,7 +26,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   Future<void> saveAuthToken(UserModel user) async {
     storage.setString(
         Config.keyStorageAuthToken,
-        JsonEncoder().convert(user.toMap()));
+        JsonEncoder().convert(user.toJson()));
     return;
   }
   
@@ -35,7 +36,15 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
     return;
   }
 
+  @override
   Future<String?> getStorageEmail() async {
-    return await storage.getString('email');
+    var email = await storage.getString(Config.keyStorageEmail);
+    return email;
+  }
+
+  @override
+  Future<void> saveStorageEmail(String email) async
+  {
+    await storage.setString(Config.keyStorageEmail, email);
   }
 }

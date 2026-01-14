@@ -2,15 +2,13 @@ import 'package:drahkma/core/exceptions/invalid_credentials_exception.dart';
 import 'package:drahkma/core/exceptions/user_not_allowed_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource_impl.dart';
+import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
 import 'package:drahkma/features/auth/domain/usecases/login_use_case.dart';
-import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/usecases/user_profile.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,7 +27,7 @@ class _LoginPage extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    getIt<AuthLocalDatasourceImpl>().getStorageEmail().then((value){
+    getIt<AuthLocalDatasource>().getStorageEmail().then((value) {
       _email.text = value ?? '';
     });
     notShowPassword = true;
@@ -42,85 +40,87 @@ class _LoginPage extends State<LoginPage> {
     super.dispose();
   }
 
-  void _toDashboard(){
-    SchedulerBinding.instance.addPostFrameCallback((_){
-      if(mounted) Navigator.of(context).pushReplacementNamed("/dashboard");
+  void _toDashboard() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.of(context).pushReplacementNamed("/dashboard");
     });
-  }
-
-  Future<UserModel?> _verifyIfUserLogged() async
-  {
-    Future.delayed(const Duration(milliseconds: 200));
-    return await UserRemoteDatasource.profile();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: _verifyIfUserLogged(), builder: (context, snap){
-      if(snap.connectionState == ConnectionState.waiting)
-      {
-        return const Center(child: CircularProgressIndicator(value: 8.0,),);
-      }
-      
-      if(snap.data is UserModel)
-      {
-        _toDashboard();
-        return const Center();
-      }
+    var userProfile = getIt<UserProfile>();
 
-      return Scaffold(
-      backgroundColor: Theme.of(context).primaryColorDark,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 500, minWidth: 200),
-              child: Center(
-                  child: _containerBorder(
-                      child: Column(
-                children: [
-                  _image(),
-                  Form(
-                      key: _formKey,
-                      child: Column(
+    return FutureBuilder<UserModel?>(
+        future: userProfile.call(),
+        builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.done) {
+            if (snap.data != null) {
+              _toDashboard();
+              return const Center();
+            }
+
+            return Scaffold(
+              backgroundColor: Theme.of(context).primaryColorDark,
+              body: Center(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(maxWidth: 500, minWidth: 200),
+                      child: Center(
+                          child: _containerBorder(
+                              child: Column(
                         children: [
-                          _emailField(),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          _passwordField(),
-                          _forgetPasswordButton(),
-                          _loginButton(),
-                          SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.40,
-                              height: 60,
-                              child: const Align(
-                                alignment: Alignment.center,
-                                child: Divider(
-                                  color: Colors.white,
-                                  thickness: 2,
-                                ),
-                              )),
-                          _registerButton()
+                          _image(),
+                          Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  _emailField(),
+                                  const SizedBox(
+                                    height: 30,
+                                  ),
+                                  _passwordField(),
+                                  _forgetPasswordButton(),
+                                  _loginButton(),
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.40,
+                                      height: 60,
+                                      child: const Align(
+                                        alignment: Alignment.center,
+                                        child: Divider(
+                                          color: Colors.white,
+                                          thickness: 2,
+                                        ),
+                                      )),
+                                  _registerButton()
+                                ],
+                              ))
                         ],
-                      ))
-                ],
-              ))),
-            ),
-          ),
-        ),
-      ),
-      extendBody: true,
-    );
-    });
+                      ))),
+                    ),
+                  ),
+                ),
+              ),
+              extendBody: true,
+            );
+          }else
+          {
+            return const Center(
+              child: CircularProgressIndicator(
+                value: 8.0,
+              ),
+            );
+          }
+        });
   }
 
   Widget _containerBorder({required Widget child}) {
     return Container(
       margin: const EdgeInsets.all(10.0),
       padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.0)),
       child: child,
     );
   }
@@ -135,22 +135,22 @@ class _LoginPage extends State<LoginPage> {
 
   Widget _emailField() {
     return TextFormFieldWidget(
-        controller: _email,
-        labelText: "E-mail",
-        keyboardType: TextInputType.emailAddress,
-        focusNode: _emailFocusNode,
-        validator: (value) {
-          var validate = AuthModel.validateEmail(value);
-          if (validate is Map) {
-            return validate['error'];
-          }
-          return null;
-        },
-        onFieldSubmited: (value){
-          FocusScope.of(context).requestFocus(_passwordFocusNode);
-        },
-        textInputAction: TextInputAction.next,
-        );
+      controller: _email,
+      labelText: "E-mail",
+      keyboardType: TextInputType.emailAddress,
+      focusNode: _emailFocusNode,
+      validator: (value) {
+        var validate = AuthModel.validateEmail(value);
+        if (validate is Map) {
+          return validate['error'];
+        }
+        return null;
+      },
+      onFieldSubmited: (value) {
+        FocusScope.of(context).requestFocus(_passwordFocusNode);
+      },
+      textInputAction: TextInputAction.next,
+    );
   }
 
   Widget _passwordField() {
@@ -175,12 +175,13 @@ class _LoginPage extends State<LoginPage> {
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined))),
       validator: (value) {
-        if (value != null && (value.length < 8 || value.length > 20) || value!.isEmpty) {
+        if (value != null && (value.length < 8 || value.length > 20) ||
+            value!.isEmpty) {
           return "Tamanho mínimo é 8 e o máximo é 20 para a senha";
         }
         return null;
       },
-      onFieldSubmited: (value){
+      onFieldSubmited: (value) {
         _formSubmit();
       },
     );
@@ -198,7 +199,6 @@ class _LoginPage extends State<LoginPage> {
                 textAlign: TextAlign.end,
               ),
               onPressed: () {
-
                 Navigator.of(context).pushNamed("/forget-password");
               }),
         ));
@@ -208,93 +208,83 @@ class _LoginPage extends State<LoginPage> {
     return SizedBox(
       width: double.maxFinite,
       height: 50,
-      child: ElevatedButton(
-        onPressed: _formSubmit,
-        child: const Text("Login")
-      ),
+      child: ElevatedButton(onPressed: _formSubmit, child: const Text("Login")),
     );
   }
 
   void _formSubmit() async {
-    
-          var closeModal = modalDialog(context, "loading");
+    var closeModal = modalDialog(context, "loading");
 
-          if (_formKey.currentState!.validate()) {
-            try {
-              var auth = AuthModel(login: _email.text, password: _password.text);
-              var ret = await getIt<LoginUseCase>().call(auth: auth);
+    if (_formKey.currentState!.validate()) {
+      try {
+        var auth = AuthModel(login: _email.text, password: _password.text);
+        var ret = await getIt<LoginUseCase>().call(auth: auth);
 
-              if(!mounted) return;
+        if (!mounted) return;
 
-              if (ret is UserModel) {
-                closeModal();
-                _toDashboard();
-              } else {
-                final snackBar = SnackBar(
-                  content: Text("Problema para efetuar login, tente novamente!"),
-                  backgroundColor: Colors.red,
-                  elevation: 10.0,
-                  showCloseIcon: true,
-                  closeIconColor:
-                      Theme.of(context).primaryColor,
-                  duration: const Duration(seconds: 5),
-                  behavior: SnackBarBehavior.floating,
-                  dismissDirection: DismissDirection.startToEnd,
-                );
-                
-                closeModal();
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }
+        if (ret is UserModel) {
+          closeModal();
+          _toDashboard();
+        } else {
+          final snackBar = SnackBar(
+            content: Text("Problema para efetuar login, tente novamente!"),
+            backgroundColor: Colors.red,
+            elevation: 10.0,
+            showCloseIcon: true,
+            closeIconColor: Theme.of(context).primaryColor,
+            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            dismissDirection: DismissDirection.startToEnd,
+          );
 
-            }on InvalidCredentialsException catch (e)
-            {
-                final snackBar = SnackBar(
-                  content: Text(e.message),
-                  backgroundColor: Colors.red,
-                  elevation: 10.0,
-                  showCloseIcon: true,
-                  closeIconColor:
-                      Theme.of(context).primaryColor,
-                  duration: const Duration(seconds: 5),
-                  behavior: SnackBarBehavior.floating,
-                  dismissDirection: DismissDirection.startToEnd,
-                );
-                closeModal();
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }on UserNotAllowedException catch (e){
-                final snackBar = SnackBar(
-                  content: Text(e.message),
-                  backgroundColor: Colors.red,
-                  elevation: 10.0,
-                  showCloseIcon: true,
-                  closeIconColor:
-                      Theme.of(context).primaryColor,
-                  duration: const Duration(seconds: 5),
-                  behavior: SnackBarBehavior.floating,
-                  dismissDirection: DismissDirection.startToEnd,
-                );
-                closeModal();
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            } on Exception catch (e) {
-              debugPrint(e.toString());
-              final snackBar = SnackBar(
-                content: const Text("Erro interno no servidor. Tente novamente!"),
-                backgroundColor: Colors.red,
-                elevation: 10.0,
-                showCloseIcon: true,
-                closeIconColor:
-                    Theme.of(context).primaryColor,
-                duration: const Duration(seconds: 5),
-                behavior: SnackBarBehavior.floating,
-                dismissDirection: DismissDirection.startToEnd,
-              );
-              closeModal();
-              ScaffoldMessenger.of(context).showSnackBar(snackBar);
-            }
-          }else{
-            closeModal();
-            _passwordFocusNode.requestFocus();
-          }
+          closeModal();
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+      } on InvalidCredentialsException catch (e) {
+        final snackBar = SnackBar(
+          content: Text(e.message),
+          backgroundColor: Colors.red,
+          elevation: 10.0,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColor,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          dismissDirection: DismissDirection.startToEnd,
+        );
+        closeModal();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } on UserNotAllowedException catch (e) {
+        final snackBar = SnackBar(
+          content: Text(e.message),
+          backgroundColor: Colors.red,
+          elevation: 10.0,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColor,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          dismissDirection: DismissDirection.startToEnd,
+        );
+        closeModal();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } on Exception catch (e) {
+        debugPrint(e.toString());
+        final snackBar = SnackBar(
+          content: const Text("Erro interno no servidor. Tente novamente!"),
+          backgroundColor: Colors.red,
+          elevation: 10.0,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColor,
+          duration: const Duration(seconds: 5),
+          behavior: SnackBarBehavior.floating,
+          dismissDirection: DismissDirection.startToEnd,
+        );
+        closeModal();
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    } else {
+      closeModal();
+      _passwordFocusNode.requestFocus();
+    }
   }
 
   Widget _registerButton() {

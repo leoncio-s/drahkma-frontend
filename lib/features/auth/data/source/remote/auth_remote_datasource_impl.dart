@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/exceptions/invalid_credentials_exception.dart';
 import 'package:drahkma/core/exceptions/user_not_allowed_exception.dart';
@@ -6,68 +8,73 @@ import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/features/users/domain/entities/user.dart';
-import 'package:requests/requests.dart';
+import 'package:http/http.dart' as http;
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
-
-  static final String authUrl = "${Config.urlApi}auth/login";
+  static final Uri _url = Uri.parse("${Config.urlApi}auth");
 
   @override
   Future<UserModel?> login(Auth auth) async {
-    final response = await Requests.post(
-      authUrl,
-      // json: {
-      //   'username': auth.getEmail,
-      //   'password': auth.getPassword,
-      // },
-      json: (auth as AuthModel).toMap(),
+    var url = _url.replace(pathSegments: [..._url.pathSegments, 'login']);
+    final response = await http.post(
+      url,
+      body: jsonEncode((auth as AuthModel).toMap()),
       headers: {'Content-type': 'application/json'},
-    );
+    ).timeout(Duration(seconds: 20));
+
+    late Map json;
     if (response.statusCode == 200) {
-      return UserModel.toObject(response.json());
-    }else if (response.statusCode == 400) {
-      var json = response.json();
-      throw InvalidCredentialsException(json['message'] ?? "Email ou senha inválidos.");
-    }else if (response.statusCode == 403) {
+      json = jsonDecode(response.body);
+      return UserModel.toObject(json);
+    } else if (response.statusCode == 400) {
+      json = jsonDecode(response.body);
+      throw InvalidCredentialsException(
+          json['message'] ?? "Email ou senha inválidos.");
+    } else if (response.statusCode == 403) {
       throw UserNotAllowedException();
-    }else{
+    } else {
       return null;
     }
   }
 
-  
-  Future<Map> forgetPassword(String email) async {
-    var req = await Requests.post('${Config.urlApi}auth/forget-password',
-        json: {"email": email},
-        headers: {'Content-type': 'application/json'},
-        timeoutSeconds: 60,
-        verify: false);
+  @override
+  Future<Map<String, dynamic>> forgetPassword(String email) async {
+    var url = _url.replace(pathSegments: [..._url.pathSegments, 'forget-password']);
+    var req = await http.post(url,
+        body: jsonEncode({"email": email}),
+        headers: {'Content-type': 'application/json'})
+        .timeout(Duration(seconds: 20));
 
-    if (req.statusCode == 500) {
-      return {"errors": "Internal server error"};
+    late Map<String, dynamic> json;
+    if (req.statusCode == 200) {
+      json = jsonDecode(req.body);
+      return json;
     } else if (req.statusCode != 200) {
-      throw Exception(req.json()['error']);
+      json = jsonDecode(req.body);
+      throw ArgumentError(json['error']);
     } else {
-      return req.json();
+      throw Exception("Erro interno no servidor");
     }
   }
 
   Future<Map> forgetPasswordCode(
       String email, String code, String password, String confPassword) async {
-    var req = await Requests.post('${Config.urlApi}auth/forget-password/$email',
+    
+    var url = _url.replace(pathSegments: [..._url.pathSegments, 'forget-password/$email']);
+    var req = await http.post(url,
         headers: {'Content-type': 'application/json'},
-        timeoutSeconds: 20,
-        verify: false,
-        json: {
+        body: jsonEncode({
           'code': code,
           'password': password,
           'confpassword': confPassword
-        });
+        })).timeout(Duration(seconds: 20));
 
+    late Map json;
     if (req.statusCode == 200) {
-      return req.json();
+      json = jsonDecode(req.body);
+      return json;
     } else {
-      var json = req.json();
+      json = jsonDecode(req.body);
       if (json['message'] != null) {
         return {'error': json['message']};
       }
@@ -78,13 +85,14 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   @override
   Future<bool> checkSession(User data) async {
     data = data as UserModel;
-    var request = await Requests.get("${Config.urlApi}user", headers: {
+    var request = await http.get(Uri.parse("${Config.urlApi}user"), headers: {
       'Authorization': " Bearer ${data.token ?? ''}",
       'Content-type': 'application/json'
-    });
+    }).timeout(Duration(seconds: 20));
 
     if (request.statusCode == 200) {
       return true;
-    }return false;
+    }
+    return false;
   }
 }

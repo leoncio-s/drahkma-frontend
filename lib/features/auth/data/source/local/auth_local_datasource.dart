@@ -12,5 +12,13 @@ interface class AuthLocalDatasource {
   Future<void> clearAuthToken() {
     throw UnimplementedError();
   }
+
+  Future<void> saveStorageEmail(String email){
+    throw UnimplementedError();
+  }
+
+  Future<String?> getStorageEmail(){
+    throw UnimplementedError();
+  }
   
 }

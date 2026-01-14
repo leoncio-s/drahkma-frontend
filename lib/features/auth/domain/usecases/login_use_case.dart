@@ -1,14 +1,16 @@
+import 'package:drahkma/Interfaces/use_cases.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 import 'package:drahkma/features/users/domain/entities/user.dart';
 
-class LoginUseCase {
+class LoginUseCase implements UseCases<User>{
   final AuthRepository repository;
   LoginUseCase(this.repository);
 
-  Future<User?> call({required Auth auth}) async {
+  @override
+  Future<User?> call({Auth? auth}) async {
     return await repository.login(
-      auth: auth
+      auth: auth!
     );
   } 
 }
