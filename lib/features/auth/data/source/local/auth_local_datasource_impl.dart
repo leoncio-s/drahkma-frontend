@@ -26,7 +26,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   Future<void> saveAuthToken(UserModel user) async {
     storage.setString(
         Config.keyStorageAuthToken,
-        JsonEncoder().convert(user.toJson()));
+        JsonEncoder().convert(user.toMap()));
     return;
   }
   
