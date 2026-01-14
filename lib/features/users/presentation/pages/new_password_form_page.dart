@@ -1,5 +1,8 @@
 
-import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
+import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/core/exceptions/update_password_exception.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/users/domain/usecases/user_update_password.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
@@ -73,21 +76,26 @@ class _NewPassWordFormPage extends State<NewPasswordFormPage>{
   {
     if(_formKey.currentState!.validate())
     {
-      SnackBarWidget snack;
-      var ret = await UserRemoteDatasource.updatePassword(_curPasswd.text, _newPasswd.text, _confNewPasswd.text);
-      if(ret['success'])
-      {
+      SnackBarWidget? snack;
+      try{
+        await getIt<UserUpdatePassword>().call(currentPassword: _curPasswd.text, newPassword:  _newPasswd.text, confirmNewPassword: _confNewPasswd.text);
+        
         snack = SnackBarWidget(content: Text("Senha alterada com sucesso"), backgroundColor: Colors.green, duration: Duration(seconds: 3),);
         Future.delayed(Duration(seconds: 3), (){
           mounted ? Navigator.of(context).pop() : null;
         });
-      }else{
-        snack = SnackBarWidget(content: Text(ret['message'])); 
+      }on UnauthenticatedException
+      {
+        snack = SnackBarWidget(content: Text("Usuário Não autenticado"), backgroundColor: Colors.redAccent, duration: Duration(seconds: 3),);
+        if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+      }on UpdatePasswordException catch (e)
+      {
+        snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.red, duration: Duration(seconds: 3),);
+      }finally
+      {
+        if(mounted) ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
       }
-      if(mounted){
-        ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
-        
-      }
+
     }
     return;
   }

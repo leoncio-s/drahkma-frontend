@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
-import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
+import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
+import 'package:drahkma/features/users/domain/usecases/user_update.dart';
 import 'package:drahkma/features/users/presentation/pages/new_password_form_page.dart';
+import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
@@ -41,73 +44,77 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
       widthDrawer = size.width * 0.8;
     }
 
+    AuthLocalDatasource localDataSource = getIt<AuthLocalDatasource>();
+
     return Drawer(
         width: widthDrawer,
         backgroundColor: Theme.of(context).primaryColorDark,
         child: FutureBuilder<UserModel?>(
-            future: AuthRemoteDatasource.getAuthUser(),
+            future: localDataSource.getAuthToken(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
+
               if(snap.hasData)
               {
                 _fullName.text=snap.data!.fullname ?? '';
                 _email.text = snap.data!.email ?? '';
                 _phone.text = snap.data!.phoneNumber ?? '';
 
-              return Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 30.0,
-                          child: Align(
-                              alignment: Alignment.centerRight,
-                              child: IconButton(
-                                  splashRadius: 1.0,
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  icon: const Icon(Icons.close))),
-                        ),
-                        DrawerHeader(
-                            child: SizedBox.expand(
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              constraints:
-                                  BoxConstraints(maxWidth: widthDrawer),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    width: 10,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
-                                borderRadius: BorderRadius.circular(100),
-                              ),
-                              child: ClipOval(
-                                child: TapRegion(
-                                    onTapInside: (ev) {},
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(5.0),
-                                      child:
-                                          Image.asset("images/logo_yellow.png"),
-                                    )),
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            height: 30.0,
+                            child: Align(
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                    splashRadius: 1.0,
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon: const Icon(Icons.close))),
+                          ),
+                          DrawerHeader(
+                              child: SizedBox.expand(
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              child: Container(
+                                constraints:
+                                    BoxConstraints(maxWidth: widthDrawer),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      width: 10,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: ClipOval(
+                                  child: TapRegion(
+                                      onTapInside: (ev) {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(5.0),
+                                        child:
+                                            Image.asset("images/logo_yellow.png"),
+                                      )),
+                                ),
                               ),
                             ),
-                          ),
-                        )),
-                        _userForm(),
-                      ],
-                    ),
-                  )
-                ],
-              );}
+                          )),
+                          _userForm(),
+                        ],
+                      ),
+                    )
+                  ],
+                );
+              }
 
             _toLogin();
             return Center(child: Text("Não foi possível obter dados do usuário, faça o login novamente."),);
@@ -193,39 +200,39 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
     ));
   }
 
-  Future<void> _submitForm() async{
+  void _submitForm() async{
+    var _clModal = modalDialog(context, 'loading');
     if(_formKey.currentState!.validate()){
-      UserModel user = UserModel(
-        fullname: _fullName.text,
-        email: _email.text,
-        phoneNumber: _phone.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "")
-      );
-      SnackBarWidget snack = SnackBarWidget(content: Text(""));
+      SnackBarWidget? snack;
       try{
-        var service = await UserRemoteDatasource.update(user);
-        if(service is bool)
-        {
-          snack = SnackBarWidget(content: Text("Dados Atualizados!"), backgroundColor: Colors.green,);
-        }else{
-          if(service['message'] != null)
-          {
-            snack = SnackBarWidget(content: Text(service['message'].toString()), backgroundColor: Colors.redAccent,);
-          }
-        }
-        if(mounted) Navigator.of(context).pop([true]);
+        UserModel user = UserModel(
+          fullname: _fullName.text,
+          email: _email.text,
+          phoneNumber: _phone.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "")
+        );
+        
+        final useCase = getIt<UserUpdate>();
+
+        await useCase.call(user: user);
+        snack = SnackBarWidget(content: Text("Dados Atualizados!"), backgroundColor: Colors.green,);
+
       }on UnauthenticatedException catch (e)
       {
         snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.redAccent,);
         if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
-      }on Exception catch(e){
+      }on ArgumentError catch(e)
+      {
+        snack = SnackBarWidget(content: Text(e.invalidValue), backgroundColor: Colors.redAccent,);
+      } catch(e){
         snack = SnackBarWidget(content: Text(e.toString()), backgroundColor: Colors.redAccent,);
       }finally{
-        if(mounted){
+        _clModal();
+        if(mounted && snack != null)
+        {
           ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
+          Navigator.of(context).pop([false]);
         }
       }
-      return;
     }
-    return;
   }
 }
