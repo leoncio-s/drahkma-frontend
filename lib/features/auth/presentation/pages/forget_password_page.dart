@@ -1,8 +1,9 @@
+import 'dart:developer';
 import 'package:drahkma/core/utils/string_regex_validate.dart';
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource_impl.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
+import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
@@ -10,6 +11,7 @@ import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class ForgetPasswordPage extends StatefulWidget{
   final String? email;
@@ -28,7 +30,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
     if(widget.email != null) {
       _email.text = widget.email!;
     } else {
-      getIt<AuthLocalDatasourceImpl>().getStorageEmail().then((value){
+      getIt<AuthLocalDatasource>().getStorageEmail().then((value){
         _email.text = value ?? '';
       });
     }
@@ -61,14 +63,14 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
           ElevatedButtonWidget(title: "Redefinir Senha", onPressed: () async {
             if(_formState.currentState!.validate()){
               final closeModal = modalDialog(context, "loading");
+              late SnackBar snack;
               try{
-                var ret = await getIt<AuthRemoteDatasourceImpl>().forgetPassword(_email.text);
-                late SnackBar snack;
+                var ret = await getIt<AuthRemoteDatasource>().forgetPassword(_email.text);
+
                 
                 if(!mounted) return;
 
-                if(ret['message'] != null) {
-                  closeModal();
+                if(ret!['message'] != null) {
                   snack = SnackBarWidget(content: Text(ret['message']), backgroundColor: Colors.white, closeIconColor: Colors.black,);
                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>ForgetPasswordCodeView(email: _email.text)));
                 } else {
@@ -76,11 +78,20 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
                 }
 
                 ScaffoldMessenger.of(context).showSnackBar(snack);
-
-              }on Exception catch(ex){
+              }on ArgumentError catch(ex)
+              {
+                snack = SnackBarWidget(content: ex.message);
+                ScaffoldMessenger.of(context).showSnackBar(snack);
+              }on ClientException{
+                snack = SnackBarWidget(content: Text("Erro interno no servidor"));
+                ScaffoldMessenger.of(context).showSnackBar(snack);
+              }on Exception catch(e, s){
+                snack = SnackBarWidget(content: Text("Erro interno no servidor"));
+                ScaffoldMessenger.of(context).showSnackBar(snack);
+                log(e.toString(), level: 1, stackTrace: s, name: "Exception Forget password page");
+              }finally
+              {
                 closeModal();
-                var  snack = SnackBarWidget(content: Text(ex.toString()));
-                ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);
               }
             }
           }),

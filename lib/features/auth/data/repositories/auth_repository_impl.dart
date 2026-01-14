@@ -25,6 +25,7 @@ class AuthRepositoryImpl implements AuthRepository
   Future<User?> login({required Auth auth}) async {
     User? ret = await _remoteDatasource.login(auth);
     _localDatasource.saveAuthToken(ret as UserModel);
+    _localDatasource.saveStorageEmail(auth.getEmail!);
     return ret;
   }
 

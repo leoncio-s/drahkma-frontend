@@ -5,4 +5,5 @@ abstract interface class AuthRemoteDatasource
 {
   Future<User?> login(Auth auth);
   Future<bool> checkSession(User user);
+  Future<Map<String, dynamic>?> forgetPassword(String email);
 }

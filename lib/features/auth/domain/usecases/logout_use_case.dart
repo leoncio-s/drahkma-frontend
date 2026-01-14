@@ -1,10 +1,12 @@
+import 'package:drahkma/Interfaces/use_cases.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 
-class LogoutUseCase {
+class LogoutUseCase implements UseCases{
   final AuthRepository _repo;
-  LogoutUseCase({required AuthRepository repository}) : this._repo = repository;
+  LogoutUseCase({required AuthRepository repository}) : _repo = repository;
 
+  @override
   Future<void> call() async{
-    await this._repo.logout();
+    await _repo.logout();
   }
 }
