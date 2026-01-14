@@ -236,8 +236,6 @@ class _LoginPage extends State<LoginPage> {
             behavior: SnackBarBehavior.floating,
             dismissDirection: DismissDirection.startToEnd,
           );
-
-          closeModal();
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       } on InvalidCredentialsException catch (e) {
@@ -251,7 +249,6 @@ class _LoginPage extends State<LoginPage> {
           behavior: SnackBarBehavior.floating,
           dismissDirection: DismissDirection.startToEnd,
         );
-        closeModal();
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } on UserNotAllowedException catch (e) {
         final snackBar = SnackBar(
@@ -264,10 +261,8 @@ class _LoginPage extends State<LoginPage> {
           behavior: SnackBarBehavior.floating,
           dismissDirection: DismissDirection.startToEnd,
         );
-        closeModal();
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      } on Exception catch (e) {
-        debugPrint(e.toString());
+      } on Exception {
         final snackBar = SnackBar(
           content: const Text("Erro interno no servidor. Tente novamente!"),
           backgroundColor: Colors.red,
@@ -278,8 +273,9 @@ class _LoginPage extends State<LoginPage> {
           behavior: SnackBarBehavior.floating,
           dismissDirection: DismissDirection.startToEnd,
         );
-        closeModal();
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }finally{
+        closeModal();
       }
     } else {
       closeModal();
