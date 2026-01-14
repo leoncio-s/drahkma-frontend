@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
