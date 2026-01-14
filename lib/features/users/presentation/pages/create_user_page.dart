@@ -1,8 +1,12 @@
 
+import 'dart:convert';
+
 import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
-import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
+import 'package:drahkma/features/users/data/models/user_dto.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/usecases/user_register.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
@@ -229,28 +233,37 @@ class _CreateUserPageState extends State<CreateUserPage> {
       );
 
   void _formSubmit() async {
-    Map<String, String> user = {};
     if (_formKey.currentState!.validate()) {
-      var phoneNumber = _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
-      user['fullname'] = _fullNameController.text;
-      user['email'] = _emailController.text;
-      user['password'] = _passwordController.text;
-      user['conf_password'] = _confPasswordController.text;
-      user['phone_number'] = phoneNumber;
+      try{
+        var phoneNumber = _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
+        UserDto user = UserDto(
+          fullname: _fullNameController.text,
+          email: _emailController.text,
+          phoneNumber: phoneNumber,
+          password: _passwordController.text, 
+          confirmNewPassword: _confPasswordController.text
+        );
 
-      dynamic ret = await UserRemoteDatasource.register(user);
+        dynamic ret = await getIt<UserRegister>().call(user: user);
 
-      if (ret.runtimeType == UserModel) {
-        context.mounted
-            // ignore: use_build_context_synchronously
-            ? Navigator.maybeOf(context)?.pushReplacement(
-                MaterialPageRoute(builder: (context) => const SuccessPage()),
-              )
-            : null;
-      } else {
+        if (ret.runtimeType == UserModel) {
+          if(mounted)  Navigator.maybeOf(context)?.pushReplacement(MaterialPageRoute(builder: (context) => const SuccessPage()),);
+        } else {
+          setState(() {
+            errors = ret['errors'] ?? ret;
+          });
+        }
+        
+      }on ArgumentError catch(e)
+      {
+        Map<String, dynamic> json = jsonDecode(e.message);
         setState(() {
-          errors = ret['errors'] ?? ret;
+          errors=json['errors'];
         });
+        return;
+      }on Exception
+      {
+        rethrow;
       }
     }
   }
@@ -265,20 +278,19 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
     if (errors != null) {
       List<Widget>? elements = errors!.entries
-          .map<Widget>((entry) => entry.key.toString().contains("error")
-              ? Text(
-                  "${entry.value}",
-                  style: errorStyle,
-                  textAlign: textAlignError,
-                )
-              : Text("${entry.key} : ${entry.value.runtimeType == List ? (entry.value as List).map((el)=>el + "\n").toString() : entry.value}",
-                  style: errorStyle, textAlign: textAlignError))
-          .toList();
+          .map<Widget>((entry) => entry.key.toString().contains("errors")
+              ? Text(entry.value.toString(), style: errorStyle, textAlign: textAlignError,)
+              : Text("${entry.key} : ${ (entry.value.runtimeType == List) ? (entry.value as List).map<String>((el)=> el.toString()).toString() : entry.value.toString()}",
+                  style: errorStyle, textAlign: textAlignError)
+          ).toList();
 
       elements.add(const SizedBox(
         height: 5,
       ));
       return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: elements,
       );
     }
