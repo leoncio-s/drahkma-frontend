@@ -1,4 +1,5 @@
-import 'package:drahkma/features/amounts/data/datasources/amount_remote_service.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/amounts/domain/usecases/amounts_fetchdata.dart';
 import 'package:flutter/material.dart';
 
 class CardAmountView extends StatefulWidget {
@@ -17,8 +18,9 @@ class _CardAmountViewState extends State<CardAmountView> {
           minHeight: 50, maxHeight: 200, minWidth: 50, maxWidth: 200),
       child: Center(
         child: FutureBuilder(
-            future: AmountRemoteDatasource().getAmounts(
-                DateTime.now().subtract(const Duration(days: 30)), DateTime.now()),
+            future: getIt<AmountsFetchdata>().call(
+                DateTime.now().subtract(const Duration(days: 30)),
+                DateTime.now()),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Flexible(
