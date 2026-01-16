@@ -200,7 +200,9 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
   }
 
   void _submitForm() async{
-    var _clModal = modalDialog(context, 'loading');
+
+    var clModal = modalDialog(context, 'loading');
+    
     if(_formKey.currentState!.validate()){
       SnackBarWidget? snack;
       try{
@@ -225,7 +227,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
       } catch(e){
         snack = SnackBarWidget(content: Text(e.toString()), backgroundColor: Colors.redAccent,);
       }finally{
-        _clModal();
+        clModal();
         if(mounted && snack != null)
         {
           ScaffoldMessenger.of(context).showSnackBar(snack as SnackBar);

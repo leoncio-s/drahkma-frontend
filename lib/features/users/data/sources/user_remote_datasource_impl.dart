@@ -126,7 +126,9 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
           'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
         }
     ).timeout(Duration(seconds: 20));
-    var json;
+
+    Map json;
+    
     if(request.statusCode == 401)
     {
       throw UnauthenticatedException();
