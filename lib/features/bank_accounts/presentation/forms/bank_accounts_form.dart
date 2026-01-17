@@ -1,8 +1,12 @@
 import 'dart:ui';
 
 import 'package:drahkma/core/utils/string_regex_validate.dart';
-import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_dto.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
+import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_banks.dart';
+import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_save.dart';
+import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +30,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
   List<BankModel> _banks = [];
 
   void _getBanks() async {
-    var banks = await BankAccountsRemoteDatasource().getBanks();
+    List<BankModel>? banks = await getIt<BankAccountsBanks>().call();
     if (banks != null) {
       setState(() {
         _banks = banks;
@@ -118,7 +122,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   ),
                   optionsBuilder: (TextEditingValue txt) async {
                     if (txt.text == "") {
-                      return await BankAccountsRemoteDatasource().getBanks() ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
+                      return (await getIt<BankAccountsBanks>().call()) ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
                     }
                     return _banks.where((BankModel? obj) =>
                         obj!.fullName.toString().toUpperCase().contains(txt.text.toUpperCase()));
@@ -262,16 +266,18 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.bankAccounts?.id != null) {
-                              ret = await BankAccountsRemoteDatasource().update(
-                                  BankAccountModel(
+                              BankAccountsDto dto= BankAccountsDto (
                                       id: widget.bankAccounts!.id,
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
                                       agency: _agency.text,
-                                      accountNumber: _accountNumber.text));
+                                      accountNumber: _accountNumber.text);
+
+                              await getIt<BankAccountsUpdate>().call(dto: dto);
+
                             } else {
-                              ret = await BankAccountsRemoteDatasource().save(
-                                  BankAccountModel(
+                              ret = await getIt<BankAccountsSave>().call(
+                                dto: BankAccountsDto(
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
                                       agency: _agency.text,
