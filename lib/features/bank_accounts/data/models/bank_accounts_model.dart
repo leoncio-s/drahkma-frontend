@@ -1,4 +1,3 @@
-
 import 'package:drahkma/features/bank_accounts/domain/entities/bank_account.dart';
 
 class BankAccountModel extends BankAccount {
@@ -11,7 +10,7 @@ class BankAccountModel extends BankAccount {
       super.bankName});
 
   @override
-  factory BankAccountModel.toObject(Map<String, dynamic> data) {
+  factory BankAccountModel.fromJson(Map<String, dynamic> data) {
     int? id = data['id'] ?? 0;
     String? bankCode = data['bankCode'] ?? "";
     String? bankName = data['bankName'] ?? "";
@@ -19,15 +18,5 @@ class BankAccountModel extends BankAccount {
     String? accountNumber = data['accountNumber'] ?? "";
 
     return BankAccountModel(id: id, bankCode: bankCode, bankName: bankName, agency: agency, accountNumber: accountNumber);
-  }
-  
-  Map<String, dynamic> toMap() {
-      return {
-              'id' : id,
-              'bankCode' : bankCode,
-              'bankName' : bankName,
-              'agency' : agency,
-              'accountNumber' : accountNumber
-      };
   }
 }

@@ -1,8 +1,9 @@
-import 'dart:async';
-
 import 'package:drahkma/core/utils/text_scaler.dart';
-import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_dto.dart';
 import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
+import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_delete.dart';
+import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_get_all.dart';
 import 'package:drahkma/features/bank_accounts/utils/bank_accounts_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,8 @@ class BankAccountsViewState extends State<BankAccountsView> {
   double _turns = 0.0;
 
   dynamic _getData() {
-    return BankAccountsRemoteDatasource().get().then((value) {
+    return getIt<BankAccountsGetAll>().call().then((value) {
+      value as List<BankAccountModel>?;
       if(mounted){
         setState(() {
         bankAccounts = value;
@@ -153,8 +155,8 @@ class BankAccountsViewState extends State<BankAccountsView> {
                                   // visualDensity: const VisualDensity(horizontal: 0.0),
                                   hoverColor: Colors.white,
                                   onPressed: () async {
-                                    dynamic ret =
-                                        await BankAccountsRemoteDatasource().delete(el);
+                                    dynamic ret = false;
+                                    await getIt<BankAccountsDelete>().call(dto: el as BankAccountsDto);
                                     if (ret == true) {
                                       _getData();
                                     } else {
