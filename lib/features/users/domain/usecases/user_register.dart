@@ -1,4 +1,4 @@
-import 'package:drahkma/Interfaces/use_cases.dart';
+import 'package:drahkma/core/interfaces/use_cases.dart';
 import 'package:drahkma/features/users/data/models/user_dto.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
 import 'package:drahkma/features/users/domain/repositories/user_repository.dart';
