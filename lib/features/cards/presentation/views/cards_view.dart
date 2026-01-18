@@ -1,11 +1,12 @@
 import 'dart:async';
-
 import 'package:drahkma/core/utils/text_scaler.dart';
-import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
-import 'package:drahkma/features/cards/data/models/card_model.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/cards/data/models/cards_model.dart';
+import 'package:drahkma/features/cards/domain/usecases/cards_delete.dart';
+import 'package:drahkma/features/cards/domain/usecases/cards_get_all.dart';
 import 'package:drahkma/features/cards/utils/card_model_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
-import 'package:flutter/material.dart' hide Card;
+import 'package:flutter/material.dart';
 import 'package:drahkma/features/cards/presentation/forms/cards_form.dart';
 
 class CardsView extends DrahkmaStatefulWidget {
@@ -18,13 +19,14 @@ class CardsView extends DrahkmaStatefulWidget {
 }
 
 class CardsViewState extends State<CardsView> {
-  List<CardModel>? cards;
+  List<CardsModel>? cards;
   String? _message;
   double _turns = 0.0;
 
   Future<Null> _getData() {
-    return CardsRemoteDatasource().get().then((value) {
+    return getIt<CardsGetAll>().call().then((value) {
       if(mounted){
+        value as List<CardsModel>?;
         setState(() {
         cards = value;
         _message = null;
@@ -112,7 +114,7 @@ class CardsViewState extends State<CardsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            CardModel? data = await Navigator.of(context).push(
+            CardsModel? data = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => CardsForm()));
             if (data != null) {
               _getData();
@@ -136,7 +138,7 @@ class CardsViewState extends State<CardsView> {
                               titleAlignment: ListTileTitleAlignment.center,
                               isThreeLine: true,
                               onTap: () async {
-                                CardModel? data =
+                                CardsModel? data =
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
@@ -151,16 +153,11 @@ class CardsViewState extends State<CardsView> {
                                   // visualDensity: const VisualDensity(horizontal: 0.0),
                                   hoverColor: Colors.white,
                                   onPressed: () async {
-                                    dynamic ret =
-                                        await CardsRemoteDatasource().delete(el);
-                                    if (ret == true) {
+                                    try{
+                                      await getIt<CardsDelete>().call(dto: el);
                                       _getData();
-                                    } else {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                                _snackBarError(ret['error']));
-                                      }
+                                    }catch(e){
+                                      rethrow;
                                     }
                                   },
                                   icon: const Icon(
@@ -172,15 +169,6 @@ class CardsViewState extends State<CardsView> {
                 .toList())
         : _message == null ? SizedBox.fromSize(
             size: const Size(50, 50), child: const CircularProgressIndicator()) : Center(child: _replayData(),);
-  }
-
-  SnackBar _snackBarError(String message) {
-    return SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
-      closeIconColor: Colors.white,
-      showCloseIcon: true,
-    );
   }
 
   Widget _replayData() {
