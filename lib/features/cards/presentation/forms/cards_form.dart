@@ -1,11 +1,13 @@
 import 'dart:ui';
 
-
-import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/cards/data/models/cards_dto.dart';
+import 'package:drahkma/features/cards/domain/usecases/cards_save.dart';
+import 'package:drahkma/features/cards/domain/usecases/cards_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
-import 'package:drahkma/features/cards/data/models/card_model.dart';
+import 'package:drahkma/features/cards/data/models/cards_model.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
 import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
 import 'package:drahkma/core/utils/months.dart';
@@ -13,7 +15,7 @@ import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CardsForm extends StatefulWidget {
-  CardModel? cards;
+  CardsModel? cards;
   CardsForm({super.key, this.cards});
 
   @override
@@ -87,11 +89,6 @@ class CardsStateForm extends State<CardsForm> {
                   FilteringTextInputFormatter.singleLineFormatter,
                   LengthLimitingTextInputFormatter(50),
                 ],
-                // decoration: const InputDecoration(
-                //     // isCollapsed: true,
-                //     labelText: "Nome do cartão",
-                //     constraints: BoxConstraints(minHeight: 50.0),
-                //     counterText: ""),
                 decoration: (const InputDecoration())
                     .applyDefaults(Theme.of(context).inputDecorationTheme)
                     .copyWith(labelText: "Nome do cartão", counterText: ""),
@@ -372,24 +369,28 @@ class CardsStateForm extends State<CardsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.cards?.id != null) {
-                              ret = await CardsRemoteDatasource().update(CardModel(
+                              await getIt<CardsUpdate>().call(
+                                dto:
+                                CardsDTO(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
-                                  expiresAt: "${_expMonth!.month}/$_expYear",
+                                  expiresAt: DateTime(_expYear!, _expMonth!.month),
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await CardsRemoteDatasource().save(CardModel(
+                              ret = await getIt<CardsSave>().call(
+                                dto:
+                                CardsDTO(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
-                                  expiresAt: "${_expMonth!.month}/$_expYear",
+                                  expiresAt: DateTime(_expYear!, _expMonth!.month),
                                   flag: _flag,
                                   type: _type));
                             }
-                            if (ret is CardModel) {
+                            if (ret is CardsModel) {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context, ret);
                             } else {
