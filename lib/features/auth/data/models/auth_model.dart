@@ -1,7 +1,8 @@
 
+import 'package:drahkma/core/mixins/dto.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 
-class AuthModel extends Auth{
+class AuthModel extends Auth with DTO{
 
   AuthModel({String? login, String? password}){
     super.setEmail = login;
@@ -25,6 +26,7 @@ class AuthModel extends Auth{
     return {"error": "Senha inválido ou incorreto, verifique"};
   }
   
+  @override
   Map<String, String?>toMap() {
     return {
       "email": super.getEmail,

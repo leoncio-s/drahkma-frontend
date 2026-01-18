@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/users/data/models/user_dto.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/entities/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthLocalDatasourceImpl implements AuthLocalDatasource {
@@ -23,10 +25,10 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   }
 
   @override
-  Future<void> saveAuthToken(UserModel user) async {
+  Future<void> saveAuthToken(User user) async {
     storage.setString(
         Config.keyStorageAuthToken,
-        JsonEncoder().convert(user.toMap()));
+        JsonEncoder().convert((user as UserDto).toMap()));
     return;
   }
   
