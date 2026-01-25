@@ -1,30 +1,30 @@
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_dto.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
-import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_delete.dart';
-import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_get_all.dart';
-import 'package:drahkma/features/bank_accounts/utils/bank_accounts_sort.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delete.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
+import 'package:drahkma/features/bank_account/utils/bank_account_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/features/bank_accounts/presentation/forms/bank_accounts_form.dart';
+import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
 
-class BankAccountsView extends DrahkmaStatefulWidget {
-  const BankAccountsView(
+class BankAccountView extends DrahkmaStatefulWidget {
+  const BankAccountView(
       {super.key, super.name = "Contas Bancárias",
       super.icon = const Icon(Icons.category, size: 20)});
 
   @override
-  State<BankAccountsView> createState() => BankAccountsViewState();
+  State<BankAccountView> createState() => BankAccountsViewState();
 }
 
-class BankAccountsViewState extends State<BankAccountsView> {
+class BankAccountsViewState extends State<BankAccountView> {
   List<BankAccountModel>? bankAccounts;
   String? _message;
   double _turns = 0.0;
 
   dynamic _getData() {
-    return getIt<BankAccountsGetAll>().call().then((value) {
+    return getIt<BankAccountGetAll>().call().then((value) {
       value as List<BankAccountModel>?;
       if(mounted){
         setState(() {
@@ -80,7 +80,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                           child: IconButton(
                               onPressed: () {
                                 setState(() {
-                                  bankAccounts!.sort(BankAccountsSort.asc);
+                                  bankAccounts!.sort(BankAccountSort.asc);
                                 });
                               },
                               icon: const Icon(Icons.arrow_upward)),
@@ -95,7 +95,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                                 bankAccounts != null
                                     ? setState(() {
                                         bankAccounts!
-                                            .sort(BankAccountsSort.desc);
+                                            .sort(BankAccountSort.desc);
                                       })
                                     : null;
                               },
@@ -107,7 +107,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
               const SizedBox(
                 height: 30,
               ),
-              listTileCategories()
+              listTileCategory()
             ],
           ),
         )),
@@ -115,7 +115,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             BankAccountModel? data = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BankAccountsForm()));
+                MaterialPageRoute(builder: (context) => BankAccountForm()));
             if (data != null) {
               _getData();
             }
@@ -124,7 +124,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
     );
   }
 
-  Widget listTileCategories() {
+  Widget listTileCategory() {
     return bankAccounts != null
         ? Column(
             // scrollDirection: Axis.vertical,
@@ -144,7 +144,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                BankAccountsForm(
+                                                BankAccountForm(
                                                     bankAccounts: el)));
                                 if (data != null) {
                                   _getData();
@@ -156,7 +156,7 @@ class BankAccountsViewState extends State<BankAccountsView> {
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     dynamic ret = false;
-                                    await getIt<BankAccountsDelete>().call(dto: el as BankAccountsDto);
+                                    await getIt<BankAccountDelete>().call(dto: el as BankAccountDTO);
                                     if (ret == true) {
                                       _getData();
                                     } else {

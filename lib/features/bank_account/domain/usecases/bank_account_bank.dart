@@ -1,11 +1,11 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_model.dart';
-import 'package:drahkma/features/bank_accounts/domain/repositories/bank_accounts_repository.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
+import 'package:drahkma/features/bank_account/domain/repositories/bank_account_repository.dart';
 
-class BankAccountsBanks implements UseCases<List<BankModel>?>
+class BankAccountBank implements UseCases<List<BankModel>?>
 {
-  final BankAccountsRepository _accountsRepository;
-  BankAccountsBanks(BankAccountsRepository repository) : _accountsRepository=repository;
+  final BankAccountRepository _accountsRepository;
+  BankAccountBank(BankAccountRepository repository) : _accountsRepository=repository;
   @override
   Future<List<BankModel>?> call() async {
     List? data = await _accountsRepository.getBanks();

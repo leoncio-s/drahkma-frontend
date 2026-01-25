@@ -1,4 +1,4 @@
-import 'package:drahkma/features/bank_accounts/domain/entities/bank_account.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 
 class BankAccountModel extends BankAccount {
 

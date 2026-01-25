@@ -1,11 +1,11 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/bank_accounts/domain/entities/bank_account.dart';
-import 'package:drahkma/features/bank_accounts/domain/repositories/bank_accounts_repository.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
+import 'package:drahkma/features/bank_account/domain/repositories/bank_account_repository.dart';
 
-class BankAccountsDelete implements UseCases
+class BankAccountDelete implements UseCases
 {
-  final BankAccountsRepository _accountsRepository;
-  BankAccountsDelete(BankAccountsRepository repository): _accountsRepository=repository;
+  final BankAccountRepository _accountsRepository;
+  BankAccountDelete(BankAccountRepository repository): _accountsRepository=repository;
 
   @override
   Future<void> call({BankAccount? dto}) async
