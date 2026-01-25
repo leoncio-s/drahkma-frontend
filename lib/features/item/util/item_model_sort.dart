@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:drahkma/features/items/data/models/item_model.dart';
+import 'package:drahkma/features/item/data/models/item_model.dart';
 
 
 class ItemModelSort{

@@ -1,4 +1,4 @@
-enum ItemsOrderEnum {
+enum ItemOrderEnum {
   // ignore: constant_identifier_names
   DataDecrescente("Data Decrescente"),
   // ignore: constant_identifier_names
@@ -14,7 +14,7 @@ enum ItemsOrderEnum {
   // ignore: constant_identifier_names
   ValorAscendente("Valor Ascendente");
 
-  const ItemsOrderEnum(this.element);
+  const ItemOrderEnum(this.element);
 
   final String element;
 }

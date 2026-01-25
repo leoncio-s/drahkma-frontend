@@ -1,18 +1,20 @@
+import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/core/notifiers/app_notifier.dart';
 import 'package:drahkma/core/utils/text_scaler.dart';
-import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
-import 'package:drahkma/features/items/data/models/item_model.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/item/data/models/item_model.dart';
+import 'package:drahkma/features/item/domain/usecases/item_delete.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/features/items/presentation/forms/items_form.dart';
-import 'package:drahkma/features/items/domain/enums/items_order_enum.dart';
-import 'package:drahkma/features/items/util/item_model_sort.dart';
+import 'package:drahkma/features/item/presentation/forms/item_form.dart';
+import 'package:drahkma/features/item/domain/enums/item_order_enum.dart';
+import 'package:drahkma/features/item/util/item_model_sort.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
 class ItemsView extends StatefulWidget{
   final String title;
-  final Future<List<ItemModel>?> Function(DateTime, DateTime) getData;
+  final Future<List<ItemModel>?> Function({DateTime start, DateTime end}) getData;
   final bool expense;
   const ItemsView(
       {super.key,
@@ -29,7 +31,7 @@ class _ItemsViewState extends State<ItemsView>{
   DateTime finishDate = appNotifier.dateTimeRange.end;
   List<ItemModel>? _items;
 
-  ItemsOrderEnum orderEnum = ItemsOrderEnum.DataDecrescente;
+  ItemOrderEnum orderEnum = ItemOrderEnum.DataDecrescente;
 
   final DateFormat dtFormat = Config.dateFormat;
   final NumberFormat curlFormat = Config.currencyFormat;
@@ -37,7 +39,8 @@ class _ItemsViewState extends State<ItemsView>{
   double _turns = 0.0;
 
   void _getData() {
-    widget.getData(startDate, finishDate).then((data) {
+    widget.getData(
+      start: startDate, end: finishDate).then((data) {
       setState(() {
         _items = data;
       });
@@ -91,7 +94,7 @@ class _ItemsViewState extends State<ItemsView>{
           onPressed: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ItemsForm(expense: widget.expense)))
+                    builder: (context) => ItemForm(expense: widget.expense)))
                 .then((data) {
               if (data is ItemModel) {
                 _getData();
@@ -119,11 +122,11 @@ class _ItemsViewState extends State<ItemsView>{
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 200),
-                    child: DropdownButton<ItemsOrderEnum>(
+                    child: DropdownButton<ItemOrderEnum>(
                         alignment: AlignmentDirectional.center,
                         value: orderEnum,
-                        items: ItemsOrderEnum.values
-                            .map((el) => DropdownMenuItem<ItemsOrderEnum>(
+                        items: ItemOrderEnum.values
+                            .map((el) => DropdownMenuItem<ItemOrderEnum>(
                                 alignment: AlignmentDirectional.center,
                                 value: el,
                                 child: Text(
@@ -136,32 +139,32 @@ class _ItemsViewState extends State<ItemsView>{
                             orderEnum = value!;
                           });
                           switch (value) {
-                            case ItemsOrderEnum.DataAscendente:
+                            case ItemOrderEnum.DataAscendente:
                               setState(() {
                                 _items!.sort(ItemModelSort.dateAsc);
                               });
                               break;
-                            case ItemsOrderEnum.DataDecrescente:
+                            case ItemOrderEnum.DataDecrescente:
                               setState(() {
                                 _items!.sort(ItemModelSort.dateDesc);
                               });
                               break;
-                            case ItemsOrderEnum.ValorAscendente:
+                            case ItemOrderEnum.ValorAscendente:
                               setState(() {
                                 _items!.sort(ItemModelSort.valueAsc);
                               });
                               break;
-                            case ItemsOrderEnum.ValorDecrescente:
+                            case ItemOrderEnum.ValorDecrescente:
                               setState(() {
                                 _items!.sort(ItemModelSort.valueDesc);
                               });
                               break;
-                            case ItemsOrderEnum.DescricaoAscendente:
+                            case ItemOrderEnum.DescricaoAscendente:
                               setState(() {
                                 _items!.sort(ItemModelSort.descrAsc);
                               });
                               break;
-                            case ItemsOrderEnum.DescricaoDecrescente:
+                            case ItemOrderEnum.DescricaoDecrescente:
                               setState(() {
                                 _items!.sort(ItemModelSort.descrDesc);
                               });
@@ -283,31 +286,23 @@ class _ItemsViewState extends State<ItemsView>{
                             ],
                           ),
                           trailing: IconButton(
-                              onPressed: () {
-                                ItemsRemoteDatasource().delete(el).then((value) {
-                                  // ignore: no_leading_underscores_for_local_identifiers
-                                  SnackBar _snackBar;
-                                  if (value) {
-                                    _snackBar = const SnackBar(
+                              onPressed: () async {
+                                try{
+                                  await getIt<ItemDelete>().call(item: el);
+                                  SnackBar snackBar = const SnackBar(
                                       content:
                                           Text("Item excluido com sucesso"),
                                       backgroundColor: Colors.greenAccent,
                                       showCloseIcon: true,
                                     );
-                                  } else {
-                                    _snackBar = SnackBar(
-                                      content: Text(value["errors"]),
-                                      backgroundColor: Colors.red,
-                                      showCloseIcon: true,
-                                    );
-                                  }
-
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(_snackBar);
-                                });
-                                // setState(() {});
-                                _getData();
+                                  if(mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                }on UnauthenticatedException
+                                {
+                                  if(mounted) Navigator.of(context).pushReplacementNamed('/auth/login');
+                                }catch(e){
+                                  rethrow;
+                                }
+                                  _getData();
                               },
                               icon: const Icon(
                                 Icons.delete,
@@ -318,7 +313,7 @@ class _ItemsViewState extends State<ItemsView>{
                           onTap: () {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(
-                                    builder: (context) => ItemsForm(
+                                    builder: (context) => ItemForm(
                                           data: el,
                                           expense: widget.expense,
                                         )))

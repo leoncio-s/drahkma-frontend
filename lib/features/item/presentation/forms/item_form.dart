@@ -1,31 +1,34 @@
 
-import 'package:drahkma/features/bank_accounts/data/datasources/bank_accounts_remote_datasource.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
-import 'package:drahkma/features/cards/data/datasources/cards_remote_datasource.dart';
-import 'package:drahkma/features/cards/data/models/card_model.dart';
-import 'package:drahkma/features/categories/data/models/category_model.dart';
-import 'package:drahkma/features/items/data/datasources/items_remote_datasource.dart';
-import 'package:drahkma/features/items/data/models/item_model.dart';
-import 'package:drahkma/features/items/data/models/transferbank_model.dart';
-import 'package:drahkma/features/items/domain/enums/transfer_bank_type_enum.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
+import 'package:drahkma/features/category/data/models/Category_model.dart';
+import 'package:drahkma/features/category/domain/usecases/Category_get_all.dart';
+import 'package:drahkma/features/item/data/models/item_dto.dart';
+import 'package:drahkma/features/item/data/models/item_model.dart';
+import 'package:drahkma/features/item/data/models/transferbank_model.dart';
+import 'package:drahkma/features/item/domain/enums/transfer_bank_type_enum.dart';
+import 'package:drahkma/features/item/domain/usecases/item_save.dart';
+import 'package:drahkma/features/item/domain/usecases/item_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
-import 'package:drahkma/features/categories/data/datasources/categories_remote_datasource.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
-class ItemsForm extends StatefulWidget {
+class ItemForm extends StatefulWidget {
   final ItemModel? data;
   final bool expense;
-  const ItemsForm({super.key, this.data, this.expense = true});
+  const ItemForm({super.key, this.data, this.expense = true});
 
   @override
-  State<StatefulWidget> createState() => ItemsFormState();
+  State<StatefulWidget> createState() => ItemFormState();
 }
 
-class ItemsFormState extends State<ItemsForm> {
+class ItemFormState extends State<ItemForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _description = TextEditingController();
   MoneyMaskedTextController _value = MoneyMaskedTextController(
@@ -47,23 +50,23 @@ class ItemsFormState extends State<ItemsForm> {
   DateFormat dateFormat = Config.dateFormat;
   // NumberFormat currencyFormat = Config.currencyFormat;
 
-  List<CategoryModel>? categories;
-  List<BankAccountModel> bankAccounts = [];
-  List<CardModel> cards = [];
+  List<CategoryModel>? category;
+  List<BankAccountModel>? bankAccounts = [];
+  List<CardModel>? cards = [];
   dynamic data;
   bool expense = false;
 
   @override
   void initState() {
     Future.wait([
-      CategoriesRemoteDatasource().get(),
-      BankAccountsRemoteDatasource().get(),
-      CardsRemoteDatasource().get()
+      getIt<CategoryGetAll>().call(),
+      getIt<BankAccountGetAll>().call(),
+      getIt<CardGetAll>().call()
     ]).then((value) {
       setState(() {
-        categories = value[0];
-        bankAccounts = value[1];
-        cards = value[2];
+        category = value[0] as List<CategoryModel>?;
+        bankAccounts = value[1] as List<BankAccountModel>?;
+        cards = value[2] as List<CardModel>?;
       });
     });
 
@@ -93,9 +96,9 @@ class ItemsFormState extends State<ItemsForm> {
       }
     } else {
       _date.text = dateFormat.format(DateTime.now());
-      _category = categories?.firstOrNull!.id;
-      _transferbank_bank_account = bankAccounts.firstOrNull?.id;
-      _card = cards.firstOrNull?.id;
+      _category = category?.firstOrNull!.id;
+      _transferbank_bank_account = bankAccounts!.firstOrNull!.id;
+      _card = cards!.firstOrNull!.id;
     }
     super.initState();
   }
@@ -250,7 +253,7 @@ class ItemsFormState extends State<ItemsForm> {
 
         ///
         /// category
-        categories == null
+        category == null
             ? const SizedBox(
                 width: 30,
                 height: 30,
@@ -269,7 +272,7 @@ class ItemsFormState extends State<ItemsForm> {
                   }
                   return null;
                 },
-                items: categories!
+                items: category!
                     .map((cat) => DropdownMenuItem<int>(
                           value: cat.id,
                           child: Text(
@@ -406,7 +409,7 @@ class ItemsFormState extends State<ItemsForm> {
                                     counterText: ""),
                             isDense: false,
                             isExpanded: true,
-                            items: bankAccounts
+                            items: bankAccounts!
                                 .map((el) => DropdownMenuItem<int?>(
                                       value: el.id,
                                       child: Text(
@@ -437,7 +440,7 @@ class ItemsFormState extends State<ItemsForm> {
                     .copyWith(labelText: "Cartão", counterText: ""),
                 isDense: false,
                 isExpanded: true,
-                items: cards
+                items: cards!
                     .map((el) => DropdownMenuItem<int?>(
                           value: el.id,
                           child: Text(
@@ -485,40 +488,45 @@ class ItemsFormState extends State<ItemsForm> {
                 if (_formKey.currentState!.validate()) {
                   dynamic ret;
                   if (widget.data?.id != null) {
-                    ret = await ItemsRemoteDatasource().update(ItemModel(
+                    getIt<ItemUpdate>().call(
+                      item:
+                      ItemDTO(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
                         category:
-                            categories!.firstWhere((el) => el.id == _category),
+                            category!.firstWhere((el) => el.id == _category),
                         date: dateFormat.parse(_date.text),
                         expense: widget.expense,
                         card: _transferbank
                             ? null
-                            : cards.firstWhere((el) => el.id == _card),
+                            : cards!.firstWhere((el) => el.id == _card),
                         transferBank: _transferbank
                             ? TransferBankModel(
                                 id: widget.data?.transferBank?.id,
-                                bankAccount: bankAccounts.firstWhere((el) =>
+                                bankAccount: bankAccounts?.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
                                 type: _transferbank_type)
                             : null));
                     // ret = null;
                   } else {
-                    ret = await ItemsRemoteDatasource().save(ItemModel(
+                    
+                    ret = await getIt<ItemSave>().call(
+                      item: 
+                      ItemDTO(
                         card: _transferbank
                             ? null
-                            : cards.firstWhere((el) => el.id == _card),
+                            : cards?.firstWhere((el) => el.id == _card),
                         description: _description.text,
                         date: dateFormat.parse(_date.text),
                         value: _value.numberValue,
                         category:
-                            categories!.firstWhere((el) => el.id == _category),
+                            category!.firstWhere((el) => el.id == _category),
                         expense: expense,
                         transferBank: _transferbank
                             ? TransferBankModel(
-                                bankAccount: bankAccounts.firstWhere((el) =>
+                                bankAccount: bankAccounts?.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
                                 type: _transferbank_type)

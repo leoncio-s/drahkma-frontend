@@ -1,6 +1,6 @@
-import 'package:drahkma/features/cards/domain/entities/card.dart';
-import 'package:drahkma/features/categories/domain/entities/category.dart';
-import 'package:drahkma/features/items/domain/entities/transfer_bank.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/category/domain/entities/Category.dart';
+import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 
 class Item{
 
