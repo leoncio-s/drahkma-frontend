@@ -1,15 +1,15 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
-import 'package:drahkma/features/cards/domain/repositories/cards_repository.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/card/domain/repositories/card_repository.dart';
 
-class CardsGetAll implements UseCases<List<Cards>?>
+class CardGetAll implements UseCases<List<Card>?>
 {
-  final CardsRepository _repository;
-  CardsGetAll(CardsRepository repository) : _repository = repository;
+  final CardRepository _repository;
+  CardGetAll(CardRepository repository) : _repository = repository;
   
   @override
-  Future<List<Cards>?> call() async {
-    List<Cards>? data = await _repository.getAll();
+  Future<List<Card>?> call() async {
+    List<Card>? data = await _repository.getAll();
     return data;
   }
 }

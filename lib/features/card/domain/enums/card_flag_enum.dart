@@ -1,4 +1,4 @@
-enum CardFlagsEnum{
+enum CardFlagEnum{
     visa('visa'),
     mastercard('Mastercard'),
     elo('Elo'),
@@ -6,25 +6,25 @@ enum CardFlagsEnum{
     hipercard('Hipercard'),
     others('Others');
 
-    const CardFlagsEnum(String type);
+    const CardFlagEnum(String type);
 
-    CardFlagsEnum? parse(String? data){
-      CardFlagsEnum? value;
+    CardFlagEnum? parse(String? data){
+      CardFlagEnum? value;
       switch (data){
         case "visa":
-          value = CardFlagsEnum.visa;
+          value = CardFlagEnum.visa;
           break;
         case "Mastercard":
-          value = CardFlagsEnum.mastercard;
+          value = CardFlagEnum.mastercard;
           break;
         case "Elo":
-          value = CardFlagsEnum.elo;
+          value = CardFlagEnum.elo;
           break;
         case "Hipercard":
-          value = CardFlagsEnum.hipercard;
+          value = CardFlagEnum.hipercard;
           break;
         case "Others":
-          value = CardFlagsEnum.others;
+          value = CardFlagEnum.others;
           break;
         default:
           value = null;

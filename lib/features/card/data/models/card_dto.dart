@@ -1,10 +1,10 @@
 import 'package:drahkma/core/mixins/dto.dart';
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:intl/intl.dart';
 
-class CardsDTO extends Cards with DTO
+class CardDTO extends Card with DTO
 {
-    CardsDTO({super.id, super.brand, super.expiresAt, super.flag, super.invoiceDay, super.last4Digits, super.type});
+    CardDTO({super.id, super.brand, super.expiresAt, super.flag, super.invoiceDay, super.last4Digits, super.type});
 
     @override
     Map<String, dynamic> toMap() {

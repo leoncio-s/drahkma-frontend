@@ -1,38 +1,38 @@
-import 'package:drahkma/features/cards/data/models/cards_dto.dart';
-import 'package:drahkma/features/cards/data/models/cards_model.dart';
-import 'package:drahkma/features/cards/data/sources/cards_remote_datasource.dart';
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
-import 'package:drahkma/features/cards/domain/repositories/cards_repository.dart';
+import 'package:drahkma/features/card/data/models/card_dto.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/card/domain/repositories/card_repository.dart';
 
-class CardsRepositoryImpl implements CardsRepository
+class CardRepositoryImpl implements CardRepository
 {
 
-  final CardsRemoteDatasource _datasource;
-  CardsRepositoryImpl(CardsRemoteDatasource datasource): _datasource = datasource;
+  final CardRemoteDatasource _datasource;
+  CardRepositoryImpl(CardRemoteDatasource datasource): _datasource = datasource;
 
   @override
-  Future<void> delete(Cards card) async {
-    return await _datasource.delete(card as CardsModel);
+  Future<void> delete(Card card) async {
+    return await _datasource.delete(card as CardModel);
   }
 
   @override
-  Future<List<Cards>?> getAll() async {
+  Future<List<Card>?> getAll() async {
     return await _datasource.getAll();
   }
 
   @override
-  Future<Cards?> getBy({int? id}) async {
+  Future<Card?> getBy({int? id}) async {
     return await _datasource.getBy(id:id);
   }
 
   @override
-  Future<Cards?> save(Cards card) async {
-    return await _datasource.save(card as CardsDTO);
+  Future<Card?> save(Card card) async {
+    return await _datasource.save(card as CardDTO);
   }
 
   @override
-  Future<void> update(Cards card) async {
-    return await _datasource.update(card as CardsDTO);
+  Future<void> update(Card card) async {
+    return await _datasource.update(card as CardDTO);
   }
   
 }

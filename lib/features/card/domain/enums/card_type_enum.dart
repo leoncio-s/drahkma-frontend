@@ -1,5 +1,5 @@
 
-enum CardsTypeEnum{
+enum CardTypeEnum{
   credit('Credito'),
   debit('Debito'),
   vR('Vale Refeição'),
@@ -7,7 +7,7 @@ enum CardsTypeEnum{
   others('Outros');
 
   
-  const CardsTypeEnum(this.type);
+  const CardTypeEnum(this.type);
   
   final String type;
 }

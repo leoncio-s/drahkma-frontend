@@ -1,11 +1,11 @@
-import 'package:drahkma/features/cards/data/models/cards_dto.dart';
-import 'package:drahkma/features/cards/data/models/cards_model.dart';
+import 'package:drahkma/features/card/data/models/card_dto.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
 
-abstract interface class CardsRemoteDatasource
+abstract interface class CardRemoteDatasource
 {
-  Future<CardsModel?> save(CardsDTO card);
-  Future<void> update(CardsDTO card);
-  Future<CardsModel?> getBy({int? id});
-  Future<List<CardsModel>?> getAll();
-  Future<void> delete(CardsModel card);
+  Future<CardModel?> save(CardDTO card);
+  Future<void> update(CardDTO card);
+  Future<CardModel?> getBy({int? id});
+  Future<List<CardModel>?> getAll();
+  Future<void> delete(CardModel card);
 }
