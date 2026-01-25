@@ -1,13 +1,11 @@
-import 'dart:async';
-
-import 'package:drahkma/features/bank_accounts/presentation/views/bank_accounts_view.dart';
-import 'package:drahkma/features/cards/presentation/views/cards_view.dart';
-import 'package:drahkma/features/categories/presentation/views/categories_view.dart';
-import 'package:drahkma/features/users/data/datasources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/amounts/presentation/pages/dashboard_page.dart';
-import 'package:drahkma/features/items/presentation/views/inflow_view.dart';
-import 'package:drahkma/features/items/presentation/views/outflow_view.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
+import 'package:drahkma/features/card/presentation/views/card_view.dart';
+import 'package:drahkma/features/category/presentation/views/Category_view.dart';
+import 'package:drahkma/features/amount/presentation/pages/dashboard_page.dart';
+import 'package:drahkma/features/item/presentation/views/income_item_view.dart';
+import 'package:drahkma/features/item/presentation/views/expense_item_view.dart';
+import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
 import 'package:drahkma/presentation/widgets/app_bar_navigator_widget.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
@@ -28,14 +26,12 @@ class HomeViewState extends State<HomeView> {
     });
   }
 
-  Future<UserModel?> _profile()async{
-    Future.delayed(const Duration(milliseconds: 200));
-    return await UserRemoteDatasource.profile();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: _profile(), builder: (context, snapshot){
+
+    UserProfile userPofile = getIt<UserProfile>();
+    
+    return FutureBuilder(future: userPofile.call(), builder: (context, snapshot){
       if(snapshot.connectionState == ConnectionState.waiting)
       {
         return const Center(child: CircularProgressIndicator(),);
@@ -48,11 +44,11 @@ class HomeViewState extends State<HomeView> {
       return AppBarNavigatorWidget(
       childrens: <DrahkmaStatefulWidget>[
         AmountsPage(),
-        InflowView(),
-        OutflowView(),
-        CategoriesView(),
-        BankAccountsView(),
-        CardsView()
+        IncomeItemView(),
+        ExpenseItemView(),
+        CategoryView(),
+        BankAccountView(),
+        CardView()
       ],
     );
     });
