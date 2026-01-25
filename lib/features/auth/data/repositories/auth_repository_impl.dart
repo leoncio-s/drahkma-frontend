@@ -2,7 +2,7 @@ import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.da
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 
 class AuthRepositoryImpl implements AuthRepository
 {

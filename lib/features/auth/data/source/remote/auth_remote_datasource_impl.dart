@@ -6,8 +6,8 @@ import 'package:drahkma/core/exceptions/user_not_allowed_exception.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
