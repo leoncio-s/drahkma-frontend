@@ -1,26 +1,17 @@
 
-import 'package:drahkma/features/cards/data/models/card_model.dart';
-import 'package:drahkma/features/categories/data/models/category_model.dart';
-import 'package:drahkma/features/items/data/models/transferbank_model.dart';
-import 'package:drahkma/features/items/domain/entities/item.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'package:drahkma/features/category/data/models/Category_model.dart';
+import 'package:drahkma/features/item/data/models/transferbank_model.dart';
+import 'package:drahkma/features/item/domain/entities/item.dart';
+import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 import 'package:intl/intl.dart';
 
-class ItemModel{
-
-    int? id;
-    String? description;
-    bool? expense;
-    double? value;
-    DateTime? date;
-    CategoryModel? category;
-    CardModel? card;
-    TransferBankModel? transferBank;
-
+class ItemModel extends Item{
     ItemModel({
-      this.card, this.category, this.date, this.description, this.expense, this.id, this.transferBank, this.value
+      super.card, super.category, super.date, super.description, super.expense, super.id, super.transferBank, super.value
     });
 
-    factory ItemModel.toObject(dynamic data){
+    factory ItemModel.fromJson(dynamic data){
       int? id = data['id'];
       
       String? description = data['description'];
@@ -31,11 +22,11 @@ class ItemModel{
       
       DateTime? date = data['date'] == null ? null : DateFormat('yyyy-MM-dd').parse(data['date']['date']!);
       
-      CategoryModel? category = data['category'] == null ? null : CategoryModel.toObject(data['category']);
+      CategoryModel? category = data['category'] == null ? null : CategoryModel.fromJson(data['category']);
       
-      CardModel? card = data['card'] == null? null : CardModel.toObject(data['card']!);
+      CardModel? card = data['card'] == null? null : CardModel.fromJson(data['card']!);
       
-      TransferBankModel? transferBank = data['transfer_bank'] == null ? null : TransferBankModel.toObject(data['transfer_bank']);
+      TransferBankModel? transferBank = data['transfer_bank'] == null ? null : TransferBankModel.fromJson(data['transfer_bank']);
 
       return ItemModel(
         card: card,
@@ -49,19 +40,6 @@ class ItemModel{
         );
     }
     
-      
-      Map<String, dynamic> toMap() {
-        return {
-          'id' : id,
-          'description' : description,
-          'date' : DateFormat('yyyyMMdd').format(date!),
-          'category': category!.id,
-          'expense' : expense,
-          'value' : value,
-          'transfer_bank' : transferBank != null ? transferBank!.toMap() : transferBank,
-          'card' : card != null ? card?.id : card
-        };
-      }
 
       Item toEntity(){
         return Item(
@@ -71,8 +49,8 @@ class ItemModel{
           value: value,
           date: date,
           category: category,
-          card: card?.toEntity(),
-          transferBank: transferBank
+          card: card,
+          transferBank: transferBank as TransferBank
         );
       }
 }
