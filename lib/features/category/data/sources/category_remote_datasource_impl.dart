@@ -6,8 +6,8 @@ import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.da
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource

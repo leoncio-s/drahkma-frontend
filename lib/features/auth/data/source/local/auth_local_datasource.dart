@@ -1,4 +1,4 @@
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 
 abstract interface class AuthLocalDatasource {
   Future<void> saveAuthToken(User user);

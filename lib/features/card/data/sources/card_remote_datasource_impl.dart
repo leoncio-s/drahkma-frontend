@@ -6,8 +6,8 @@ import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.da
 import 'package:drahkma/features/card/data/models/card_dto.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class CardRemoteDatasourceImpl implements CardRemoteDatasource{

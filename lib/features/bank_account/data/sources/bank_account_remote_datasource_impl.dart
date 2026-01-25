@@ -7,8 +7,8 @@ import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
