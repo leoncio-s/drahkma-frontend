@@ -1,24 +1,10 @@
-import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/entities/user.dart';
 
-interface class AuthLocalDatasource {
-  Future<void> saveAuthToken(UserModel user) {
-    throw UnimplementedError();
-  }
-
-  Future<UserModel?> getAuthToken() {
-    throw UnimplementedError();
-  }
-  
-  Future<void> clearAuthToken() {
-    throw UnimplementedError();
-  }
-
-  Future<void> saveStorageEmail(String email){
-    throw UnimplementedError();
-  }
-
-  Future<String?> getStorageEmail(){
-    throw UnimplementedError();
-  }
+abstract interface class AuthLocalDatasource {
+  Future<void> saveAuthToken(User user);
+  Future<User?> getAuthToken();
+  Future<void> clearAuthToken();
+  Future<void> saveStorageEmail(String email);
+  Future<String?> getStorageEmail();
   
 }
