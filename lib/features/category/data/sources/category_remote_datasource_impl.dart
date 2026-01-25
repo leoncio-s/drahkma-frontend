@@ -3,30 +3,32 @@ import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/categories/data/models/categories_dto.dart';
-import 'package:drahkma/features/categories/data/models/categories_model.dart';
-import 'package:drahkma/features/categories/data/sources/categories_remote_datasource.dart';
+import 'package:drahkma/features/category/data/models/category_dto.dart';
+import 'package:drahkma/features/category/data/models/category_model.dart';
+import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
-class CategoriesRemoteDatasourceImpl implements CategoriesRemoteDatasource
+class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
 {
-  static final Uri _url = Uri.parse("${Config.urlApi}categories");
+  static final Uri _url = Uri.parse("${Config.urlApi}Category");
 
   @override
-  Future<List<CategoriesModel>> getAll() async {
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+  Future<List<CategoryModel>> getAll() async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var request = await http.get(
       _url,
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
     );
 
-    List<CategoriesModel>? toRet = [];
+    List<CategoryModel>? toRet = [];
 
     if (request.statusCode == 200) {
       List<dynamic> data = jsonDecode(request.body);
       for (var el in data) {
-        toRet.add(CategoriesModel.fromJson(el));
+        toRet.add(CategoryModel.fromJson(el));
       }
     }
 
@@ -34,8 +36,9 @@ class CategoriesRemoteDatasourceImpl implements CategoriesRemoteDatasource
   }
 
   @override
-  Future<CategoriesModel?> save(CategoriesDTO data) async {
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+  Future<CategoryModel?> save(CategoryDTO data) async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var request = await http.post(
       _url,
       body: jsonEncode(data.toMap()),
@@ -45,25 +48,26 @@ class CategoriesRemoteDatasourceImpl implements CategoriesRemoteDatasource
       },
     );
 
-    CategoriesModel? cat;
+    CategoryModel? cat;
 
     if (request.statusCode == 201) {
-      cat = CategoriesModel.fromJson(jsonDecode(request.body));
+      cat = CategoryModel.fromJson(jsonDecode(request.body));
     }
 
     return cat;
   }
 
   @override
-  Future<void> update(CategoriesDTO data) async {
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+  Future<void> update(CategoryDTO data) async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     
     var request = await http.put(
       _url,
       body: jsonEncode(data.toMap()),
       headers: {
-        'Authorization': " Bearer ${user?.token ?? ''}",
+        'Authorization': " Bearer ${user.token ?? ''}",
         'Content-type': 'application/json',
       },
     );
@@ -80,8 +84,9 @@ class CategoriesRemoteDatasourceImpl implements CategoriesRemoteDatasource
   }
 
   @override
-  Future delete(CategoriesModel data) async {
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+  Future delete(CategoryModel data) async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var request = await http.delete(
       _url.resolve("/${data.id}"),
       headers: {
@@ -99,8 +104,7 @@ class CategoriesRemoteDatasourceImpl implements CategoriesRemoteDatasource
   }
   
   @override
-  Future<CategoriesModel?> getBy({int? id}) {
-    // TODO: implement getBy
+  Future<CategoryModel?> getBy({int? id}) {
     throw UnimplementedError();
   }
 }
