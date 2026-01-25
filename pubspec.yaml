@@ -1,7 +1,7 @@
 name: drahkma
 description: "Aplicação de gerenciamento financeiro inteligente."
 publish_to: 'none'
-version: 0.1.0
+version: 2.0.0
 
 environment:
   sdk: ^3.5.1
@@ -11,14 +11,15 @@ dependencies:
     sdk: flutter
   flutter_masked_text2: ^0.9.1
   graphic: ^2.5.0
-  http: ^0.13.6
+  http: ^1.6.0
   intl: ^0.20.2
-  requests: ^4.7.0
   flutter_localizations:
     sdk: flutter
-  syncfusion_flutter_charts: ^31.2.5
+  syncfusion_flutter_charts: ^32.1.22
   ini: ^2.1.0
   web: ^1.1.1
+  shared_preferences: ^2.5.4
+  get_it: ^9.2.0
 
 dev_dependencies:
   flutter_test:
