@@ -1,4 +1,6 @@
-import 'package:drahkma/features/auth/data/datasources/auth_remote_datasource.dart';
+
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 
@@ -23,18 +25,15 @@ class AppBarNavigatorWidget extends StatelessWidget {
               actions: [
                 ElevatedButton.icon(
                     onPressed: () {
-                      AuthRemoteDatasource.logout();
+                      getIt<LogoutUseCase>().call();
                       Navigator.of(context).pushReplacementNamed("/auth/login");
                     }, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
               ],
               bottom: TabBar(
                   isScrollable: true,
                   indicatorColor: Theme.of(context).hoverColor,
-                  // indicatorSize: TabBarIndicatorSize.label,
                   labelColor: Theme.of(context).secondaryHeaderColor,
-                  // enableFeedback: true,
                   indicatorWeight: 10.0,
-                  // indicatorPadding: EdgeInsets.all(90),
                   tabs: childrens
                       .map((el) =>
                       ConstrainedBox(constraints: const BoxConstraints(maxHeight: 60, minHeight: 30, minWidth: 40,  maxWidth: 200), child: SizedBox(
@@ -45,10 +44,8 @@ class AppBarNavigatorWidget extends StatelessWidget {
                               text: MediaQuery.of(context).size.width > 500 ? el.name : null,
                             ) :
                       Tooltip(
-                            // icon: el.icon,
                             constraints: BoxConstraints.expand(height: 50),
                             message: el.name,
-                            // child: Text(el.name),
                             child: Tab(
                               icon: el.icon,
                               height: 50,
