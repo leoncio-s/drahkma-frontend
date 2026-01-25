@@ -4,9 +4,9 @@ import 'dart:convert';
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
-import 'package:drahkma/features/users/data/models/user_dto.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/usecases/user_register.dart';
+import 'package:drahkma/features/user/data/models/user_dto.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
@@ -236,7 +236,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (_formKey.currentState!.validate()) {
       try{
         var phoneNumber = _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
-        UserDto user = UserDto(
+        UserDTO user = UserDTO(
           fullname: _fullNameController.text,
           email: _emailController.text,
           phoneNumber: phoneNumber,

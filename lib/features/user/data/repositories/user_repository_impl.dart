@@ -1,6 +1,6 @@
-import 'package:drahkma/features/users/data/sources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
-import 'package:drahkma/features/users/domain/repositories/user_repository.dart';
+import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
+import 'package:drahkma/features/user/domain/repositories/user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository
 {

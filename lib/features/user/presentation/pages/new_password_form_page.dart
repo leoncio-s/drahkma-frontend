@@ -2,7 +2,7 @@
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/core/exceptions/update_password_exception.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/users/domain/usecases/user_update_password.dart';
+import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
 import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
