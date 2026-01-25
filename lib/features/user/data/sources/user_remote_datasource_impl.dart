@@ -5,10 +5,10 @@ import 'package:drahkma/core/exceptions/update_password_exception.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/users/data/models/user_dto.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/data/sources/user_remote_datasource.dart';
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/data/models/user_dto.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class UserRemoteDatasourceImpl implements UserRemoteDatasource{
@@ -20,7 +20,8 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
 
   @override
   Future<UserModel?> profile() async {
-    UserModel? loggedUser = await _authLocalSource.getAuthToken();
+    User? loggedUser = await _authLocalSource.getAuthToken();
+    loggedUser as UserModel?;
 
     if(loggedUser == null) return null;
 
@@ -34,7 +35,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
     }
     var user = UserModel();
     var json = jsonDecode(request.body);
-    user = UserModel.toObject(json);
+    user = UserModel.fromJson(json);
     user.token = loggedUser.token;
     return user;
   }
@@ -43,14 +44,14 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   Future<UserModel?> save(User data) async {
     try {
       var request = await http.post(_url,
-          body: jsonEncode((data as UserDto).toMap()),
+          body: jsonEncode((data as UserDTO).toMap()),
           headers: {'Content-type': 'application/json'})
           .timeout(Duration(seconds: 20));
 
       late Map json;
       if (request.statusCode == 201) {
         json = jsonDecode(request.body);
-        return UserModel.toObject(json);
+        return UserModel.fromJson(json);
       } else if (request.statusCode == 400) {
         json = jsonDecode(request.body);
         throw ArgumentError(jsonEncode(json), 'Erro(s) na validação do cadastro');
@@ -65,13 +66,14 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   Future<void> update(User user) async
   {
     try{
-      UserModel? loggedUser = await _authLocalSource.getAuthToken();
+      User? loggedUser = await _authLocalSource.getAuthToken();
+      loggedUser as UserModel?;
 
       if(loggedUser == null) throw UnauthenticatedException();
 
       var request = await http.put(
         _url, 
-        body: jsonEncode((user as UserModel).toMap()),
+        body: jsonEncode((user as UserDTO).toMap()),
         headers: {
           'Content-type': 'application/json', 
           'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
@@ -108,7 +110,8 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   Future<void> updatePassword({required String currentPassword, required String newPassword, required String confirmNewPassword}) async
   {
 
-    UserModel? loggedUser = await _authLocalSource.getAuthToken();
+    User? loggedUser = await _authLocalSource.getAuthToken();
+    loggedUser as UserModel?;
 
     if(loggedUser == null) throw UnauthenticatedException();
 

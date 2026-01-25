@@ -1,7 +1,7 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/users/data/models/user_dto.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/repositories/user_repository.dart';
+import 'package:drahkma/features/user/data/models/user_dto.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/repositories/user_repository.dart';
 
 class UserRegister implements UseCases<UserModel>
 {
@@ -9,7 +9,7 @@ class UserRegister implements UseCases<UserModel>
   const UserRegister(UserRepository repository) : _repo = repository;
 
   @override
-  call({UserDto? user}) async {
+  call({UserDTO? user}) async {
       UserModel? save = await _repo.save(user!) as UserModel;
       return save;
 

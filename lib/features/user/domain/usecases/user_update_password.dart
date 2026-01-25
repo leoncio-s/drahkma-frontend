@@ -1,5 +1,5 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/users/domain/repositories/user_repository.dart';
+import 'package:drahkma/features/user/domain/repositories/user_repository.dart';
 
 class UserUpdatePassword implements UseCases
 {

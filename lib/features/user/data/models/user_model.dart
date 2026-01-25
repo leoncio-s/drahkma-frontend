@@ -1,4 +1,4 @@
-import 'package:drahkma/features/users/domain/entities/user.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
 
 class UserModel extends User {
     String? token;
@@ -7,7 +7,7 @@ class UserModel extends User {
 
 
     @override
-    factory UserModel.toObject(Map data){
+    factory UserModel.fromJson(Map data){
       final int? id;
       final String? fullname;
       final String? email;
@@ -51,16 +51,4 @@ class UserModel extends User {
         token: token
       );
     }
-
-    Map toMap() => {
-      'actived' : actived,
-      'id'  : id,
-      'created_at' : createdAt?.toIso8601String(),
-      'updated_at' : updatedAt?.toIso8601String(),
-      'email_verified_at' : emailVerifiedAt?.toIso8601String(),
-      'fullname' : fullname,
-      'email' : email,
-      'phone_number' : phoneNumber,
-      'token' : token
-    };
 }

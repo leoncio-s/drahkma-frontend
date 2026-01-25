@@ -2,9 +2,10 @@ import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/users/data/models/user_model.dart';
-import 'package:drahkma/features/users/domain/usecases/user_update.dart';
-import 'package:drahkma/features/users/presentation/pages/new_password_form_page.dart';
+import 'package:drahkma/features/user/data/models/user_model.dart';
+import 'package:drahkma/features/user/domain/entities/user.dart';
+import 'package:drahkma/features/user/domain/usecases/user_update.dart';
+import 'package:drahkma/features/user/presentation/pages/new_password_form_page.dart';
 import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
@@ -48,7 +49,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
     return Drawer(
         width: widthDrawer,
         backgroundColor: Theme.of(context).primaryColorDark,
-        child: FutureBuilder<UserModel?>(
+        child: FutureBuilder<User?>(
             future: localDataSource.getAuthToken(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
