@@ -12,7 +12,8 @@ import 'package:http/http.dart' as http;
 
 class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
 {
-  static final Uri _url = Uri.parse("${Config.urlApi}Category");
+  static String defaultUrl = "${Config.urlApi}categories/";
+  static final Uri _url = Uri.parse(defaultUrl);
 
   @override
   Future<List<CategoryModel>> getAll() async {
@@ -23,16 +24,17 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
     );
 
-    List<CategoryModel>? toRet = [];
+    List<CategoryModel>? categories = [];
 
     if (request.statusCode == 200) {
-      List<dynamic> data = jsonDecode(request.body);
-      for (var el in data) {
-        toRet.add(CategoryModel.fromJson(el));
+      List<dynamic> jsonCategories = jsonDecode(request.body);
+      for (var category in jsonCategories) {
+        CategoryModel categoryModel = CategoryModel.fromJson(category);
+        categories.add(categoryModel);
       }
     }
 
-    return toRet;
+    return categories;
   }
 
   @override
@@ -87,8 +89,9 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   Future delete(CategoryModel data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     user as UserModel?;
+    var url = _url.resolve("${data.id}");
     var request = await http.delete(
-      _url.resolve("/${data.id}"),
+      url,
       headers: {
         'Authorization': " Bearer ${user?.token ?? ''}",
         'Content-type': 'application/json'

@@ -31,18 +31,24 @@ class CardModel extends Card{
   factory CardModel.fromJson(Map<String, dynamic> data) {
     String? dataBrand = data['brand'] ?? "";
     int? dataId = data['id'] ?? 0;
-    CardTypeEnum? dataType = CardTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
-    CardFlagEnum? dataFlag = CardFlagEnum.values.firstWhere((val) => val.name == data['flag'].toString());
-    String? dataExpiresAt = data['expires_at'] ?? "";
+    CardTypeEnum? dataType = CardTypeEnum.values.firstWhere((val) => val.name.toLowerCase() == data['type'].toString().toLowerCase(), orElse: ()=>CardTypeEnum.others);
+    CardFlagEnum? dataFlag = CardFlagEnum.values.firstWhere((val) => val.name.toLowerCase() == data['flag'].toString().toLowerCase(), orElse: ()=>CardFlagEnum.others);
     int? dataInvoiceDay = data['invoice_day'] ?? 1;
     String? dataLast4Digits = data['last_4_digits'] ?? "";
+
+    DateTime? dataExpiresAtDateTime;
+    if(data['expires_at'] != null)
+    {
+      var dataExpiresAt = data['expires_at'].toString().split('/');
+      dataExpiresAtDateTime = DateTime(int.parse(dataExpiresAt[1]), int.parse(dataExpiresAt[0]));
+    }
 
     return CardModel(
       id: dataId, 
       brand: dataBrand,
       type: dataType,
       flag: dataFlag,
-      expiresAt: DateTime.parse(dataExpiresAt!),
+      expiresAt: dataExpiresAtDateTime,
       invoiceDay: dataInvoiceDay,
       last4Digits: dataLast4Digits
     );

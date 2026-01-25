@@ -11,7 +11,8 @@ class AmountRepositoryImpl implements AmountRepository
   @override
   Future<Dashboard?> fetchData({required DateTime startDate, required DateTime endDate}) async {
     Map<String, dynamic>? data = await _datasource.fetchAmounts(startDate, endDate);
-    return DashboardModel.fromJson(data!);
+    if(data == null) return null;
+    return DashboardModel.fromJson(data);
   }
   
 }

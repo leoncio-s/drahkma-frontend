@@ -42,7 +42,7 @@ class _LoginPage extends State<LoginPage> {
 
   void _toDashboard() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) Navigator.of(context).pushReplacementNamed("/dashboard");
+      if (mounted) Navigator.of(context).pushNamedAndRemoveUntil("/dashboard", (route)=>false);
     });
   }
 

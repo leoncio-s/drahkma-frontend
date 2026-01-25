@@ -9,7 +9,7 @@ class CategoryUpdate implements UseCases
 
   @override
   Future<void> call({CategoryDTO? category}) async{
-    await _repository.delete(category!);
+    await _repository.update(category!);
     return;
   }
   

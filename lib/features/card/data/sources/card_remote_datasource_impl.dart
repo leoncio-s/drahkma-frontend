@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 class CardRemoteDatasourceImpl implements CardRemoteDatasource{
 
-  static final Uri _url = Uri.parse("${Config.urlApi}cards");
+  static final Uri _url = Uri.parse("${Config.urlApi}cards/");
 
 
   @override
@@ -24,15 +24,16 @@ class CardRemoteDatasourceImpl implements CardRemoteDatasource{
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
     );
 
-    List<CardModel>? toRet = [];
+    List<CardModel>? cards = [];
 
     if (request.statusCode == 200) {
-      List<dynamic> data = jsonDecode(request.body);
-      for (var el in data) {
-        toRet.add(CardModel.fromJson(el));
+      List<dynamic> cardsJson = jsonDecode(request.body);
+      for (var card in cardsJson) {
+        CardModel cardModel = CardModel.fromJson(card);
+        cards.add(cardModel);
       }
     }
-    return toRet;
+    return cards;
   }
 
   @override
@@ -58,7 +59,7 @@ class CardRemoteDatasourceImpl implements CardRemoteDatasource{
       User? user = await getIt<AuthLocalDatasource>().getAuthToken();
       user as UserModel?;
       var response = await http.delete(
-      _url.resolve("/${data.id}"),
+      _url.resolve("${data.id}"),
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
     );
 

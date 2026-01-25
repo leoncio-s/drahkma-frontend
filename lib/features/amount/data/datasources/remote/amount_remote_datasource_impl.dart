@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 class AmountRemoteDatasourceImpl implements AmountRemoteDatasource 
 {
-  final _url = Uri.parse("${Config.urlApi}/item/amounts");
+  final _url = Uri.parse("${Config.urlApi}item/amounts");
   @override
   Future<Map<String, dynamic>?> fetchAmounts(DateTime startDate, DateTime endDate) async {
     var user = await getIt<AuthLocalDatasource>().getAuthToken();
