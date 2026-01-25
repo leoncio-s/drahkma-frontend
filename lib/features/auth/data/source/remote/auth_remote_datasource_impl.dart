@@ -25,7 +25,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     late Map json;
     if (response.statusCode == 200) {
       json = jsonDecode(response.body);
-      return UserModel.toObject(json);
+      return UserModel.fromJson(json);
     } else if (response.statusCode == 400) {
       json = jsonDecode(response.body);
       throw InvalidCredentialsException(
