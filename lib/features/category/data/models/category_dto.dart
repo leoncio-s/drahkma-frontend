@@ -1,10 +1,10 @@
 import 'package:drahkma/core/mixins/dto.dart';
-import 'package:drahkma/features/categories/domain/entities/categories.dart';
+import 'package:drahkma/features/category/domain/entities/category.dart';
 
-class CategoriesDTO extends Categories with DTO
+class CategoryDTO extends Category with DTO
 {
 
-  CategoriesDTO({super.id, super.description});
+  CategoryDTO({super.id, super.description});
 
   @override
   Map<String, dynamic> toMap(){

@@ -1,21 +1,25 @@
 
-import 'package:drahkma/features/categories/data/sources/categories_remote_datasource_impl.dart';
-import 'package:drahkma/features/categories/data/models/categories_model.dart';
+import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/category/data/models/category_dto.dart';
+import 'package:drahkma/features/category/data/models/category_model.dart';
+import 'package:drahkma/features/category/domain/entities/category.dart';
+import 'package:drahkma/features/category/domain/usecases/category_save.dart';
+import 'package:drahkma/features/category/domain/usecases/category_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
-class CategoriesForm extends StatefulWidget {
-  CategoriesModel? category;
-  CategoriesForm({super.key, this.category});
+class CategoryForm extends StatefulWidget {
+  Category? category;
+  CategoryForm({super.key, this.category});
 
   @override
-  State<CategoriesForm> createState() => CategoriesStateForm();
+  State<CategoryForm> createState() => CategoryStateForm();
 }
 
-class CategoriesStateForm extends State<CategoriesForm> {
+class CategoryStateForm extends State<CategoryForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _description = TextEditingController();
 
@@ -109,15 +113,16 @@ class CategoriesStateForm extends State<CategoriesForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if(widget.category?.id != null){
-                              ret = await CategoriesRemoteDatasource().update(CategoriesModel(id: widget.category!.id, description: _description.text.toUpperCase()));
+                              await getIt<CategoryUpdate>().call(
+                                category: CategoryDTO(id: widget.category!.id, description: _description.text.toUpperCase()));
                             }else{
-                              ret = await CategoriesRemoteDatasource().save(
-                                CategoriesModel(
+                              ret = await getIt<CategorySave>().call(
+                                category: CategoryDTO(
                                     description:
                                         _description.text.toUpperCase()));
                             }
                             if(!mounted) return;
-                            if (ret is CategoriesModel) {
+                            if (ret is CategoryModel) {
                               Navigator.of(context).pop(ret);
                             } else {
                               SnackBar snackBar = SnackBar(
