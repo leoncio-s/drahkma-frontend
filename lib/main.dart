@@ -1,21 +1,25 @@
 import 'dart:async';
+import 'dart:developer';
+import 'dart:ui';
 
 import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
 import 'package:drahkma/core/exceptions/update_password_exception.dart';
-import 'package:drahkma/features/users/presentation/pages/forget_password_page.dart';
+import 'package:drahkma/features/auth/presentation/pages/forget_password_page.dart';
 import 'package:drahkma/features/auth/presentation/pages/login_page.dart';
-import 'package:drahkma/features/amounts/presentation/pages/dashboard_page.dart';
-import 'package:drahkma/features/users/presentation/pages/create_user_page.dart';
+import 'package:drahkma/features/user/presentation/pages/create_user_page.dart';
 import 'package:drahkma/presentation/dialogs/alert_dialog.dart';
+import 'package:drahkma/presentation/pages/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/di/injector.dart';
 
 
 final GlobalKey<NavigatorState> _navState = GlobalKey();
 void exceptionHandler(Object e, StackTrace s)
 {
+  
   BuildContext? context = _navState.currentContext;
   if(context != null)
   {
@@ -27,6 +31,7 @@ void exceptionHandler(Object e, StackTrace s)
     }
     else
     {
+      log(e.toString(), stackTrace: s, level: 1, name: "Drahkma App");
       alertDialog<String>(context, e.toString(), title: "Format Invalid Error");
     }
   }
@@ -36,26 +41,35 @@ void exceptionHandler(Object e, StackTrace s)
 void main() async {
   String initialRoute = "/auth/login";
 
+  initializeDependencies();
+  await getIt.allReady(timeout: Duration(seconds: 5));
+
   if(kDebugMode){
-    Config.setUrlApi = "http://localhost:8081/public/api/v1/";
+    Config.setUrlApi = "http://localhost:8081/api/v1/";
   }
 
   initialRoute = "/dashboard";
   
 
-  runZonedGuarded<void>(()=>runApp(LFinanca(initialRoute: initialRoute,)), exceptionHandler);
+  runZonedGuarded<void>(
+    (){
+      channelBuffers.resize('flutter/lifecycle', 5);
+      WidgetsFlutterBinding.ensureInitialized();
+      runApp(Drahkma(initialRoute: initialRoute,));
+    },
+    exceptionHandler);
 }
 
 
-class LFinanca extends StatefulWidget {
+class Drahkma extends StatefulWidget {
   final String initialRoute;
-  const LFinanca({super.key, required this.initialRoute});
+  const Drahkma({super.key, required this.initialRoute});
 
   @override
   State<StatefulWidget> createState() => _MainApp();
 }
 
-class _MainApp extends State<LFinanca> {
+class _MainApp extends State<Drahkma> {
 
   Color yellowMainColor = const Color(0xFFDE9D32);
   Color backgroundColorBlue = const Color(0xFF00101D);
@@ -196,8 +210,8 @@ class _MainApp extends State<LFinanca> {
       ),
       routes: {
         '/auth/login' : (context) => const LoginPage(),
-        // '/dashboard': (context) => const HomeView(),
-        '/dashboard': (context) => const AmountsPage(),
+        '/dashboard': (context) => const HomeView(),
+        // '/dashboard': (context) => const AmountsPage(),
         '/register' : (context) => const CreateUserPage(),
         '/forget-password' : (context) => const ForgetPasswordPage(),
       },
