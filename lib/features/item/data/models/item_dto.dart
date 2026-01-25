@@ -14,7 +14,7 @@ class ItemDTO extends Item
         'category': category!.id,
         'expense' : expense,
         'value' : value,
-        'transfer_bank' : transferBank != null ? (transferBank as TransferBankDTO?)!.toMap() : transferBank,
+        'transfer_bank' : transferBank != null ? TransferBankDTO.fromModel(transferBank!).toMap() : transferBank,
         'card' : card != null ? card?.id : card
       };
     }

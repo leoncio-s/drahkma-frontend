@@ -4,8 +4,8 @@ import 'package:drahkma/features/bank_account/data/models/bank_account_model.dar
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
-import 'package:drahkma/features/category/data/models/Category_model.dart';
-import 'package:drahkma/features/category/domain/usecases/Category_get_all.dart';
+import 'package:drahkma/features/category/data/models/category_model.dart';
+import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
 import 'package:drahkma/features/item/data/models/item_dto.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/data/models/transferbank_model.dart';
@@ -89,16 +89,16 @@ class ItemFormState extends State<ItemForm> {
         _transferbank_description.text =
             (_transferbank) ? widget.data!.transferBank!.description! : "";
         _transferbank_bank_account = (_transferbank)
-            ? widget.data!.transferBank!.bankAccount!.id
+            ? widget.data!.transferBank!.bankAccount?.id
             : null;
       } catch (e) {
         rethrow;
       }
     } else {
       _date.text = dateFormat.format(DateTime.now());
-      _category = category?.firstOrNull!.id;
-      _transferbank_bank_account = bankAccounts!.firstOrNull!.id;
-      _card = cards!.firstOrNull!.id;
+      _category = category?.firstOrNull?.id;
+      _transferbank_bank_account = bankAccounts!.firstOrNull?.id;
+      _card = cards!.firstOrNull?.id;
     }
     super.initState();
   }

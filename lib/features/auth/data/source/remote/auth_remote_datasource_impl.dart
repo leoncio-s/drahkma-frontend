@@ -26,7 +26,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     if (response.statusCode == 200) {
       json = jsonDecode(response.body);
       return UserModel.fromJson(json);
-    } else if (response.statusCode == 400) {
+    } else if (response.statusCode == 400 || response.statusCode == 404) {
       json = jsonDecode(response.body);
       throw InvalidCredentialsException(
           json['message'] ?? "Email ou senha inválidos.");

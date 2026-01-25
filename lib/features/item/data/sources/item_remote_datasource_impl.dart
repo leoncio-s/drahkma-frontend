@@ -15,7 +15,7 @@ import 'package:http/http.dart' as http;
 
 class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
 {
-  static final Uri _url = Uri.parse("${Config.urlApi}item");
+  static final Uri _url = Uri.parse("${Config.urlApi}item/");
 
   @override
   Future<List<ItemModel>?> getIncome(DateTime start, DateTime end) async {
@@ -25,7 +25,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
 
     DateFormat dateFormat = DateFormat("yyyyMMdd");
     Response response = await http.get(
-      _url.resolve("/inflow").replace(queryParameters: {
+      _url.resolve("inflow").replace(queryParameters: {
         'start_date': dateFormat.format(start),
         'finish_date': dateFormat.format(end)
       }),
@@ -55,7 +55,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     if (user == null) throw UnauthenticatedException();
     DateFormat dateFormat = DateFormat("yyyyMMdd");
     Response response = await http.get(
-        _url.resolve("/outflow").replace(queryParameters: {
+        _url.resolve("outflow").replace(queryParameters: {
           'start_date': dateFormat.format(start),
           'finish_date': dateFormat.format(end)
         }),
@@ -82,7 +82,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     user as UserModel?;
     if (user == null) throw UnauthenticatedException();
-    Response response = await http.delete(_url.resolve("/${item.id}"),
+    Response response = await http.delete(_url.resolve("${item.id}"),
         headers: {'Authorization': " Bearer ${user.token ?? ''}"});
 
     if (response.statusCode == 200) {
@@ -103,7 +103,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     if (user == null) throw UnauthenticatedException();
     Response response = await http.post(_url,
         body: jsonEncode(item.toMap()),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}"});
+        headers: {'Authorization': " Bearer ${user.token ?? ''}", "Content-type":"application/json"});
 
     late Map json;
     if (response.statusCode == 201) {
@@ -114,7 +114,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
       throw UnauthenticatedException();
     }else
     {
-      throw ArgumentError(response.body, "delete item request");
+      throw ArgumentError(response.body, "Save item request");
     }
   }
 
@@ -125,7 +125,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     if (user == null) throw UnauthenticatedException();
     Response response = await http.put(_url,
         body: jsonEncode(item.toMap()),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}"});
+        headers: {'Authorization': " Bearer ${user.token ?? ''}", "Content-type":"application/json"});
 
     if (response.statusCode == 200) {
       return;
@@ -134,7 +134,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
       throw UnauthenticatedException();
     }else
     {
-      throw ArgumentError(response.body, "delete item request");
+      throw ArgumentError(response.body, "update item request");
     }
   }
 }

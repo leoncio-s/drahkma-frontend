@@ -1,10 +1,11 @@
-import 'package:drahkma/features/category/domain/entities/category.dart';
+import 'package:drahkma/features/category/data/models/category_dto.dart';
+import 'package:drahkma/features/category/data/models/category_model.dart';
 
 abstract interface class CategoryRepository
 {
-  Future<Category?> save(Category data);
-  Future<void> update(Category data);
-  Future<void> delete(Category data);
-  Future<Category?> getBy({int? id});
-  Future<List<Category>?> getAll();
+  Future<CategoryModel?> save(CategoryDTO data);
+  Future<void> update(CategoryDTO data);
+  Future<void> delete(CategoryModel data);
+  Future<CategoryModel?> getBy({int? id});
+  Future<List<CategoryModel>?> getAll();
 }

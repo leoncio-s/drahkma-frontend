@@ -11,23 +11,23 @@ class CategoryRepositoryImpl implements CategoryRepository
   CategoryRepositoryImpl(CategoryRemoteDatasource datasource): _datasource=datasource;
 
   @override
-  Future<void> delete(Category data) async {
-    return await _datasource.delete(data as CategoryModel);
+  Future<void> delete(CategoryModel data) async {
+    return await _datasource.delete(data);
   }
 
   @override
-  Future<List<Category>?> getAll() async {
-    return await _datasource.getAll() as List<Category>;
+  Future<List<CategoryModel>?> getAll() async {
+    return await _datasource.getAll();
   }
 
   @override
-  Future<Category?> getBy({int? id}) async {
-    return await _datasource.getBy(id: id) as Category;
+  Future<CategoryModel?> getBy({int? id}) async {
+    return await _datasource.getBy(id: id);
   }
 
   @override
-  Future<Category?> save(Category data) async {
-    return await _datasource.save(data as CategoryDTO) as Category?;
+  Future<CategoryModel?> save(Category data) async {
+    return await _datasource.save(data as CategoryDTO);
   }
 
   @override

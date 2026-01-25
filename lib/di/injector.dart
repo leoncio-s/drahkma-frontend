@@ -10,6 +10,7 @@ import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 import 'package:drahkma/features/auth/domain/usecases/login_use_case.dart';
+import 'package:drahkma/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:drahkma/features/bank_account/data/repositories/bank_accounts_repository_impl.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource_impl.dart';
@@ -73,6 +74,7 @@ void initializeDependencies()
   getIt.registerFactory<UserUpdate>(()=>UserUpdate(getIt<UserRepository>()));
   getIt.registerFactory<UserRegister>(()=>UserRegister(getIt<UserRepository>()));
   getIt.registerFactory<UserProfile>(()=>UserProfile(getIt<UserRepository>()));
+  getIt.registerFactory<LogoutUseCase>(()=>LogoutUseCase(getIt<AuthRepository>()));
   getIt.registerFactory<UserUpdatePassword>(()=>UserUpdatePassword(getIt<UserRepository>()));
 
   ///// Amounts

@@ -1,8 +1,8 @@
 import 'package:drahkma/di/injector.dart';
+import 'package:drahkma/features/amount/presentation/pages/dashboard_amount_page.dart';
 import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
 import 'package:drahkma/features/card/presentation/views/card_view.dart';
 import 'package:drahkma/features/category/presentation/views/Category_view.dart';
-import 'package:drahkma/features/amount/presentation/pages/dashboard_page.dart';
 import 'package:drahkma/features/item/presentation/views/income_item_view.dart';
 import 'package:drahkma/features/item/presentation/views/expense_item_view.dart';
 import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
@@ -43,7 +43,8 @@ class HomeViewState extends State<HomeView> {
       }
       return AppBarNavigatorWidget(
       childrens: <DrahkmaStatefulWidget>[
-        AmountsPage(),
+        // AmountsPage(),
+        DashboardAmountPage(),
         IncomeItemView(),
         ExpenseItemView(),
         CategoryView(),

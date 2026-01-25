@@ -2,7 +2,6 @@
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/entities/category.dart';
 import 'package:drahkma/features/category/domain/usecases/category_save.dart';
 import 'package:drahkma/features/category/domain/usecases/category_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
@@ -12,7 +11,7 @@ import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CategoryForm extends StatefulWidget {
-  Category? category;
+  CategoryModel? category;
   CategoryForm({super.key, this.category});
 
   @override

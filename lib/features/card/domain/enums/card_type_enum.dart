@@ -2,8 +2,8 @@
 enum CardTypeEnum{
   credit('Credito'),
   debit('Debito'),
-  vR('Vale Refeição'),
-  vA('Vale Alimentação'),
+  vr('Vale Refeição'),
+  va('Vale Alimentação'),
   others('Outros');
 
   

@@ -10,7 +10,7 @@ class CategorySave implements UseCases<CategoryModel>{
   @override
   Future<CategoryModel?> call({CategoryDTO? category}) async {
     var data = await _repository.save(category!);
-    return data as CategoryModel?;
+    return data;
   }
 
 }

@@ -23,6 +23,7 @@ class _DataNotifier with ChangeNotifier {
       endDate: dateRange.end).then((Dashboard? onValue) {
         _setData(onValue as DashboardModel);
     });
+    return;
   }
 
 }

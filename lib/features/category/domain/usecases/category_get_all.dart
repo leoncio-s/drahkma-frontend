@@ -10,6 +10,6 @@ class CategoryGetAll implements UseCases<List<CategoryModel>?>
   @override
   Future<List<CategoryModel>?> call() async {
     var data = await _repository.getAll();
-    return data as List<CategoryModel>?;
+    return data;
   }
 }

@@ -42,7 +42,7 @@ void main() async {
   String initialRoute = "/auth/login";
 
   initializeDependencies();
-  await getIt.allReady(timeout: Duration(seconds: 5));
+  await getIt.allReady(timeout: Duration(seconds: 1));
 
   if(kDebugMode){
     Config.setUrlApi = "http://localhost:8081/api/v1/";

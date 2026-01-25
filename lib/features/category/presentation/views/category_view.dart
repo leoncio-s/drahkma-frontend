@@ -1,7 +1,6 @@
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/entities/category.dart';
 import 'package:drahkma/features/category/domain/usecases/category_delete.dart';
 import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
 import 'package:drahkma/features/category/domain/util/category_model_sort.dart';
@@ -144,7 +143,7 @@ class CategoryViewState extends State<CategoryView> {
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                CategoryForm(category: el as Category)));
+                                                CategoryForm(category: el)));
                                 if (data != null) {
                                   _getData();
                                 }

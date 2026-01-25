@@ -37,6 +37,8 @@ class CardsViewState extends State<CardView> {
         setState(() {
         _message = "Erro ao processar solicitação. Tente novamente!";
       });
+      print(e);
+      print(s);
       }
     });
   }
