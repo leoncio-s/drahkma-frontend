@@ -1,32 +1,32 @@
 import 'dart:async';
 import 'package:drahkma/core/utils/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/cards/data/models/cards_model.dart';
-import 'package:drahkma/features/cards/domain/usecases/cards_delete.dart';
-import 'package:drahkma/features/cards/domain/usecases/cards_get_all.dart';
-import 'package:drahkma/features/cards/utils/card_model_sort.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'package:drahkma/features/card/domain/usecases/card_delete.dart';
+import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
+import 'package:drahkma/features/card/utils/card_model_sort.dart';
 import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:drahkma/features/cards/presentation/forms/cards_form.dart';
+import 'package:drahkma/features/card/presentation/forms/card_form.dart';
 
-class CardsView extends DrahkmaStatefulWidget {
-  const CardsView(
+class CardView extends DrahkmaStatefulWidget {
+  const CardView(
       {super.key, super.name = "Cartões",
       super.icon = const Icon(Icons.category, size: 20)});
 
   @override
-  State<CardsView> createState() => CardsViewState();
+  State<CardView> createState() => CardsViewState();
 }
 
-class CardsViewState extends State<CardsView> {
-  List<CardsModel>? cards;
+class CardsViewState extends State<CardView> {
+  List<CardModel>? cards;
   String? _message;
   double _turns = 0.0;
 
   Future<Null> _getData() {
-    return getIt<CardsGetAll>().call().then((value) {
+    return getIt<CardGetAll>().call().then((value) {
       if(mounted){
-        value as List<CardsModel>?;
+        value as List<CardModel>?;
         setState(() {
         cards = value;
         _message = null;
@@ -114,8 +114,8 @@ class CardsViewState extends State<CardsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            CardsModel? data = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CardsForm()));
+            CardModel? data = await Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => CardForm()));
             if (data != null) {
               _getData();
             }
@@ -138,11 +138,11 @@ class CardsViewState extends State<CardsView> {
                               titleAlignment: ListTileTitleAlignment.center,
                               isThreeLine: true,
                               onTap: () async {
-                                CardsModel? data =
+                                CardModel? data =
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                CardsForm(
+                                                CardForm(
                                                     cards: el)));
                                 if (data != null) {
                                   _getData();
@@ -154,7 +154,7 @@ class CardsViewState extends State<CardsView> {
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     try{
-                                      await getIt<CardsDelete>().call(dto: el);
+                                      await getIt<CardDelete>().call(dto: el);
                                       _getData();
                                     }catch(e){
                                       rethrow;

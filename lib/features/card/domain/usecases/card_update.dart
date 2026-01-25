@@ -1,14 +1,14 @@
 import 'package:drahkma/core/interfaces/use_cases.dart';
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
-import 'package:drahkma/features/cards/domain/repositories/cards_repository.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/card/domain/repositories/card_repository.dart';
 
-class CardsUpdate implements UseCases
+class CardUpdate implements UseCases
 {
-  final CardsRepository _repository;
-  CardsUpdate(CardsRepository repository) : _repository=repository;
+  final CardRepository _repository;
+  CardUpdate(CardRepository repository) : _repository=repository;
 
   @override
-  Future<void> call({Cards? dto}) async{
+  Future<void> call({Card? dto}) async{
     await _repository.delete(dto!);
     return;
   }

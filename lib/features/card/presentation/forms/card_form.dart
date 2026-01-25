@@ -1,28 +1,28 @@
 import 'dart:ui';
 
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/cards/data/models/cards_dto.dart';
-import 'package:drahkma/features/cards/domain/usecases/cards_save.dart';
-import 'package:drahkma/features/cards/domain/usecases/cards_update.dart';
+import 'package:drahkma/features/card/data/models/card_dto.dart';
+import 'package:drahkma/features/card/domain/usecases/card_save.dart';
+import 'package:drahkma/features/card/domain/usecases/card_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
-import 'package:drahkma/features/cards/data/models/cards_model.dart';
-import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
-import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
+import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
 import 'package:drahkma/core/utils/months.dart';
 import 'package:drahkma/core/utils/string_regex_validate.dart';
 
 // ignore: must_be_immutable
-class CardsForm extends StatefulWidget {
-  CardsModel? cards;
-  CardsForm({super.key, this.cards});
+class CardForm extends StatefulWidget {
+  CardModel? cards;
+  CardForm({super.key, this.cards});
 
   @override
-  State<CardsForm> createState() => CardsStateForm();
+  State<CardForm> createState() => CardsStateForm();
 }
 
-class CardsStateForm extends State<CardsForm> {
+class CardsStateForm extends State<CardForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _brand = TextEditingController();
   Months? _expMonth =
@@ -30,8 +30,8 @@ class CardsStateForm extends State<CardsForm> {
   int? _expYear = DateTime.now().year;
   final TextEditingController _last4Digits = TextEditingController();
   int? _invoiceDay;
-  CardsTypeEnum? _type = CardsTypeEnum.credit;
-  CardFlagsEnum? _flag = CardFlagsEnum.mastercard;
+  CardTypeEnum? _type = CardTypeEnum.credit;
+  CardFlagEnum? _flag = CardFlagEnum.mastercard;
 
   @override
   void initState() {
@@ -119,7 +119,7 @@ class CardsStateForm extends State<CardsForm> {
                       ),
                   isDense: false,
                   isExpanded: true,
-                  items: CardsTypeEnum.values
+                  items: CardTypeEnum.values
                       .map((el) => DropdownMenuItem(
                             value: el,
                             child: Text(
@@ -148,7 +148,7 @@ class CardsStateForm extends State<CardsForm> {
                       ),
                   isDense: false,
                   isExpanded: true,
-                  items: CardFlagsEnum.values
+                  items: CardFlagEnum.values
                       .map((el) => DropdownMenuItem(
                             value: el,
                             child: Text(
@@ -369,9 +369,9 @@ class CardsStateForm extends State<CardsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.cards?.id != null) {
-                              await getIt<CardsUpdate>().call(
+                              await getIt<CardUpdate>().call(
                                 dto:
-                                CardsDTO(
+                                CardDTO(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
@@ -380,9 +380,9 @@ class CardsStateForm extends State<CardsForm> {
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await getIt<CardsSave>().call(
+                              ret = await getIt<CardSave>().call(
                                 dto:
-                                CardsDTO(
+                                CardDTO(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
@@ -390,7 +390,7 @@ class CardsStateForm extends State<CardsForm> {
                                   flag: _flag,
                                   type: _type));
                             }
-                            if (ret is CardsModel) {
+                            if (ret is CardModel) {
                               // ignore: use_build_context_synchronously
                               Navigator.pop(context, ret);
                             } else {

@@ -1,10 +1,10 @@
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
 
-abstract interface class CardsRepository
+abstract interface class CardRepository
 {
-  Future<Cards?> save(Cards card);
-  Future<void> update(Cards card);
-  Future<Cards?> getBy({int? id});
-  Future<List<Cards>?> getAll();
-  Future<void> delete(Cards card);
+  Future<Card?> save(Card card);
+  Future<void> update(Card card);
+  Future<Card?> getBy({int? id});
+  Future<List<Card>?> getAll();
+  Future<void> delete(Card card);
 }

@@ -1,9 +1,9 @@
-import 'package:drahkma/features/cards/domain/entities/cards.dart';
-import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
-import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
+import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
 
-class CardsModel extends Cards{
-    CardsModel({ 
+class CardModel extends Card{
+    CardModel({ 
       super.id, 
       super.type,
       super.brand,
@@ -28,16 +28,16 @@ class CardsModel extends Cards{
     }
 
   @override
-  factory CardsModel.fromJson(Map<String, dynamic> data) {
+  factory CardModel.fromJson(Map<String, dynamic> data) {
     String? dataBrand = data['brand'] ?? "";
     int? dataId = data['id'] ?? 0;
-    CardsTypeEnum? dataType = CardsTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
-    CardFlagsEnum? dataFlag = CardFlagsEnum.values.firstWhere((val) => val.name == data['flag'].toString());
+    CardTypeEnum? dataType = CardTypeEnum.values.firstWhere((val) => val.name == data['type'].toString());
+    CardFlagEnum? dataFlag = CardFlagEnum.values.firstWhere((val) => val.name == data['flag'].toString());
     String? dataExpiresAt = data['expires_at'] ?? "";
     int? dataInvoiceDay = data['invoice_day'] ?? 1;
     String? dataLast4Digits = data['last_4_digits'] ?? "";
 
-    return CardsModel(
+    return CardModel(
       id: dataId, 
       brand: dataBrand,
       type: dataType,

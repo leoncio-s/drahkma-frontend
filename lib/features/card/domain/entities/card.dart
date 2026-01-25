@@ -1,17 +1,17 @@
-import 'package:drahkma/features/cards/domain/enums/cards_flags_enum.dart';
-import 'package:drahkma/features/cards/domain/enums/cards_type_enum.dart';
+import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
+import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
 
-class Cards{
+class Card{
     final int? id;
-    final CardsTypeEnum? type;
+    final CardTypeEnum? type;
     final String? brand;
-    final CardFlagsEnum? flag;
+    final CardFlagEnum? flag;
     final DateTime? expiresAt;
     final String? last4Digits;
     final int? invoiceDay;
 
 
-    Cards({
+    Card({
       this.id, 
       this.type,
       this.brand,
