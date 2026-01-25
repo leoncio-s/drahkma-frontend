@@ -1,7 +1,7 @@
-import 'package:drahkma/features/bank_accounts/domain/entities/bank.dart';
-import 'package:drahkma/features/bank_accounts/domain/entities/bank_account.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 
-abstract interface class BankAccountsRemoteDatasource
+abstract interface class BankAccountRemoteDatasource
 {
   Future<BankAccount?> save(BankAccount dto);
   Future<void> update(BankAccount dto);

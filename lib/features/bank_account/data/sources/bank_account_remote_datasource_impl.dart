@@ -2,20 +2,22 @@ import 'dart:convert';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_dto.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_model.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
-import 'package:drahkma/features/bank_accounts/data/sources/bank_accounts_remote_datasource.dart';
-import 'package:drahkma/features/bank_accounts/domain/entities/bank_account.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
+import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/users/data/models/user_model.dart';
+import 'package:drahkma/features/users/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
-class BankAccountsRemoteDatasourceImpl implements BankAccountsRemoteDatasource {
+class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
   static final Uri _url = Uri.parse("${Config.urlApi}banks");
 
   @override
   Future<List<BankAccountModel>> getAll() async {
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var request = await http.get(
       _url,
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
@@ -35,8 +37,9 @@ class BankAccountsRemoteDatasourceImpl implements BankAccountsRemoteDatasource {
 
   @override
   Future<BankAccountModel?> save(data) async {
-    (data as BankAccountsDto);
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    (data as BankAccountDTO);
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var response = await http.post(
       _url,
       body: jsonEncode(data.toMap()),
@@ -56,8 +59,9 @@ class BankAccountsRemoteDatasourceImpl implements BankAccountsRemoteDatasource {
 
   @override
   Future delete(BankAccount data) async {
-    (data as BankAccountsDto);
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    (data as BankAccountDTO);
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var response = await http.delete(
       _url.resolve("/${data.id}"),
       headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
@@ -72,8 +76,9 @@ class BankAccountsRemoteDatasourceImpl implements BankAccountsRemoteDatasource {
 
   @override
   Future update(data) async {
-    (data as BankAccountsDto);
-    UserModel? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    (data as BankAccountDTO);
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
     var response = await http.put(
       _url, 
       body: jsonEncode(data.toMap()), 

@@ -2,26 +2,26 @@ import 'dart:ui';
 
 import 'package:drahkma/core/utils/string_regex_validate.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_dto.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_accounts_model.dart';
-import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_banks.dart';
-import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_save.dart';
-import 'package:drahkma/features/bank_accounts/domain/usecases/bank_accounts_update.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_bank.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
+import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
 import 'package:drahkma/presentation/styles/input_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:drahkma/features/bank_accounts/data/models/bank_model.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 
 
-class BankAccountsForm extends StatefulWidget {
+class BankAccountForm extends StatefulWidget {
   final BankAccountModel? bankAccounts;
-  const BankAccountsForm({super.key, this.bankAccounts});
+  const BankAccountForm({super.key, this.bankAccounts});
 
   @override
-  State<BankAccountsForm> createState() => BankAccountsStateForm();
+  State<BankAccountForm> createState() => BankAccountsStateForm();
 }
 
-class BankAccountsStateForm extends State<BankAccountsForm> {
+class BankAccountsStateForm extends State<BankAccountForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _bankName = TextEditingController();
   final TextEditingController _bankCode = TextEditingController();
@@ -30,7 +30,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
   List<BankModel> _banks = [];
 
   void _getBanks() async {
-    List<BankModel>? banks = await getIt<BankAccountsBanks>().call();
+    List<BankModel>? banks = await getIt<BankAccountBank>().call();
     if (banks != null) {
       setState(() {
         _banks = banks;
@@ -122,7 +122,7 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                   ),
                   optionsBuilder: (TextEditingValue txt) async {
                     if (txt.text == "") {
-                      return (await getIt<BankAccountsBanks>().call()) ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
+                      return (await getIt<BankAccountBank>().call()) ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
                     }
                     return _banks.where((BankModel? obj) =>
                         obj!.fullName.toString().toUpperCase().contains(txt.text.toUpperCase()));
@@ -266,18 +266,18 @@ class BankAccountsStateForm extends State<BankAccountsForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.bankAccounts?.id != null) {
-                              BankAccountsDto dto= BankAccountsDto (
+                              BankAccountDTO dto= BankAccountDTO (
                                       id: widget.bankAccounts!.id,
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
                                       agency: _agency.text,
                                       accountNumber: _accountNumber.text);
 
-                              await getIt<BankAccountsUpdate>().call(dto: dto);
+                              await getIt<BankAccountUpdate>().call(dto: dto);
 
                             } else {
-                              ret = await getIt<BankAccountsSave>().call(
-                                dto: BankAccountsDto(
+                              ret = await getIt<BankAccountSave>().call(
+                                dto: BankAccountDTO(
                                       bankCode: _bankCode.text,
                                       bankName: _bankName.text,
                                       agency: _agency.text,
