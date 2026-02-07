@@ -1,8 +1,8 @@
 
-import 'package:drahkma/core/mixins/dto.dart';
+import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 
-class AuthModel extends Auth with DTO{
+class AuthModel extends Auth with DTOMixin{
 
   AuthModel({String? login, String? password}){
     super.setEmail = login;

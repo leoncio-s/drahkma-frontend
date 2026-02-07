@@ -1,4 +1,4 @@
-import 'package:drahkma/core/interfaces/use_cases.dart';
+import 'package:drahkma/core/domain/entities/use_cases.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 
 class LogoutUseCase implements UseCases{

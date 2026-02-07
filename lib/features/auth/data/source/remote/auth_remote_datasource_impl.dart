@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/core/exceptions/invalid_credentials_exception.dart';
-import 'package:drahkma/core/exceptions/user_not_allowed_exception.dart';
+import 'package:drahkma/core/error/invalid_credentials_exception.dart';
+import 'package:drahkma/core/error/user_not_allowed_exception.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
@@ -88,7 +88,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     var request = await http.get(Uri.parse("${Config.urlApi}user"), headers: {
       'Authorization': " Bearer ${data.token ?? ''}",
       'Content-type': 'application/json'
-    }).timeout(Duration(seconds: 20));
+    }).timeout(Duration(seconds: 15));
 
     if (request.statusCode == 200) {
       return true;

@@ -13,24 +13,32 @@ class AuthRepositoryImpl implements AuthRepository
 
   @override
   Future<User?> checkSession() async {
-    if (await _remoteDatasource.checkSession((await _localDatasource.getAuthToken()) as User))
+    var authToken = (await _localDatasource.getAuthToken());
+    if(authToken == null) return null;
+    var result = await _remoteDatasource.checkSession(authToken);
+    if (result)
     {
-      return _localDatasource.getAuthToken();
+      return authToken;
     }
     return null;
   }
 
   @override
   Future<User?> login({required Auth auth}) async {
+    await _localDatasource.saveStorageEmail(auth.getEmail!);
     User? ret = await _remoteDatasource.login(auth);
-    _localDatasource.saveAuthToken(ret as User);
-    _localDatasource.saveStorageEmail(auth.getEmail!);
+    await _localDatasource.saveAuthToken(ret as User);
     return ret;
   }
 
   @override
   Future<void> logout() async {
     await _localDatasource.clearAuthToken();
+  }
+
+  @override
+  Future<String?> getLocalSavedEmail() async {
+    return await _localDatasource.getStorageEmail();
   }
 
 }
