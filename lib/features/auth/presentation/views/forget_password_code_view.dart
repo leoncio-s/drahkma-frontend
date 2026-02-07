@@ -1,11 +1,11 @@
 
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
-import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
-import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
-import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
-import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
-import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/core/presentation/dialogs/modal_dialog.dart';
+import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
+import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
+import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
+import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordCodeView extends StatefulWidget{

@@ -6,4 +6,5 @@ abstract interface class AuthRepository {
   Future<User?> login({required Auth auth});
   Future<User?> checkSession();
   Future<void> logout();
+  Future<String?> getLocalSavedEmail();
 }

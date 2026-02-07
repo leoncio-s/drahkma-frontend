@@ -1,15 +1,15 @@
 import 'dart:developer';
-import 'package:drahkma/core/utils/string_regex_validate.dart';
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
-import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
-import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
-import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
-import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
-import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/core/presentation/dialogs/modal_dialog.dart';
+import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
+import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
+import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
+import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -53,7 +53,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
             labelText: "E-mail",
             controller: _email,
             validator: (value){
-              if(StringValidators.sqlInjection(value)) {
+              if(value.isSqlInjection) {
                 return "E-mail inválido";
               }
               return null;
@@ -112,7 +112,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage>{
               ),
               onPressed: () {
 
-                Navigator.of(context).pushNamed("/auth/login");
+                Navigator.of(context).pushNamed("login");
               }),
         ))
         ],
