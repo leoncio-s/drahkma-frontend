@@ -1,3 +1,0 @@
-mixin DTO {
-  Map toMap();
-}
