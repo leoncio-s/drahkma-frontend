@@ -1,0 +1,3 @@
+mixin DTOMixin {
+  Map toMap();
+}
