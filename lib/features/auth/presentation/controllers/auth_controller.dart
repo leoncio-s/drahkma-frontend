@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:drahkma/core/domain/entities/failure.dart';
 import 'package:drahkma/core/error/invalid_credentials_exception.dart';
 import 'package:drahkma/core/error/user_not_allowed_exception.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/domain/usecases/auth_check_use_case.dart';
 import 'package:drahkma/features/auth/domain/usecases/auth_use_case.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_state.dart';
+import 'package:drahkma/main.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
-class AuthController extends ValueNotifier<AuthState>
+class AuthController extends ValueNotifier<AppState>
 {
   final AuthUseCase _useCase;
   final AuthCheckUseCase _authCheckUseCase;
@@ -15,21 +20,33 @@ class AuthController extends ValueNotifier<AuthState>
 
   Future<void> checkSession() async
   {
+    await appController.checkNetwork();
     value = AuthLoading();
-
-    var result = await _authCheckUseCase.call();
+    try{
+     var result = await _authCheckUseCase.call();
     
-    if(result == null)
+      if(result == null)
+      {
+        value = AuthInitial();
+      }else
+      {
+        value = AuthSuccess();
+      } 
+    }on ClientException
     {
-      value = AuthFailure();
-    }else
+      value = NoNetworkState();
+    }on TimeoutException catch(e)
     {
-      value = AuthSuccess();
+      value = TimeoutConnectState(message: e.message);
+    }catch(e)
+    {
+      value = ErrorState(message: e.toString());
     }
   }
 
   Future<void> signIn(String email, String password) async
   {
+    await appController.checkNetwork();
     value = AuthLoading();
     AuthModel auth = AuthModel(
       login: email,
@@ -52,6 +69,15 @@ class AuthController extends ValueNotifier<AuthState>
     }on UserNotAllowedException catch (e)
     {
       value = AuthFailure(error: [Failure(e.message)]);
+    }on TimeoutException catch(e)
+    {
+      value = TimeoutConnectState(message: e.message);
+    }on ClientException catch(e)
+    {
+      value = ErrorState(message: "Erro interno no servidor: ${e.message}");
+    }catch(e)
+    {
+      value = ErrorState(message: e.toString());
     }
   }
   
