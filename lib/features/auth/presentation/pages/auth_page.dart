@@ -1,4 +1,6 @@
-import 'package:drahkma/core/domain/entities/use_cases.dart';
+import 'package:drahkma/core/domain/usecases/use_cases.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_state.dart';
 import 'package:drahkma/features/auth/presentation/forms/auth_form.dart';
@@ -21,8 +23,8 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.controller.checkSession();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await widget.controller.checkSession();
     });
   }
 
@@ -42,7 +44,7 @@ class _AuthPageState extends State<AuthPage> {
         resizeToAvoidBottomInset: true,
         body: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
-                  child: ValueListenableBuilder<AuthState>(
+                  child: ValueListenableBuilder<AppState>(
                     valueListenable: widget.controller,
                     builder: (context, state, _) {
                       if (state is AuthSuccess) {
@@ -52,12 +54,53 @@ class _AuthPageState extends State<AuthPage> {
                                 'dashboard', (_) => true);
                           }
                         });
+                      } else if (state is NoNetworkState) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            Navigator.of(context).pushNamed('/');
+                          }
+                        });
+                      } else if (state is TimeoutConnectState) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showMaterialBanner(
+                                MaterialBanner(
+                                    backgroundColor: AppColors.redError,
+                                    content: Text(
+                                        "Timeout na conexão com o servidor. Tente novamente."),
+                                    actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentMaterialBanner(),
+                                      child: Text("OK"))
+                                ]));
+                          }
+                        });
+                        widget.controller.value = AuthInitial();
+                      } else if (state is ErrorState) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showMaterialBanner(
+                                MaterialBanner(
+                                    backgroundColor: AppColors.redError,
+                                    content: Text(
+                                        state.message??"Ocorreu um erro com a solicitação. Tente novamente mais tarde!"),
+                                    actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentMaterialBanner(),
+                                      child: Text("OK"))
+                                ]));
+                          }
+                        });
+                        widget.controller.value = AuthInitial();
                       }
 
                       WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        var value = await widget.useCases.call();
-
-                        _login.text = value;
+                        String? value = await widget.useCases.call() as String?;
+                        _login.text = value ?? "";
                       });
 
                       return Column(

@@ -5,6 +5,7 @@ import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_state.dart';
+import 'package:drahkma/main.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatelessWidget {
@@ -236,7 +237,9 @@ class AuthForm extends StatelessWidget {
                                 .copyWith(fontSize: 16),
                           ),
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamed(context, "sign-in");
+                              },
                               style: ButtonStyle(textStyle:
                                   WidgetStateTextStyle.resolveWith(
                                       (Set<WidgetState> state) {
@@ -261,6 +264,7 @@ class AuthForm extends StatelessWidget {
 
   void _formSubmit() async {
     if (_formKey.currentState!.validate()) {
+      await appController.checkNetwork();
       await controller.signIn(loginEDC.text, passwordEDC.text);
     }
   }

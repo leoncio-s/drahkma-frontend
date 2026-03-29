@@ -1,13 +1,10 @@
 import 'package:drahkma/core/domain/entities/failure.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
-import 'package:equatable/equatable.dart';
 
-sealed class AuthState extends Equatable
+sealed class AuthState extends AppState
 {
   const AuthState();
-  @override
-  List<Object?> get props => [];
-
 }
 
 class AuthInitial extends AuthState{
@@ -29,7 +26,4 @@ class AuthSuccess extends AuthState{
 
   @override
   List<User?> get props => [user];
-}
-class Unauthenticated extends AuthState{
-  const Unauthenticated();
 }
