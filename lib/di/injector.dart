@@ -5,8 +5,8 @@ import 'package:drahkma/core/data/sources/app_windows_check_network_datasource_i
 import 'package:drahkma/core/domain/repositories/app_repository.dart';
 import 'package:drahkma/core/domain/usecases/check_network_use_case.dart';
 import 'package:drahkma/core/presentation/controllers/app_controller.dart';
-import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_datasource.dart';
-import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_datasource_impl.dart';
+import 'package:drahkma/features/amount/data/sources/remote/amount_remote_datasource.dart';
+import 'package:drahkma/features/amount/data/sources/remote/amount_remote_datasource_impl.dart';
 import 'package:drahkma/features/amount/data/repositories/amount_repository_impl.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
 import 'package:drahkma/features/amount/domain/usecases/amount_fetchdata.dart';
