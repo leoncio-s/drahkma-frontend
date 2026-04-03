@@ -1,18 +1,20 @@
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/usecases/category_delete.dart';
-import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
 import 'package:drahkma/features/category/domain/util/category_model_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/category/presentation/forms/category_form.dart';
 
 class CategoryView extends DrahkmaStatefulWidget {
-  const CategoryView(
-      {super.key,
-      super.name = "Categorias",
-      super.icon = const Icon(Icons.category, size: 20)});
+  final CategoryController categoryController;
+  const CategoryView({
+    super.key,
+    super.name = "Categorias",
+    super.icon = const Icon(Icons.category, size: 20),
+    required this.categoryController,
+  });
 
   @override
   State<StatefulWidget> createState() => CategoryViewState();
@@ -23,32 +25,41 @@ class CategoryViewState extends State<CategoryView> {
   String? _message;
   double _turns = 0.0;
 
-  void _getData() {
-    getIt<CategoryGetAll>()
-        .call()
-        .then((value) {
-          if (mounted) {
-            setState(() {
-              category = value;
-              _message = null;
-            });
-          }
-        })
-        .timeout(const Duration(seconds: 3))
-        .onError((e, s) {
-          if (mounted) {
-            setState(() {
-              _message = "Erro ao processar a solicitação. Tente novamente!";
-            });
-          }
-        });
+  void _loadData() {
+    widget.categoryController.loadCategories();
   }
 
   @override
   void initState() {
-    _getData();
-
     super.initState();
+    _loadData();
+    widget.categoryController.addListener(_onControllerStateChanged);
+  }
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.categoryController.value;
+      if (state is CategoriesLoaded) {
+        setState(() {
+          category = state.data;
+          _message = null;
+        });
+      } else if (state is AppStateError) {
+        setState(() {
+          _message = state.message ?? "Erro ao processar a solicitação. Tente novamente!";
+        });
+      } else if (state is AppStateLoading) {
+        setState(() {
+          _message = null;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.categoryController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -119,9 +130,9 @@ class CategoryViewState extends State<CategoryView> {
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             CategoryModel? data = await Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => CategoryForm()));
+                .push(MaterialPageRoute(builder: (context) => CategoryForm(categoryController: widget.categoryController)));
             if (data != null) {
-              _getData();
+              _loadData();
             }
           },
           label: const Text("Adicionar Categoria")),
@@ -143,17 +154,17 @@ class CategoryViewState extends State<CategoryView> {
                                     await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                CategoryForm(category: el)));
+                                                CategoryForm(category: el, categoryController: widget.categoryController)));
                                 if (data != null) {
-                                  _getData();
+                                  _loadData();
                                 }
                               },
                               trailing: IconButton(
                                   splashRadius: 20.0,
                                   hoverColor: Colors.white,
                                   onPressed: () async {
-                                    await getIt<CategoryDelete>()
-                                        .call(category: el);
+                                    await widget.categoryController
+                                        .deleteCategory(el);
                                     if (mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(_snackBarError(
@@ -206,7 +217,7 @@ class CategoryViewState extends State<CategoryView> {
                             _turns -= 1.0;
                             _message = null;
                           });
-                          _getData();
+                          _loadData();
                         },
                         icon: AnimatedRotation(
                           turns: _turns,
