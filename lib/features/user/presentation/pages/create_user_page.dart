@@ -1,22 +1,21 @@
 import 'dart:convert';
 
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
-import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
-import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
+import 'package:drahkma/features/user/presentation/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class CreateUserPage extends StatefulWidget {
-  final CreateUserController controller;
-  const CreateUserPage(this.controller, {super.key});
+  final UserController userController;
+  const CreateUserPage(this.userController, {super.key});
 
   @override
   State<CreateUserPage> createState() => _CreateUserPageState();
@@ -278,18 +277,17 @@ class _CreateUserPageState extends State<CreateUserPage> {
             password: _passwordController.text,
             confirmNewPassword: _confPasswordController.text);
 
-        dynamic ret = await getIt<UserRegister>().call(user: user);
-
-        if (ret.runtimeType == UserModel) {
-          if (mounted) {
-            Navigator.maybeOf(context)?.pushReplacement(
-              MaterialPageRoute(builder: (context) => SuccessPage()),
-            );
-          }
-        } else {
+        await widget.userController.registerUser(user);
+        
+        var state = widget.userController.value;
+        if (state is ErrorState) {
           setState(() {
-            errors = ret['errors'] ?? ret;
+            errors = {'error': state.message};
           });
+        } else if (mounted) {
+          Navigator.maybeOf(context)?.pushReplacement(
+            MaterialPageRoute(builder: (context) => SuccessPage()),
+          );
         }
       } on ArgumentError catch (e) {
         Map<String, dynamic> json = jsonDecode(e.message);

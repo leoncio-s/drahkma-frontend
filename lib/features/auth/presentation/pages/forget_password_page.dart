@@ -2,9 +2,7 @@ import 'dart:developer';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
-import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
@@ -13,8 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class ForgetPasswordPage extends StatefulWidget {
+  final AuthController authController;
   final String? email;
-  const ForgetPasswordPage({super.key, this.email});
+  const ForgetPasswordPage({super.key, required this.authController, this.email});
 
   @override
   State<ForgetPasswordPage> createState() => _ForgetPasswordPageState();
@@ -29,12 +28,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   void initState() {
     if (widget.email != null) {
       _email.text = widget.email!;
-    } else {
-      if(mounted){
-        getIt<AuthLocalDatasource>().getStorageEmail().then((value) {
-        _email.text = value ?? '';
-      });
-      }
     }
     super.initState();
   }
