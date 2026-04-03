@@ -6,9 +6,25 @@ import 'package:drahkma/features/item/domain/entities/item.dart';
 import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 import 'package:intl/intl.dart';
 
-class ItemModel extends Item{
+class ItemModel {
+    final int? id;
+    final String? description;
+    final bool? expense;
+    final double? value;
+    final DateTime? date;
+    final CategoryModel? category;
+    final CardModel? card;
+    final TransferBankModel? transferBank;
+
     ItemModel({
-      super.card, super.category, super.date, super.description, super.expense, super.id, super.transferBank, super.value
+      this.card, 
+      this.category, 
+      this.date, 
+      this.description, 
+      this.expense, 
+      this.id, 
+      this.transferBank, 
+      this.value
     });
 
     factory ItemModel.fromJson(dynamic data){

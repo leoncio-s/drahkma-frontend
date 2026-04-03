@@ -1,11 +1,12 @@
 import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/entities/category.dart';
 
-class CategoryDTO extends Category with DTOMixin
+class CategoryDTO with DTOMixin
 {
+  final int? id;
+  final String? description;
 
-  CategoryDTO({super.id, super.description});
+  CategoryDTO({this.id, this.description});
 
   factory CategoryDTO.fromModel(CategoryModel category)
   {

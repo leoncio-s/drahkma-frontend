@@ -1,9 +1,9 @@
 
-import 'package:drahkma/features/category/domain/entities/Category.dart';
+class CategoryModel {
+  final int? id;
+  final String? description;
 
-class CategoryModel extends Category{
-
-  CategoryModel({super.id, super.description});
+  CategoryModel({this.id, this.description});
 
   factory CategoryModel.fromJson(Map<String, dynamic> data){
     int? id = data['id'] ?? 0;
