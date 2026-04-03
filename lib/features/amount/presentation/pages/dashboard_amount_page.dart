@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/core/notifiers/app_notifier.dart';
-import 'package:drahkma/core/notifiers/data_notifier.dart';
+import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
+import 'package:drahkma/core/presentation/notifiers/data_notifier.dart' as dt;
+import 'package:drahkma/core/presentation/notifiers/data_notifier_interface.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
 import 'package:drahkma/features/amount/presentation/pages/chart_page.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 
 class DashboardAmountPage extends DrahkmaStatefulWidget{
@@ -32,26 +33,55 @@ class _DashboardState extends State<DashboardAmountPage> {
     return Scaffold(
         body: _Cards(
       notifier: _notifier,
-      dataNotifier: dataNotifier,
+      dataNotifier: dt.dataNotifier,
     )
         );
   }
 }
 
-class _Cards extends StatelessWidget {
-  _Cards({required this.notifier, required dataNotifier});
 
+class _Cards extends StatefulWidget
+{
   final AppNotifier notifier;
-  final DashboardModel data = dataNotifier.data;
+  final DataNotifierInterface dataNotifier;
+  const _Cards({required this.notifier, required this.dataNotifier});
 
   @override
-  StatelessElement createElement() {
-    dataNotifier.getData(notifier.dateTimeRange);
-    notifier.addListener(() {
-      Timer.periodic(const Duration(seconds: 3), (Timer timer)=> dataNotifier.getData(appNotifier.dateTimeRange));
-    });
-    return super.createElement();
+  State<_Cards> createState() => _CardsState();
+  
+}
+
+
+class _CardsState extends State<_Cards> {
+  late DashboardModel data;
+  late AppNotifier notifier;
+  Timer? _refreshTimer;
+
+  void _onTimerListener(){
+    _refreshTimer?.cancel();
+    _refreshTimer= Timer.periodic(const Duration(seconds: 3), (Timer timer)=> widget.dataNotifier.fetchData(notifier.dateTimeRange));
   }
+
+  @override
+  void initState() {
+    notifier = widget.notifier;
+    data = widget.dataNotifier.data;
+    widget.dataNotifier.fetchData(notifier.dateTimeRange);
+    notifier.addListener(_onTimerListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // notifier.dispose();
+    _refreshTimer?.cancel();
+    notifier.removeListener(_onTimerListener);
+    super.dispose();
+  }
+
+
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -72,96 +102,96 @@ class _Cards extends StatelessWidget {
               size: const Size.fromHeight(30.0),
             ),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
-                  return _balance(context, dataNotifier.data.amount);
+                  return _balance(context, data.amount);
                 }),
 
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
-                  return _balanceInflow(context, dataNotifier.data.inflow);
+                  return _balanceInflow(context, data.inflow);
                 }),
 
             
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
-                  return _balanceOutflow(context, dataNotifier.data.outflow);
+                  return _balanceOutflow(context, data.outflow);
                 }),
             
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return _balanceInflowCards(
-                      context, dataNotifier.data.totalAmountInflowCards);
+                      context, data.totalAmountInflowCards);
                 }),
             
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return _balanceOutflowCards(
-                      context, dataNotifier.data.totalAmountOutflowCards);
+                      context, data.totalAmountOutflowCards);
                 }),
             
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return _balanceInflowTransferBank(
-                      context, dataNotifier.data.totalAmountInflowTransferBank);
+                      context, data.totalAmountInflowTransferBank);
                 }),
             
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return _balanceOutflowTransferBank(context,
-                      dataNotifier.data.totalAmountOutflowTransferBank);
+                      data.totalAmountOutflowTransferBank);
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
-                    data: dataNotifier.data.amountInflowCategory,
+                    data: data.amountInflowCategory,
                     title: "Receitas por Categoria",
                   );
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
-                    data: dataNotifier.data.amountInflowCard,
+                    data: data.amountInflowCard,
                     title: "Receitas por Cartão",
                   );
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
-                    data: dataNotifier.data.amountOutflowCategory,
+                    data: data.amountOutflowCategory,
                     title: "Despesas por Categoria",
                   );
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
-                    data: dataNotifier.data.amountOutflowCard,
+                    data: data.amountOutflowCard,
                     title: "Despesas por Cartão",
                   );
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountTranferBank(
-                    data: dataNotifier.data.amountInflowTransferBank,
+                    data: data.amountInflowTransferBank,
                     title: "Receita por Tranferência Bancária",
                   );
                 }),
             ListenableBuilder(
-                listenable: dataNotifier,
+                listenable: widget.dataNotifier,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountTranferBank(
-                    data: dataNotifier.data.amountOutflowTransferBank,
+                    data: data.amountOutflowTransferBank,
                     title: "Despesa por Tranferência Bancária",
                   );
                 }),
@@ -171,7 +201,7 @@ class _Cards extends StatelessWidget {
     ));
   }
 
-  _period(context) {
+  Widget _period(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800.00, maxHeight: 80.00),
       child: Center(
@@ -213,7 +243,7 @@ class _Cards extends StatelessWidget {
     );
   }
 
-  _balance(context, double value) {
+  Widget _balance(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -257,7 +287,7 @@ class _Cards extends StatelessWidget {
         ));
   }
 
-  _balanceInflow(context, double value) {
+  Widget _balanceInflow(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -296,7 +326,7 @@ class _Cards extends StatelessWidget {
             )));
   }
 
-  _balanceOutflow(context, double value) {
+  Widget _balanceOutflow(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -337,7 +367,7 @@ class _Cards extends StatelessWidget {
         ));
   }
 
-  _balanceInflowCards(context, double value) {
+  Widget _balanceInflowCards(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -378,7 +408,7 @@ class _Cards extends StatelessWidget {
         ));
   }
 
-  _balanceOutflowCards(context, double value) {
+  Widget _balanceOutflowCards(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -419,7 +449,7 @@ class _Cards extends StatelessWidget {
         ));
   }
 
-  _balanceInflowTransferBank(context, double value) {
+  Widget _balanceInflowTransferBank(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,
@@ -460,7 +490,7 @@ class _Cards extends StatelessWidget {
         ));
   }
 
-  _balanceOutflowTransferBank(context, double value) {
+  Widget _balanceOutflowTransferBank(BuildContext context, double value) {
     return ConstrainedBox(
         constraints: BoxConstraints.fromViewConstraints(const ViewConstraints(
             maxWidth: 400.0,

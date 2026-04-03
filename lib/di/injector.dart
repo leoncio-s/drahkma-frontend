@@ -1,3 +1,10 @@
+import 'package:drahkma/core/data/repositories/app_respository_impl.dart';
+import 'package:drahkma/core/data/sources/app_check_network_datasource.dart';
+import 'package:drahkma/core/data/sources/app_web_check_network_datasource_impl.dart';
+import 'package:drahkma/core/data/sources/app_windows_check_network_datasource_impl.dart';
+import 'package:drahkma/core/domain/repositories/app_repository.dart';
+import 'package:drahkma/core/domain/usecases/check_network_use_case.dart';
+import 'package:drahkma/core/presentation/controllers/app_controller.dart';
 import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_datasource.dart';
 import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_datasource_impl.dart';
 import 'package:drahkma/features/amount/data/repositories/amount_repository_impl.dart';
@@ -9,8 +16,11 @@ import 'package:drahkma/features/auth/data/source/local/auth_local_datasource_im
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
-import 'package:drahkma/features/auth/domain/usecases/login_use_case.dart';
+import 'package:drahkma/features/auth/domain/usecases/auth_check_use_case.dart';
+import 'package:drahkma/features/auth/domain/usecases/auth_get_saved_email_use_case.dart';
+import 'package:drahkma/features/auth/domain/usecases/auth_use_case.dart';
 import 'package:drahkma/features/auth/domain/usecases/logout_use_case.dart';
+import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:drahkma/features/bank_account/data/repositories/bank_accounts_repository_impl.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource_impl.dart';
@@ -34,6 +44,7 @@ import 'package:drahkma/features/category/data/sources/category_remote_datasourc
 import 'package:drahkma/features/category/domain/repositories/category_repository.dart';
 import 'package:drahkma/features/category/domain/usecases/category_delete.dart';
 import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
+import 'package:drahkma/features/category/domain/usecases/category_get_all_by_user.dart';
 import 'package:drahkma/features/category/domain/usecases/category_save.dart';
 import 'package:drahkma/features/category/domain/usecases/category_update.dart';
 import 'package:drahkma/features/item/data/repositories/item_repository_impl.dart';
@@ -53,6 +64,8 @@ import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
 import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
+import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -61,12 +74,21 @@ final GetIt getIt = GetIt.instance;
 void initializeDependencies()
 {
   getIt.registerFactory<SharedPreferencesAsync>(()=>SharedPreferencesAsync());
+  
+  ///// App
+  getIt.registerSingleton<AppCheckNetworkDatasource>(kIsWeb ? AppWebCheckNetworkDatasourceImpl() : AppWindowsCheckNetworkDatasourceImpl());
+  getIt.registerSingleton<AppRepository>(AppRespositoryImpl(getIt()));
+  getIt.registerSingleton<CheckNetworkUseCase>(CheckNetworkUseCase(getIt()));
+  getIt.registerSingleton<AppController>(AppController(getIt()));
 
   //// Auth
   getIt.registerFactory<AuthLocalDatasource>(()=>AuthLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
   getIt.registerFactory<AuthRemoteDatasource>(()=>AuthRemoteDatasourceImpl());
   getIt.registerFactory<AuthRepository>(()=>AuthRepositoryImpl(getIt<AuthLocalDatasource>(), getIt<AuthRemoteDatasource>()));
-  getIt.registerSingletonAsync<LoginUseCase>(()async=>LoginUseCase(getIt()));
+  getIt.registerSingleton<AuthUseCase>(AuthUseCase(getIt()));
+  getIt.registerSingleton<AuthGetSavedEmailUseCase>(AuthGetSavedEmailUseCase(getIt()));
+  getIt.registerSingleton<AuthCheckUseCase>(AuthCheckUseCase(getIt()));
+  getIt.registerSingleton<AuthController>(AuthController(getIt(), getIt()));
 
   //// User
   getIt.registerFactory<UserRemoteDatasource>(()=>UserRemoteDatasourceImpl(getIt<AuthLocalDatasource>()));
@@ -76,6 +98,7 @@ void initializeDependencies()
   getIt.registerFactory<UserProfile>(()=>UserProfile(getIt<UserRepository>()));
   getIt.registerFactory<LogoutUseCase>(()=>LogoutUseCase(getIt<AuthRepository>()));
   getIt.registerFactory<UserUpdatePassword>(()=>UserUpdatePassword(getIt<UserRepository>()));
+  getIt.registerFactory<CreateUserController>(()=>CreateUserController());
 
   ///// Amounts
   getIt.registerFactory<AmountRemoteDatasource>(()=>AmountRemoteDatasourceImpl());
@@ -106,6 +129,7 @@ void initializeDependencies()
   getIt.registerFactory<CategoryUpdate>(()=>CategoryUpdate(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryDelete>(()=>CategoryDelete(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryGetAll>(()=>CategoryGetAll(getIt<CategoryRepository>()));
+  getIt.registerFactory<CategoryGetAllByUser>(()=>CategoryGetAllByUser(getIt<CategoryRepository>()));
 
   //// Item
   getIt.registerFactory<ItemRemoteDatasource>(()=>ItemRemoteDatasourceImpl());

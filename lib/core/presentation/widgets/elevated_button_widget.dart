@@ -10,7 +10,9 @@ class ElevatedButtonWidget extends StatelessWidget {
   final Color? backgroundColor;
   final Color? hoverColor;
   final Color? foregroundColor;
+  final Color? foregroundHoverColor;
   final Widget? icon;
+  final bool readOnly;
   const ElevatedButtonWidget(
       {super.key,
       required this.title,
@@ -20,7 +22,9 @@ class ElevatedButtonWidget extends StatelessWidget {
       this.backgroundColor = AppColors.gold,
       this.hoverColor = AppColors.lightGold,
       this.foregroundColor,
-      this.icon});
+      this.foregroundHoverColor,
+      this.icon,
+      this.readOnly = false});
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -29,6 +33,10 @@ class ElevatedButtonWidget extends StatelessWidget {
         child: ElevatedButton(
           style: ButtonStyle(
             alignment: Alignment.center,
+            foregroundColor: WidgetStateColor.fromMap({
+              WidgetState.any : foregroundColor ?? Colors.white,
+              WidgetState.hovered: foregroundHoverColor ?? Colors.white
+            }),
             backgroundColor: WidgetStateColor.fromMap({
               WidgetState.hovered: hoverColor!,
               WidgetState.any: backgroundColor!
@@ -44,7 +52,7 @@ class ElevatedButtonWidget extends StatelessWidget {
               WidgetState.any : 20
             })
           ),
-          onPressed: onPressed,
+          onPressed: readOnly ? null : onPressed,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -1,6 +1,6 @@
-import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
-import 'package:drahkma/core/notifiers/app_notifier.dart';
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/domain/usecases/item_delete.dart';
@@ -298,7 +298,7 @@ class _ItemsViewState extends State<ItemsView>{
                                   if(mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                 }on UnauthenticatedException
                                 {
-                                  if(mounted) Navigator.of(context).pushReplacementNamed('/auth/login');
+                                  if(mounted) Navigator.of(context).pushReplacementNamed('login');
                                 }catch(e){
                                   rethrow;
                                 }

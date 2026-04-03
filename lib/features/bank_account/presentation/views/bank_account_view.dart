@@ -1,11 +1,11 @@
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delete.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/bank_account/utils/bank_account_sort.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
 

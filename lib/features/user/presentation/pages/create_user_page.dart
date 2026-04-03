@@ -1,20 +1,22 @@
-
 import 'dart:convert';
 
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/usecases/user_register.dart';
-import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
-import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
-import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
+import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
+import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class CreateUserPage extends StatefulWidget {
-  const CreateUserPage({super.key});
+  final CreateUserController controller;
+  const CreateUserPage(this.controller, {super.key});
 
   @override
   State<CreateUserPage> createState() => _CreateUserPageState();
@@ -23,6 +25,8 @@ class CreateUserPage extends StatefulWidget {
 class _CreateUserPageState extends State<CreateUserPage> {
   bool notShowPassword = true;
   bool notShowPassword2 = true;
+  late CreateUserController controller;
+  _CreateUserPageState();
 
   final GlobalKey<FormState> _formKey = GlobalKey();
   final TextEditingController _fullNameController = TextEditingController();
@@ -32,22 +36,43 @@ class _CreateUserPageState extends State<CreateUserPage> {
   final TextEditingController _phoneNumberController =
       MaskedTextController(mask: "(00) 0 0000-0000");
   late Map? errors;
+  final ButtonStyle _textButtonStyle = ButtonStyle(
+      backgroundColor:
+          WidgetStateProperty.fromMap({WidgetState.hovered: AppColors.gold}),
+      foregroundColor:
+          WidgetStateColor.fromMap({WidgetState.any: Colors.white}));
 
   @override
   void initState() {
     errors = null;
+    controller = widget.controller;
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) => DefaultLayoutWidget(
-        child: _form(),
+  Widget build(BuildContext context) => Scaffold(
+        body: LayoutBuilder(
+            builder: (ctx, constraints) => SingleChildScrollView(
+                    child: ValueListenableBuilder(
+                  valueListenable: controller,
+                  builder: (ctx, state, child) {
+                    return child!;
+                  },
+                  child: Center(
+                    widthFactor: 90,
+                    child: Container(
+                      constraints: constraints
+                          .widthConstraints()
+                          .copyWith(maxWidth: 600),
+                      child: _form(),
+                    ),
+                  ),
+                ))),
       );
 
   Widget _form() => _containerBorder(
           child: Form(
         key: _formKey,
-        // autovalidateMode: AutovalidateMode.onUnfocus,
         child: Column(
           children: [
             Text(
@@ -110,7 +135,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   TextFormFieldWidget _fullNameField() => TextFormFieldWidget(
         controller: _fullNameController,
-        labelText: "Nome Completo",
+        hintText: "Nome Completo",
         autovalidateMode: AutovalidateMode.onUnfocus,
         validator: (value) {
           if (value!.isEmpty) {
@@ -124,7 +149,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   TextFormFieldWidget _emailField() => TextFormFieldWidget(
       controller: _emailController,
-      labelText: "E-mail",
+      hintText: "E-mail",
       keyboardType: TextInputType.emailAddress,
       autovalidateMode: AutovalidateMode.onUnfocus,
       validator: (value) {
@@ -140,7 +165,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   TextFormFieldWidget _passwordField() => TextFormFieldWidget(
         controller: _passwordController,
-        labelText: "Senha",
+        hintText: "Senha",
         obscureText: notShowPassword,
         obscuringCharacter: "*",
         keyboardType: TextInputType.visiblePassword,
@@ -168,7 +193,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   TextFormFieldWidget _confPasswordField() => TextFormFieldWidget(
         controller: _confPasswordController,
-        labelText: "Confirme a Senha",
+        hintText: "Confirme a Senha",
         obscureText: notShowPassword2,
         obscuringCharacter: "*",
         keyboardType: TextInputType.visiblePassword,
@@ -198,7 +223,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
 
   TextFormFieldWidget _phoneNumberField() => TextFormFieldWidget(
         controller: _phoneNumberController,
-        labelText: "Número de Telefone",
+        hintText: "Número de Telefone",
         keyboardType: TextInputType.phone,
         // keyboardType: TextInputType.emailAddress,
         autovalidateMode: AutovalidateMode.onUnfocus,
@@ -211,58 +236,68 @@ class _CreateUserPageState extends State<CreateUserPage> {
       );
 
   SizedBox _signinButton() => SizedBox(
-        // width: double.maxFinite,
-        child: TextButton.icon(
-          icon: const Icon(Icons.login),
-          style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color?>((state) {
-            if (state.contains(WidgetState.hovered)) {
-              return Theme.of(context).colorScheme.secondary;
-            }
-            return null;
-          })),
-          onPressed: () {
-            Navigator.maybeOf(context)!.pushReplacementNamed("/auth/login");
-          },
-          label: const Text(
-            "Ir para página de login",
-            textAlign: TextAlign.right,
-            style: TextStyle(decorationThickness: 5.0),
-          ),
-        ),
-      );
+      height: 60,
+      width: double.maxFinite,
+      child: Align(
+        alignment: Alignment.center,
+        child: TextButton(
+            style: ButtonStyle(
+                backgroundColor: WidgetStateColor.fromMap({
+                  WidgetState.hovered: AppColors.blueNavy,
+                  WidgetState.any: Colors.transparent
+                }),
+                foregroundColor: WidgetStateProperty.fromMap(
+                    {WidgetState.any: Colors.white})),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.arrow_back),
+                SizedBox(
+                  width: 5,
+                ),
+                Text(
+                  "Voltar a página de Login",
+                  textAlign: TextAlign.end,
+                )
+              ],
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed("login");
+            }),
+      ));
 
   void _formSubmit() async {
     if (_formKey.currentState!.validate()) {
-      try{
-        var phoneNumber = _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
+      try {
+        var phoneNumber =
+            _phoneNumberController.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "");
         UserDTO user = UserDTO(
-          fullname: _fullNameController.text,
-          email: _emailController.text,
-          phoneNumber: phoneNumber,
-          password: _passwordController.text, 
-          confirmNewPassword: _confPasswordController.text
-        );
+            fullname: _fullNameController.text,
+            email: _emailController.text,
+            phoneNumber: phoneNumber,
+            password: _passwordController.text,
+            confirmNewPassword: _confPasswordController.text);
 
         dynamic ret = await getIt<UserRegister>().call(user: user);
 
         if (ret.runtimeType == UserModel) {
-          if(mounted)  Navigator.maybeOf(context)?.pushReplacement(MaterialPageRoute(builder: (context) => const SuccessPage()),);
+          if (mounted) {
+            Navigator.maybeOf(context)?.pushReplacement(
+              MaterialPageRoute(builder: (context) => SuccessPage()),
+            );
+          }
         } else {
           setState(() {
             errors = ret['errors'] ?? ret;
           });
         }
-        
-      }on ArgumentError catch(e)
-      {
+      } on ArgumentError catch (e) {
         Map<String, dynamic> json = jsonDecode(e.message);
         setState(() {
-          errors=json['errors'];
+          errors = json['errors'];
         });
         return;
-      }on Exception
-      {
+      } on Exception {
         rethrow;
       }
     }
@@ -279,10 +314,16 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (errors != null) {
       List<Widget>? elements = errors!.entries
           .map<Widget>((entry) => entry.key.toString().contains("errors")
-              ? Text(entry.value.toString(), style: errorStyle, textAlign: textAlignError,)
-              : Text("${entry.key} : ${ (entry.value.runtimeType == List) ? (entry.value as List).map<String>((el)=> el.toString()).toString() : entry.value.toString()}",
-                  style: errorStyle, textAlign: textAlignError)
-          ).toList();
+              ? Text(
+                  entry.value.toString(),
+                  style: errorStyle,
+                  textAlign: textAlignError,
+                )
+              : Text(
+                  "${entry.key} : ${(entry.value.runtimeType == List) ? (entry.value as List).map<String>((el) => el.toString()).toString() : entry.value.toString()}",
+                  style: errorStyle,
+                  textAlign: textAlignError))
+          .toList();
 
       elements.add(const SizedBox(
         height: 5,
@@ -299,7 +340,12 @@ class _CreateUserPageState extends State<CreateUserPage> {
 }
 
 class SuccessPage extends StatelessWidget {
-  const SuccessPage({super.key});
+  final ButtonStyle _textButtonStyle = ButtonStyle(
+      backgroundColor:
+          WidgetStateProperty.fromMap({WidgetState.hovered: AppColors.gold}),
+      foregroundColor:
+          WidgetStateColor.fromMap({WidgetState.any: Colors.white}));
+  SuccessPage({super.key});
 
   @override
   Widget build(BuildContext context) => DefaultLayoutWidget(
@@ -346,17 +392,13 @@ class SuccessPage extends StatelessWidget {
             SizedBox(
               // width: double.maxFinite,
               child: TextButton.icon(
-                icon: const Icon(Icons.login),
-                style: ButtonStyle(backgroundColor:
-                    WidgetStateProperty.resolveWith<Color?>((state) {
-                  if (state.contains(WidgetState.hovered)) {
-                    return Theme.of(context).colorScheme.secondary;
-                  }
-                  return null;
-                })),
+                icon: const Icon(
+                  Icons.login,
+                  color: Colors.white,
+                ),
+                style: _textButtonStyle,
                 onPressed: () {
-                  Navigator.maybeOf(context)!
-                      .pushReplacementNamed("/auth/login");
+                  Navigator.maybeOf(context)!.pushReplacementNamed("login");
                 },
                 label: const Text(
                   "Ir para página de login",

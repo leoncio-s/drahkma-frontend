@@ -1,4 +1,4 @@
-import 'package:drahkma/core/interfaces/use_cases.dart';
+import 'package:drahkma/core/domain/usecases/use_cases.dart';
 import 'package:drahkma/features/amount/domain/entities/dashboard.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
 

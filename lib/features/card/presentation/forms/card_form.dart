@@ -4,14 +4,14 @@ import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/card/data/models/card_dto.dart';
 import 'package:drahkma/features/card/domain/usecases/card_save.dart';
 import 'package:drahkma/features/card/domain/usecases/card_update.dart';
-import 'package:drahkma/presentation/styles/input_text_style.dart';
+import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
 import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
-import 'package:drahkma/core/utils/months.dart';
-import 'package:drahkma/core/utils/string_regex_validate.dart';
+import 'package:drahkma/core/utils/enums/month.dart';
+import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CardForm extends StatefulWidget {
@@ -25,8 +25,8 @@ class CardForm extends StatefulWidget {
 class CardsStateForm extends State<CardForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _brand = TextEditingController();
-  Months? _expMonth =
-      Months.values.firstWhere((el) => DateTime.now().month == el.month);
+  Month? _expMonth =
+      Month.values.firstWhere((el) => DateTime.now().month == el.month);
   int? _expYear = DateTime.now().year;
   final TextEditingController _last4Digits = TextEditingController();
   int? _invoiceDay;
@@ -38,7 +38,7 @@ class CardsStateForm extends State<CardForm> {
     if (widget.cards != null) {
       _brand.text = widget.cards!.brand ?? "";
       // _expiresAt = widget.cards!.expires_at;
-      _expMonth = Months.values
+      _expMonth = Month.values
           .firstWhere((el) => el.month == widget.cards!.expiresAt!.month);
       _expYear = widget.cards!.expiresAt!.year;
       _last4Digits.text = widget.cards!.last4Digits.toString();
@@ -83,7 +83,7 @@ class CardsStateForm extends State<CardForm> {
                 // cursorColor: Colors.black,
                 maxLength: 50,
                 keyboardType: TextInputType.name,
-                style: inputTextStyle(),
+                style: AppTextStyle.inputTextStyle,
                 selectionHeightStyle: BoxHeightStyle.includeLineSpacingTop,
                 inputFormatters: [
                   FilteringTextInputFormatter.singleLineFormatter,
@@ -96,7 +96,7 @@ class CardsStateForm extends State<CardForm> {
                   if (value!.length < 3 || value.length > 50) {
                     return "O tamanho minimo é 3 e o máximo é 50";
                   } else if (RegExp(r"[\w\s]+").hasMatch(value) &&
-                      StringValidators.sqlInjection(value)) {
+                      value.isSqlInjection) {
                     return "O campo possui caracteres ou expressões inválidas";
                   }
                   return null;
@@ -173,7 +173,7 @@ class CardsStateForm extends State<CardForm> {
                 cursorColor: Colors.white,
                 maxLength: 4,
                 keyboardType: TextInputType.number,
-                style: inputTextStyle(),
+                style: AppTextStyle.inputTextStyle,
                 inputFormatters: [
                   FilteringTextInputFormatter.singleLineFormatter,
                   LengthLimitingTextInputFormatter(4),
@@ -189,7 +189,7 @@ class CardsStateForm extends State<CardForm> {
                   if (value!.isEmpty || value.length > 4) {
                     return "O tamanho do campo deve ser 4";
                   } else if (RegExp(r"[0-9]{4}").hasMatch(value) &&
-                      StringValidators.sqlInjection(value)) {
+                      value.isSqlInjection) {
                     return "O campo possui caracteres ou expressões inválidas";
                   }
                   return null;
@@ -255,7 +255,7 @@ class CardsStateForm extends State<CardForm> {
               ///
                   Row(
                     children: [
-                      DropdownButtonFormField<Months>(
+                      DropdownButtonFormField<Month>(
                         initialValue: _expMonth,
                         decoration: (const InputDecoration())
                             .applyDefaults(
@@ -267,8 +267,8 @@ class CardsStateForm extends State<CardForm> {
                                     maxWidth: 130, minHeight: 50.0)),
                         isDense: false,
                         isExpanded: true,
-                        items: Months.values
-                            .map((el) => DropdownMenuItem<Months>(
+                        items: Month.values
+                            .map((el) => DropdownMenuItem<Month>(
                                   value: el,
                                   child: Text(
                                     el.name,

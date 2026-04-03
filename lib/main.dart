@@ -22,28 +22,32 @@ void exceptionHandler(Object e, StackTrace s) {
     return;
   }
 
-  if (e is UnauthenticatedException) {
+  try{
+    if (e is UnauthenticatedException) {
     Navigator.of(context).pushReplacementNamed("login");
-  } else if (e is UpdatePasswordException) {
-    alertDialog<String>(context, e.message, title: "Erro ao atualizar senha");
-  } else {
+    } else if (e is UpdatePasswordException) {
+      alertDialog<String>(context, e.message, title: "Erro ao atualizar senha");
+    } else {
+      log(e.toString(), stackTrace: s, level: 1, name: "Drahkma App");
+      alertDialog<String>(context, e.toString(), title: "Format Invalid Error");
+    }
+  } catch (dialogError, e)
+  {
     log(e.toString(), stackTrace: s, level: 1, name: "Drahkma App");
-    alertDialog<String>(context, e.toString(), title: "Format Invalid Error");
   }
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  initializeDependencies();
-  await getIt.allReady(timeout: Duration(seconds: 5));
-  appController = getIt<AppController>();
-
-  if (kDebugMode) {
-    Config.setUrlApi = "http://localhost:8081/api/v1/";
-  }
 
   runZonedGuarded<void>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    initializeDependencies();
+    await getIt.allReady(timeout: Duration(seconds: 5));
+    appController = getIt<AppController>();
+
+    if (kDebugMode) {
+      Config.setUrlApi = "http://localhost:8081/api/v1/";
+    }
     await appController.checkNetwork();
 
     runApp(_buildApp());

@@ -6,13 +6,14 @@ import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
+import 'package:drahkma/features/category/domain/usecases/category_get_all_by_user.dart';
 import 'package:drahkma/features/item/data/models/item_dto.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/data/models/transferbank_model.dart';
 import 'package:drahkma/features/item/domain/enums/transfer_bank_type_enum.dart';
 import 'package:drahkma/features/item/domain/usecases/item_save.dart';
 import 'package:drahkma/features/item/domain/usecases/item_update.dart';
-import 'package:drahkma/presentation/styles/input_text_style.dart';
+import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -59,7 +60,7 @@ class ItemFormState extends State<ItemForm> {
   @override
   void initState() {
     Future.wait([
-      getIt<CategoryGetAll>().call(),
+      getIt<CategoryGetAllByUser>().call(),
       getIt<BankAccountGetAll>().call(),
       getIt<CardGetAll>().call()
     ]).then((value) {
@@ -166,7 +167,7 @@ class ItemFormState extends State<ItemForm> {
           cursorColor: Colors.white,
           maxLength: 10,
           keyboardType: TextInputType.datetime,
-          style: inputTextStyle(),
+          style: AppTextStyle.inputTextStyle,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
@@ -218,7 +219,7 @@ class ItemFormState extends State<ItemForm> {
           cursorColor: Colors.white,
           maxLength: 100,
           keyboardType: TextInputType.name,
-          style: inputTextStyle(),
+          style: AppTextStyle.inputTextStyle,
           inputFormatters: [
             FilteringTextInputFormatter.singleLineFormatter,
             LengthLimitingTextInputFormatter(100),
@@ -237,7 +238,7 @@ class ItemFormState extends State<ItemForm> {
           controller: _value,
           maxLength: 50,
           keyboardType: TextInputType.number,
-          style: inputTextStyle(),
+          style: AppTextStyle.inputTextStyle,
           inputFormatters: [
             FilteringTextInputFormatter.singleLineFormatter,
             LengthLimitingTextInputFormatter(50),
@@ -382,7 +383,7 @@ class ItemFormState extends State<ItemForm> {
                           cursorColor: Colors.white,
                           maxLength: 100,
                           keyboardType: TextInputType.name,
-                          style: inputTextStyle(),
+                          style: AppTextStyle.inputTextStyle,
                           inputFormatters: [
                             FilteringTextInputFormatter.singleLineFormatter,
                             LengthLimitingTextInputFormatter(100),
@@ -488,9 +489,7 @@ class ItemFormState extends State<ItemForm> {
                 if (_formKey.currentState!.validate()) {
                   dynamic ret;
                   if (widget.data?.id != null) {
-                    getIt<ItemUpdate>().call(
-                      item:
-                      ItemDTO(
+                    ret = ItemDTO(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
@@ -508,8 +507,8 @@ class ItemFormState extends State<ItemForm> {
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
                                 type: _transferbank_type)
-                            : null));
-                    // ret = null;
+                            : null);
+                    await getIt<ItemUpdate>().call(item:ret);
                   } else {
                     
                     ret = await getIt<ItemSave>().call(
@@ -533,9 +532,11 @@ class ItemFormState extends State<ItemForm> {
                             : null));
                   }
 
-                  if (ret is ItemModel) {
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context, ret);
+                  if (ret is ItemModel || ret is ItemDTO) {
+                    if(mounted)
+                    {
+                      Navigator.pop(context, ret);
+                    }
                   } else {
                     SnackBar snackBar = SnackBar(
                       content: Text(
@@ -546,8 +547,9 @@ class ItemFormState extends State<ItemForm> {
                       backgroundColor: Colors.red,
                       closeIconColor: Colors.white,
                     );
-                    // ignore: use_build_context_synchronously
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    if(mounted){
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   }
                 }
               },

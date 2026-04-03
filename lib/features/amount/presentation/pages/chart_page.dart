@@ -6,7 +6,7 @@ import 'package:drahkma/features/amount/data/models/amount_model.dart';
 import 'package:drahkma/features/amount/data/models/transfer_bank_amount_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/core/notifiers/data_notifier.dart';
+import 'package:drahkma/core/presentation/notifiers/data_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartsWidgetTotalAmountGroup extends StatelessWidget {

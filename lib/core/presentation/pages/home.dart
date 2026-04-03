@@ -22,7 +22,7 @@ class HomeViewState extends State<HomeView> {
 
   void _toLogin(){
     SchedulerBinding.instance.addPostFrameCallback((_){
-      if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+      if(mounted) Navigator.of(context).pushReplacementNamed("login");
     });
   }
 

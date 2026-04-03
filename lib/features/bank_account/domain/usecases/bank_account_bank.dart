@@ -1,4 +1,4 @@
-import 'package:drahkma/core/interfaces/use_cases.dart';
+import 'package:drahkma/core/domain/usecases/use_cases.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 import 'package:drahkma/features/bank_account/domain/repositories/bank_account_repository.dart';
 

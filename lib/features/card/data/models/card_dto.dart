@@ -1,8 +1,8 @@
-import 'package:drahkma/core/mixins/dto.dart';
+import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:intl/intl.dart';
 
-class CardDTO extends Card with DTO
+class CardDTO extends Card with DTOMixin
 {
     CardDTO({super.id, super.brand, super.expiresAt, super.flag, super.invoiceDay, super.last4Digits, super.type});
 

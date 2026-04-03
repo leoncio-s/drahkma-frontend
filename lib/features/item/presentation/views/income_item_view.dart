@@ -1,6 +1,6 @@
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/item/domain/usecases/item_get_income.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/item/presentation/views/items_view.dart';
 

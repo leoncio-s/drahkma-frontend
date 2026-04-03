@@ -6,7 +6,7 @@ import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/error/invalid_credentials_exception.dart';
 import 'package:drahkma/core/error/user_not_allowed_exception.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
@@ -53,7 +53,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       return json;
     } else if (req.statusCode != 200) {
       json = jsonDecode(req.body);
-      throw ArgumentError(json['error']);
+      throw ArgumentError(json['message']);
     } else {
       throw Exception("Erro interno no servidor");
     }
