@@ -1,9 +1,9 @@
-import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/amount/domain/usecases/amount_fetchdata.dart';
+import 'package:drahkma/features/amount/presentation/controllers/amount_controller.dart';
 import 'package:flutter/material.dart';
 
 class CardAmountView extends StatefulWidget {
-  const CardAmountView({super.key});
+  final AmountController amountController;
+  const CardAmountView({super.key, required this.amountController});
 
   @override
   State<StatefulWidget> createState() => _CardAmountViewState();
@@ -11,25 +11,33 @@ class CardAmountView extends StatefulWidget {
 
 class _CardAmountViewState extends State<CardAmountView> {
   @override
+  void initState() {
+    super.initState();
+    widget.amountController.loadAmounts(
+      start: DateTime.now().subtract(const Duration(days: 30)),
+      end: DateTime.now(),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
         child: ConstrainedBox(
       constraints: const BoxConstraints(
           minHeight: 50, maxHeight: 200, minWidth: 50, maxWidth: 200),
       child: Center(
-        child: FutureBuilder(
-            future: getIt<AmountsFetchdata>().call(
-                DateTime.now().subtract(const Duration(days: 30)),
-                DateTime.now()),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Flexible(
-                    child: Card.outlined(
-                  child: Text(snapshot.data.toString()),
-                ));
-              }
-              return const CircularProgressIndicator();
-            }),
+        child: ListenableBuilder(
+          listenable: widget.amountController,
+          builder: (context, child) {
+            if (widget.amountController.value is AmountsLoaded) {
+              return Flexible(
+                  child: Card.outlined(
+                child: Text('Dados carregados'),
+              ));
+            }
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
     ));
   }

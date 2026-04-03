@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
-import 'package:drahkma/features/card/domain/usecases/card_delete.dart';
-import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
 import 'package:drahkma/features/card/utils/card_model_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/card/presentation/forms/card_form.dart';
 
 class CardView extends DrahkmaStatefulWidget {
+  final CardController cardController;
   const CardView(
       {super.key, super.name = "Cartões",
-      super.icon = const Icon(Icons.category, size: 20)});
+      super.icon = const Icon(Icons.category, size: 20),
+      required this.cardController});
 
   @override
   State<CardView> createState() => CardsViewState();
@@ -23,29 +24,41 @@ class CardsViewState extends State<CardView> {
   String? _message;
   double _turns = 0.0;
 
-  Future<Null> _getData() {
-    return getIt<CardGetAll>().call().then((value) {
-      if(mounted){
-        value as List<CardModel>?;
+  void _loadData() {
+    widget.cardController.loadCards();
+  }
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.cardController.value;
+      if (state is CardsLoaded) {
         setState(() {
-        cards = value;
-        _message = null;
-      });
-      }
-    }).onError((e,s){
-      if(mounted){
+          cards = state.data;
+          _message = null;
+        });
+      } else if (state is AppStateError) {
         setState(() {
-        _message = "Erro ao processar solicitação. Tente novamente!";
-      });
+          _message = state.message ?? "Erro ao processar solicitação. Tente novamente!";
+        });
+      } else if (state is AppStateLoading) {
+        setState(() {
+          _message = null;
+        });
       }
-    });
+    }
   }
 
   @override
   void initState() {
-    // _timer = Timer(const Duration(seconds: 3), _getData);
-    _getData();
     super.initState();
+    _loadData();
+    widget.cardController.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.cardController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -115,9 +128,9 @@ class CardsViewState extends State<CardView> {
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             CardModel? data = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => CardForm()));
+                MaterialPageRoute(builder: (context) => CardForm(cardController: widget.cardController)));
             if (data != null) {
-              _getData();
+              _loadData();
             }
           },
           label: const Text("Adicionar Cartão")),
@@ -143,19 +156,19 @@ class CardsViewState extends State<CardView> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 CardForm(
-                                                    cards: el)));
+                                                    cards: el,
+                                                    cardController: widget.cardController)));
                                 if (data != null) {
-                                  _getData();
+                                  _loadData();
                                 }
                               },
                               trailing: IconButton(
                                   splashRadius: 20.0,
-                                  // visualDensity: const VisualDensity(horizontal: 0.0),
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     try{
-                                      await getIt<CardDelete>().call(dto: el);
-                                      _getData();
+                                      await widget.cardController.deleteCard(el);
+                                      _loadData();
                                     }catch(e){
                                       rethrow;
                                     }
@@ -183,7 +196,7 @@ class CardsViewState extends State<CardView> {
                 _turns -= 1.0;
                 _message = null;
               });
-              _getData();
+              _loadData();
             },
             icon:  AnimatedRotation(
               turns: _turns,

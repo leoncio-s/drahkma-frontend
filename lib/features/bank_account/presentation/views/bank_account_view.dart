@@ -1,18 +1,19 @@
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
-import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delete.dart';
-import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/bank_account/utils/bank_account_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
 
 class BankAccountView extends DrahkmaStatefulWidget {
+  final BankAccountController bankAccountController;
   const BankAccountView(
       {super.key, super.name = "Contas Bancárias",
-      super.icon = const Icon(Icons.category, size: 20)});
+      super.icon = const Icon(Icons.category, size: 20),
+      required this.bankAccountController});
 
   @override
   State<BankAccountView> createState() => BankAccountsViewState();
@@ -23,28 +24,41 @@ class BankAccountsViewState extends State<BankAccountView> {
   String? _message;
   double _turns = 0.0;
 
-  dynamic _getData() {
-    return getIt<BankAccountGetAll>().call().then((value) {
-      value as List<BankAccountModel>?;
-      if(mounted){
+  void _loadData() {
+    widget.bankAccountController.loadBankAccounts();
+  }
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.bankAccountController.value;
+      if (state is BankAccountsLoaded) {
         setState(() {
-        bankAccounts = value;
-        _message = null;
-      });
-      }
-    }).onError((e, s) {
-      if(mounted){
+          bankAccounts = state.data;
+          _message = null;
+        });
+      } else if (state is AppStateError) {
         setState(() {
-        _message = "Erro ao processar solicitação. Tente novamente!";
-      });
+          _message = state.message ?? "Erro ao processar solicitação. Tente novamente!";
+        });
+      } else if (state is AppStateLoading) {
+        setState(() {
+          _message = null;
+        });
       }
-    });
+    }
   }
 
   @override
   void initState() {
-    _getData();
     super.initState();
+    _loadData();
+    widget.bankAccountController.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.bankAccountController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
 
@@ -117,7 +131,7 @@ class BankAccountsViewState extends State<BankAccountView> {
             BankAccountModel? data = await Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => BankAccountForm()));
             if (data != null) {
-              _getData();
+              _loadData();
             }
           },
           label: const Text("Adicionar Banco")),
@@ -147,18 +161,17 @@ class BankAccountsViewState extends State<BankAccountView> {
                                                 BankAccountForm(
                                                     bankAccounts: el)));
                                 if (data != null) {
-                                  _getData();
+                                  _loadData();
                                 }
                               },
                               trailing: IconButton(
                                   splashRadius: 20.0,
-                                  // visualDensity: const VisualDensity(horizontal: 0.0),
                                   hoverColor: Colors.white,
                                   onPressed: () async {
                                     dynamic ret = false;
-                                    await getIt<BankAccountDelete>().call(dto: el as BankAccountDTO);
+                                    await widget.bankAccountController.deleteBankAccount(el);
                                     if (ret == true) {
-                                      _getData();
+                                      _loadData();
                                     } else {
                                       if (context.mounted) {
                                         // ignore: use_build_context_synchronously
@@ -214,7 +227,7 @@ class BankAccountsViewState extends State<BankAccountView> {
                             _turns -= 1.0;
                             _message = null;
                           });
-                          _getData();
+                          _loadData();
                         },
                         icon: AnimatedRotation(
                           turns: _turns,

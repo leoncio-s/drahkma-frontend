@@ -1,9 +1,9 @@
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
-import 'package:drahkma/features/item/domain/usecases/item_delete.dart';
+import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/item/presentation/forms/item_form.dart';
 import 'package:drahkma/features/item/domain/enums/item_order_enum.dart';
@@ -14,12 +14,12 @@ import 'package:intl/intl.dart';
 // ignore: must_be_immutable
 class ItemsView extends StatefulWidget{
   final String title;
-  final Future<List<ItemModel>?> Function({DateTime start, DateTime end}) getData;
+  final ItemController itemController;
   final bool expense;
   const ItemsView(
       {super.key,
       required this.title,
-      required this.getData,
+      required this.itemController,
       this.expense = false});
 
   @override
@@ -38,19 +38,45 @@ class _ItemsViewState extends State<ItemsView>{
   String? _message;
   double _turns = 0.0;
 
-  void _getData() {
-    widget.getData(
-      start: startDate, end: finishDate).then((data) {
-      setState(() {
-        _items = data;
-      });
-    });
+  void _loadData() {
+    if (widget.expense) {
+      widget.itemController.loadExpense(start: startDate, end: finishDate);
+    } else {
+      widget.itemController.loadIncome(start: startDate, end: finishDate);
+    }
+  }
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.itemController.value;
+      if (state is ItemsLoaded) {
+        setState(() {
+          _items = state.data;
+          _message = null;
+        });
+      } else if (state is AppStateError) {
+        setState(() {
+          _message = state.message ?? "Erro ao processar dados";
+        });
+      } else if (state is AppStateLoading) {
+        setState(() {
+          _message = null;
+        });
+      }
+    }
   }
 
   @override
   void initState() {
-    _getData();
+    _loadData();
+    widget.itemController.addListener(_onControllerStateChanged);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.itemController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -97,7 +123,7 @@ class _ItemsViewState extends State<ItemsView>{
                     builder: (context) => ItemForm(expense: widget.expense)))
                 .then((data) {
               if (data is ItemModel) {
-                _getData();
+                _loadData();
               }
             });
           },
@@ -202,7 +228,7 @@ class _ItemsViewState extends State<ItemsView>{
                             startDate = date.start;
                             finishDate = date.end;
                           });
-                          _getData();
+                          _loadData();
                         }
                       },
                       label: const Text("Alterar Período"))
@@ -288,7 +314,7 @@ class _ItemsViewState extends State<ItemsView>{
                           trailing: IconButton(
                               onPressed: () async {
                                 try{
-                                  await getIt<ItemDelete>().call(item: el);
+                                  await widget.itemController.deleteItem(el);
                                   SnackBar snackBar = const SnackBar(
                                       content:
                                           Text("Item excluido com sucesso"),
@@ -302,7 +328,7 @@ class _ItemsViewState extends State<ItemsView>{
                                 }catch(e){
                                   rethrow;
                                 }
-                                  _getData();
+                                  _loadData();
                               },
                               icon: const Icon(
                                 Icons.delete,
@@ -320,7 +346,7 @@ class _ItemsViewState extends State<ItemsView>{
                                 .then((data) {
                               if (data is ItemModel) {
                                 // setState(() {});
-                                _getData();
+                                _loadData();
                               }
                             });
                           },
@@ -348,6 +374,15 @@ class _ItemsViewState extends State<ItemsView>{
                         onPressed: () {
                           setState(() {
                             _turns -= 1.0;
+                            _message = null;
+                          });
+                          _loadData();
+                        },
+                        icon: AnimatedRotation(
+                          turns: _turns,
+                          duration: const Duration(seconds: 1),
+                          child: const Icon(Icons.replay),
+                        ))))
                             _message = null;
                           });
                           _getData();
