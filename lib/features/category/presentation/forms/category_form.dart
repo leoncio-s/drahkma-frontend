@@ -1,9 +1,7 @@
 
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/usecases/category_save.dart';
-import 'package:drahkma/features/category/domain/usecases/category_update.dart';
+import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +9,9 @@ import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CategoryForm extends StatefulWidget {
+  final CategoryController? categoryController;
   CategoryModel? category;
-  CategoryForm({super.key, this.category});
+  CategoryForm({super.key, this.category, this.categoryController});
 
   @override
   State<CategoryForm> createState() => CategoryStateForm();
@@ -112,11 +111,12 @@ class CategoryStateForm extends State<CategoryForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if(widget.category?.id != null){
-                              await getIt<CategoryUpdate>().call(
-                                category: CategoryDTO(id: widget.category!.id, description: _description.text.toUpperCase()));
+                              await widget.categoryController?.updateCategory(CategoryModel(
+                                id: widget.category!.id, 
+                                description: _description.text.toUpperCase()
+                              ));
                             }else{
-                              ret = await getIt<CategorySave>().call(
-                                category: CategoryDTO(
+                              ret = await widget.categoryController?.saveCategory(CategoryModel(
                                     description:
                                         _description.text.toUpperCase()));
                             }
@@ -126,7 +126,7 @@ class CategoryStateForm extends State<CategoryForm> {
                             } else {
                               SnackBar snackBar = SnackBar(
                                   content: Text(
-                                    ret['error'], style: const TextStyle(color: Colors.white),),
+                                    ret?['error'] ?? 'Erro ao salvar', style: const TextStyle(color: Colors.white),),
                                   showCloseIcon: true,
                                   backgroundColor: Colors.red,
                                   closeIconColor: Colors.white, 
