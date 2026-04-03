@@ -4,7 +4,7 @@ import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
-import 'package:drahkma/features/user/domain/usecases/user_update.dart';
+import 'package:drahkma/features/user/presentation/controllers/user_controller.dart';
 import 'package:drahkma/features/user/presentation/pages/new_password_form_page.dart';
 import 'package:drahkma/core/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
@@ -15,7 +15,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class DrawerProfileComponent extends StatefulWidget {
-  const DrawerProfileComponent({super.key});
+  final UserController userController;
+  const DrawerProfileComponent({super.key, required this.userController});
 
   @override
   State<DrawerProfileComponent> createState() => _DrawerProfileComponentState();
@@ -213,9 +214,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
           phoneNumber: _phone.text.replaceAll(RegExp(r"[\(\)\s)-]+"), "")
         );
         
-        final useCase = getIt<UserUpdate>();
-
-        await useCase.call(user: user);
+        await widget.userController.updateUser(user);
         snack = SnackBarWidget(content: Text("Dados Atualizados!"), backgroundColor: Colors.green,);
 
       }on UnauthenticatedException catch (e)
