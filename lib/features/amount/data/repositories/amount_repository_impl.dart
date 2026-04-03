@@ -1,4 +1,4 @@
-import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_datasource.dart';
+import 'package:drahkma/features/amount/data/sources/remote/amount_remote_datasource.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
 import 'package:drahkma/features/amount/domain/entities/dashboard.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
