@@ -11,10 +11,10 @@ import 'package:drahkma/features/amount/data/repositories/amount_repository_impl
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
 import 'package:drahkma/features/amount/domain/usecases/amount_fetchdata.dart';
 import 'package:drahkma/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource_impl.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource_impl.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource_impl.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource_impl.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 import 'package:drahkma/features/auth/domain/usecases/auth_check_use_case.dart';
 import 'package:drahkma/features/auth/domain/usecases/auth_get_saved_email_use_case.dart';
