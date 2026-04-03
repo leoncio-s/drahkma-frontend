@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/card/data/models/card_dto.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
