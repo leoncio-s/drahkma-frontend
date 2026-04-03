@@ -1,15 +1,17 @@
-import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
-
-class BankAccountModel extends BankAccount {
+class BankAccountModel {
+  final int? id;
+  final String? bankCode;
+  final String? accountNumber;
+  final String? agency;
+  final String? bankName;
 
   BankAccountModel(
-      {super.id,
-      super.bankCode,
-      super.accountNumber,
-      super.agency,
-      super.bankName});
+      {this.id,
+      this.bankCode,
+      this.accountNumber,
+      this.agency,
+      this.bankName});
 
-  @override
   factory BankAccountModel.fromJson(Map<String, dynamic> data) {
     int? id = data['id'] ?? 0;
     String? bankCode = data['bankCode'] ?? "";

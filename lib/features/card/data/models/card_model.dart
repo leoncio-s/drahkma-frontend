@@ -1,16 +1,23 @@
-import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
 import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
 
-class CardModel extends Card{
+class CardModel {
+    final int? id;
+    final CardTypeEnum? type;
+    final String? brand;
+    final CardFlagEnum? flag;
+    final DateTime? expiresAt;
+    final String? last4Digits;
+    final int? invoiceDay;
+
     CardModel({ 
-      super.id, 
-      super.type,
-      super.brand,
-      super.expiresAt,
-      super.flag,
-      super.invoiceDay,
-      super.last4Digits
+      this.id, 
+      this.type,
+      this.brand,
+      this.expiresAt,
+      this.flag,
+      this.invoiceDay,
+      this.last4Digits
     });
 
     DateTime get nextInvoiceDate{

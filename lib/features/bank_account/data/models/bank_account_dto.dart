@@ -1,9 +1,19 @@
 import 'package:drahkma/core/mixins/dto_mixin.dart';
-import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 
-class BankAccountDTO extends BankAccount with DTOMixin
-{
-    BankAccountDTO({super.id, super.accountNumber, super.agency, super.bankCode, super.bankName});
+class BankAccountDTO with DTOMixin {
+    final int? id;
+    final String? accountNumber;
+    final String? agency;
+    final String? bankCode;
+    final String? bankName;
+
+    BankAccountDTO({
+      this.id, 
+      this.accountNumber, 
+      this.agency, 
+      this.bankCode, 
+      this.bankName
+    });
     
     @override
     Map<String, dynamic> toMap() {

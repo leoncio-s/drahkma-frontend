@@ -1,10 +1,29 @@
+import 'package:drahkma/features/card/domain/entities/card.dart';
+import 'package:drahkma/features/category/domain/entities/Category.dart';
 import 'package:drahkma/features/item/data/models/transfer_bank_dto.dart';
-import 'package:drahkma/features/item/domain/entities/item.dart';
+import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 import 'package:intl/intl.dart';
 
-class ItemDTO extends Item
-{
-  ItemDTO({super.id, super.card, super.category, super.date, super.description, super.expense, super.transferBank, super.value});
+class ItemDTO {
+  final int? id;
+  final String? description;
+  final bool? expense;
+  final double? value;
+  final DateTime? date;
+  final Category? category;
+  final Card? card;
+  final TransferBank? transferBank;
+
+  ItemDTO({
+    this.id, 
+    this.card, 
+    this.category, 
+    this.date, 
+    this.description, 
+    this.expense, 
+    this.transferBank, 
+    this.value
+  });
 
   Map<String, dynamic> toMap() {
       return {

@@ -1,16 +1,34 @@
 import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
-import 'package:drahkma/features/user/domain/entities/user.dart';
 
-class UserDTO extends User with DTOMixin
-{
-  String? token;
+class UserDTO with DTOMixin {
+  final int? id;
+  final String? fullname;
+  final String? email;
+  final String? phoneNumber;
+  final bool? actived;
+  final DateTime? emailVerifiedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? token;
   final String? password;
   final String? confirmNewPassword;
-  UserDTO({super.actived, super.createdAt, super.email, super.emailVerifiedAt, super.fullname, super.id, super.phoneNumber, super.updatedAt, this.password, this.confirmNewPassword, this.token});
 
-  factory UserDTO.fromModel(UserModel user)
-  {
+  UserDTO({
+    this.actived, 
+    this.createdAt, 
+    this.email, 
+    this.emailVerifiedAt, 
+    this.fullname, 
+    this.id, 
+    this.phoneNumber, 
+    this.updatedAt, 
+    this.password, 
+    this.confirmNewPassword, 
+    this.token
+  });
+
+  factory UserDTO.fromModel(UserModel user) {
     return UserDTO(
       id: user.id,
       phoneNumber: user.phoneNumber,
