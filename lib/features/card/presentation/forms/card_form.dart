@@ -1,9 +1,7 @@
 import 'dart:ui';
 
-import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/card/data/models/card_dto.dart';
-import 'package:drahkma/features/card/domain/usecases/card_save.dart';
-import 'package:drahkma/features/card/domain/usecases/card_update.dart';
+import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
@@ -15,8 +13,9 @@ import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CardForm extends StatefulWidget {
+  final CardController? cardController;
   CardModel? cards;
-  CardForm({super.key, this.cards});
+  CardForm({super.key, this.cards, this.cardController});
 
   @override
   State<CardForm> createState() => CardsStateForm();
@@ -369,9 +368,8 @@ class CardsStateForm extends State<CardForm> {
                           if (_formState.currentState!.validate()) {
                             dynamic ret;
                             if (widget.cards?.id != null) {
-                              await getIt<CardUpdate>().call(
-                                dto:
-                                CardDTO(
+                              await widget.cardController?.updateCard(
+                                CardModel(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
@@ -380,9 +378,8 @@ class CardsStateForm extends State<CardForm> {
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await getIt<CardSave>().call(
-                                dto:
-                                CardDTO(
+                              ret = await widget.cardController?.saveCard(
+                                CardModel(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
@@ -396,7 +393,7 @@ class CardsStateForm extends State<CardForm> {
                             } else {
                               SnackBar snackBar = SnackBar(
                                 content: Text(
-                                  ret['errors'].toString(),
+                                  ret?['errors']?.toString() ?? 'Erro ao salvar',
                                   style: const TextStyle(color: Colors.white),
                                 ),
                                 showCloseIcon: true,
