@@ -10,6 +10,7 @@ import 'package:drahkma/features/amount/data/datasources/remote/amount_remote_da
 import 'package:drahkma/features/amount/data/repositories/amount_repository_impl.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
 import 'package:drahkma/features/amount/domain/usecases/amount_fetchdata.dart';
+import 'package:drahkma/features/amount/presentation/controllers/amount_controller.dart';
 import 'package:drahkma/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource_impl.dart';
@@ -30,6 +31,7 @@ import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delet
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
+import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
 import 'package:drahkma/features/card/data/repositories/card_repository_impl.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource_impl.dart';
@@ -38,6 +40,7 @@ import 'package:drahkma/features/card/domain/usecases/card_delete.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
 import 'package:drahkma/features/card/domain/usecases/card_save.dart';
 import 'package:drahkma/features/card/domain/usecases/card_update.dart';
+import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
 import 'package:drahkma/features/category/data/repositories/category_repository_impl.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource_impl.dart';
@@ -47,6 +50,7 @@ import 'package:drahkma/features/category/domain/usecases/category_get_all.dart'
 import 'package:drahkma/features/category/domain/usecases/category_get_all_by_user.dart';
 import 'package:drahkma/features/category/domain/usecases/category_save.dart';
 import 'package:drahkma/features/category/domain/usecases/category_update.dart';
+import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
 import 'package:drahkma/features/item/data/repositories/item_repository_impl.dart';
 import 'package:drahkma/features/item/data/sources/item_remote_datasource.dart';
 import 'package:drahkma/features/item/data/sources/item_remote_datasource_impl.dart';
@@ -56,6 +60,7 @@ import 'package:drahkma/features/item/domain/usecases/item_get_expense.dart';
 import 'package:drahkma/features/item/domain/usecases/item_get_income.dart';
 import 'package:drahkma/features/item/domain/usecases/item_save.dart';
 import 'package:drahkma/features/item/domain/usecases/item_update.dart';
+import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:drahkma/features/user/data/repositories/user_repository_impl.dart';
 import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
 import 'package:drahkma/features/user/data/sources/user_remote_datasource_impl.dart';
@@ -65,6 +70,7 @@ import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
 import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
+import 'package:drahkma/features/user/presentation/controllers/user_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,11 +105,13 @@ void initializeDependencies()
   getIt.registerFactory<LogoutUseCase>(()=>LogoutUseCase(getIt<AuthRepository>()));
   getIt.registerFactory<UserUpdatePassword>(()=>UserUpdatePassword(getIt<UserRepository>()));
   getIt.registerFactory<CreateUserController>(()=>CreateUserController());
+  getIt.registerSingleton<UserController>(UserController(getIt(), getIt(), getIt(), getIt()));
 
   ///// Amounts
   getIt.registerFactory<AmountRemoteDatasource>(()=>AmountRemoteDatasourceImpl());
   getIt.registerFactory<AmountRepository>(()=>AmountRepositoryImpl(getIt<AmountRemoteDatasource>()));
   getIt.registerFactory<AmountsFetchdata>(() => AmountsFetchdata(getIt<AmountRepository>()));
+  getIt.registerSingleton<AmountController>(AmountController(getIt()));
 
   //// BankAccounts
   getIt.registerFactory<BankAccountRemoteDatasource>(()=>BankAccountRemoteDatasourceImpl());
@@ -113,6 +121,7 @@ void initializeDependencies()
   getIt.registerFactory<BankAccountDelete>(()=>BankAccountDelete(getIt<BankAccountRepository>()));
   getIt.registerFactory<BankAccountGetAll>(()=>BankAccountGetAll(getIt<BankAccountRepository>()));
   getIt.registerFactory<BankAccountBank>(()=>BankAccountBank(getIt<BankAccountRepository>()));
+  getIt.registerSingleton<BankAccountController>(BankAccountController(getIt(), getIt(), getIt(), getIt(), getIt()));
 
   //// Cards
   getIt.registerFactory<CardRemoteDatasource>(()=>CardRemoteDatasourceImpl());
@@ -121,6 +130,7 @@ void initializeDependencies()
   getIt.registerFactory<CardUpdate>(()=>CardUpdate(getIt<CardRepository>()));
   getIt.registerFactory<CardDelete>(()=>CardDelete(getIt<CardRepository>()));
   getIt.registerFactory<CardGetAll>(()=>CardGetAll(getIt<CardRepository>()));
+  getIt.registerSingleton<CardController>(CardController(getIt(), getIt(), getIt(), getIt()));
 
   //// Category
   getIt.registerFactory<CategoryRemoteDatasource>(()=>CategoryRemoteDatasourceImpl());
@@ -130,6 +140,7 @@ void initializeDependencies()
   getIt.registerFactory<CategoryDelete>(()=>CategoryDelete(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryGetAll>(()=>CategoryGetAll(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryGetAllByUser>(()=>CategoryGetAllByUser(getIt<CategoryRepository>()));
+  getIt.registerSingleton<CategoryController>(CategoryController(getIt(), getIt(), getIt(), getIt()));
 
   //// Item
   getIt.registerFactory<ItemRemoteDatasource>(()=>ItemRemoteDatasourceImpl());
@@ -139,4 +150,5 @@ void initializeDependencies()
   getIt.registerFactory<ItemDelete>(()=>ItemDelete(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetIncome>(()=>ItemGetIncome(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetExpense>(()=>ItemGetExpense(getIt<ItemRepository>()));
+  getIt.registerSingleton<ItemController>(ItemController(getIt(), getIt(), getIt()));
 }
