@@ -20,6 +20,10 @@ class CategoryRepositoryImpl implements CategoryRepository
     return await _datasource.getAll();
   }
 
+  Future<List<CategoryModel>?> getAllByUser() async {
+    return await _datasource.getAllByUser();
+  }
+
   @override
   Future<CategoryModel?> getBy({int? id}) async {
     return await _datasource.getBy(id: id);

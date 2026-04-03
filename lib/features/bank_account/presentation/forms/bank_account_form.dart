@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:drahkma/core/utils/string_regex_validate.dart';
+import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_bank.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
-import 'package:drahkma/presentation/styles/input_text_style.dart';
+import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
@@ -96,7 +96,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                     cursorColor: Colors.white,
                     maxLength: 100,
                     keyboardType: TextInputType.name,
-                    style: inputTextStyle(),
+                    style: AppTextStyle.inputTextStyle,
                     selectionHeightStyle: BoxHeightStyle.includeLineSpacingTop,
                     inputFormatters: [
                     FilteringTextInputFormatter.singleLineFormatter,
@@ -111,7 +111,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       if (value!.length < 3 || value.length > 100) {
                         return "O tamano minimo é 1 e o máximo é 100";
                       } else if (RegExp(r"[\w\s]+").hasMatch(value) &&
-                          StringValidators.sqlInjection(value)) {
+                          value.isSqlInjection) {
                         return "O campo possui caracteres ou expressões inválidas";
                       }
                       setState(() {
@@ -148,7 +148,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                     cursorColor: Colors.white,
                     maxLength: 10,
                     keyboardType: TextInputType.number,
-                    style: inputTextStyle(),
+                    style: AppTextStyle.inputTextStyle,
                     inputFormatters: [
                       FilteringTextInputFormatter.singleLineFormatter,
                       LengthLimitingTextInputFormatter(10),
@@ -163,7 +163,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       if (value!.isEmpty || value.length > 10) {
                         return "O tamano minimo é 1 e o máximo é 10";
                       } else if (RegExp(r"[0-9]{1,10}").hasMatch(value) &&
-                          StringValidators.sqlInjection(value)) {
+                          value.isSqlInjection) {
                         return "O campo possui caracteres ou expressões inválidas";
                       }
                       return null;
@@ -181,7 +181,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                     cursorColor: Colors.white,
                     maxLength: 8,
                     keyboardType: TextInputType.number,
-                    style: inputTextStyle(),
+                    style: AppTextStyle.inputTextStyle,
                     inputFormatters: [
                       FilteringTextInputFormatter.singleLineFormatter,
                       LengthLimitingTextInputFormatter(8),
@@ -196,7 +196,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       if (value!.isEmpty || value.length > 8) {
                         return "O tamano minimo é 3 e o máximo é 8";
                       } else if (RegExp(r"[0-9]{1,8}").hasMatch(value) &&
-                          StringValidators.sqlInjection(value)) {
+                          value.isSqlInjection) {
                         return "O campo possui caracteres ou expressões inválidas";
                       }
                       return null;
@@ -215,7 +215,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                     cursorColor: Colors.white,
                     maxLength: 10,
                     keyboardType: TextInputType.number,
-                    style: inputTextStyle(),
+                    style: AppTextStyle.inputTextStyle,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
@@ -230,7 +230,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       if (value!.length < 2 || value.length > 10) {
                         return "O tamano minimo é 2 e o máximo é 10";
                       } else if (RegExp(r"[0-9]{2,10}").hasMatch(value) &&
-                          StringValidators.sqlInjection(value)) {
+                          value.isSqlInjection) {
                         return "O campo possui caracteres ou expressões inválidas";
                       }
                       return null;

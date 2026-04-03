@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
@@ -34,6 +34,27 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
       }
     }
 
+    return categories;
+  }
+
+  @override
+  Future<List<CategoryModel>> getAllByUser() async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    user as UserModel?;
+    var request = await http.get(
+      _url.replace(path: "${_url.path}all"),
+      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+    );
+
+    List<CategoryModel>? categories = [];
+
+    if (request.statusCode == 200) {
+      List<dynamic> jsonCategories = jsonDecode(request.body);
+      for (var category in jsonCategories) {
+        CategoryModel categoryModel = CategoryModel.fromJson(category);
+        categories.add(categoryModel);
+      }
+    }
     return categories;
   }
 

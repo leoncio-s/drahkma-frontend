@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';

@@ -26,7 +26,7 @@ class AppBarNavigatorWidget extends StatelessWidget {
                 ElevatedButton.icon(
                     onPressed: () {
                       getIt<LogoutUseCase>().call();
-                      Navigator.of(context).pushReplacementNamed("/auth/login");
+                      Navigator.of(context).pushReplacementNamed("login");
                     }, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
               ],
               bottom: TabBar(

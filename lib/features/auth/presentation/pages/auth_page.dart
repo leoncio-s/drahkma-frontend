@@ -20,6 +20,8 @@ class _AuthPageState extends State<AuthPage> {
   final FocusNode _loginFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
+  AppState? _lastProcessedStateType;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,61 @@ class _AuthPageState extends State<AuthPage> {
     super.dispose();
   }
 
+  void _handleStateChange(AppState state) {
+    if (state is AuthSuccess && _lastProcessedStateType is! AuthSuccess) {
+      _lastProcessedStateType = state;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context)
+              .pushReplacementNamed('dashboard');
+        }
+      });
+    } else if (state is NoNetworkState && _lastProcessedStateType is! NoNetworkState) {
+      _lastProcessedStateType = state;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pushNamed('/');
+        }
+      });
+    } else if (state is TimeoutConnectState && _lastProcessedStateType is! TimeoutConnectState) {
+      _lastProcessedStateType = state;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+              backgroundColor: AppColors.redError,
+              content:
+                  Text("Timeout na conexão com o servidor. Tente novamente."),
+              actions: [
+                TextButton(
+                    onPressed: () => ScaffoldMessenger.of(context)
+                        .hideCurrentMaterialBanner(),
+                    child: Text("OK"))
+              ]));
+        }
+      });
+      widget.controller.value = AuthInitial();
+    } else if (state is ErrorState && _lastProcessedStateType is! ErrorState) {
+      _lastProcessedStateType = state;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+              backgroundColor: AppColors.redError,
+              content: Text(state.message ??
+                  "Ocorreu um erro com a solicitação. Tente novamente mais tarde!"),
+              actions: [
+                TextButton(
+                    onPressed: () => ScaffoldMessenger.of(context)
+                        .hideCurrentMaterialBanner(),
+                    child: Text("OK"))
+              ]));
+        }
+      });
+      widget.controller.value = AuthInitial();
+    }else if(state is AuthInitial){
+      _lastProcessedStateType = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,61 +104,20 @@ class _AuthPageState extends State<AuthPage> {
                   child: ValueListenableBuilder<AppState>(
                     valueListenable: widget.controller,
                     builder: (context, state, _) {
-                      if (state is AuthSuccess) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                'dashboard', (_) => true);
-                          }
-                        });
-                      } else if (state is NoNetworkState) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            Navigator.of(context).pushNamed('/');
-                          }
-                        });
-                      } else if (state is TimeoutConnectState) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showMaterialBanner(
-                                MaterialBanner(
-                                    backgroundColor: AppColors.redError,
-                                    content: Text(
-                                        "Timeout na conexão com o servidor. Tente novamente."),
-                                    actions: [
-                                  TextButton(
-                                      onPressed: () =>
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentMaterialBanner(),
-                                      child: Text("OK"))
-                                ]));
-                          }
-                        });
-                        widget.controller.value = AuthInitial();
-                      } else if (state is ErrorState) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showMaterialBanner(
-                                MaterialBanner(
-                                    backgroundColor: AppColors.redError,
-                                    content: Text(
-                                        state.message??"Ocorreu um erro com a solicitação. Tente novamente mais tarde!"),
-                                    actions: [
-                                  TextButton(
-                                      onPressed: () =>
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentMaterialBanner(),
-                                      child: Text("OK"))
-                                ]));
-                          }
-                        });
-                        widget.controller.value = AuthInitial();
-                      }
 
-                      WidgetsBinding.instance.addPostFrameCallback((_) async {
-                        String? value = await widget.useCases.call() as String?;
-                        _login.text = value ?? "";
-                      });
+                      Future.microtask(()=> _handleStateChange(state));
+
+                      if(state is AuthInitial && _login.text.isEmpty)
+                      {
+
+                        Future.microtask(() async {
+                          String? value = await widget.useCases.call() as String?;
+                          if(mounted && _login.text.isEmpty){
+                              _login.text = value ?? "";
+                          }
+                        });
+
+                      }
 
                       return Column(
                         children: [

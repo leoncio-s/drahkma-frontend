@@ -8,4 +8,5 @@ abstract interface class CategoryRepository
   Future<void> delete(CategoryModel data);
   Future<CategoryModel?> getBy({int? id});
   Future<List<CategoryModel>?> getAll();
+  Future<List<CategoryModel>?> getAllByUser();
 }

@@ -1,12 +1,12 @@
 
-import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
-import 'package:drahkma/core/exceptions/update_password_exception.dart';
+import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/error/update_password_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
-import 'package:drahkma/presentation/widgets/default_layout_widget.dart';
-import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
-import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
-import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
+import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
+import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
+import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 
 class NewPasswordFormPage extends StatefulWidget
@@ -87,7 +87,7 @@ class _NewPassWordFormPage extends State<NewPasswordFormPage>{
       }on UnauthenticatedException
       {
         snack = SnackBarWidget(content: Text("Usuário Não autenticado"), backgroundColor: Colors.redAccent, duration: Duration(seconds: 3),);
-        if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+        if(mounted) Navigator.of(context).pushReplacementNamed("login");
       }on UpdatePasswordException catch (e)
       {
         snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.red, duration: Duration(seconds: 3),);

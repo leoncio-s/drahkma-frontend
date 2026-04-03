@@ -1,8 +1,8 @@
-import 'package:drahkma/core/mixins/dto.dart';
+import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 
-class UserDTO extends User with DTO
+class UserDTO extends User with DTOMixin
 {
   String? token;
   final String? password;
@@ -31,7 +31,7 @@ class UserDTO extends User with DTO
       'email' : email,
       'phone_number' : phoneNumber,
       'password' : password,
-      'confPassword' : confirmNewPassword
+      'conf_password' : confirmNewPassword
     };
     if(token != null)
     { 

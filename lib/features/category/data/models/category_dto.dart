@@ -1,8 +1,8 @@
-import 'package:drahkma/core/mixins/dto.dart';
+import 'package:drahkma/core/mixins/dto_mixin.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/domain/entities/category.dart';
 
-class CategoryDTO extends Category with DTO
+class CategoryDTO extends Category with DTOMixin
 {
 
   CategoryDTO({super.id, super.description});

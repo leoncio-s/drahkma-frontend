@@ -1,9 +1,9 @@
 
 
 import 'package:drahkma/features/user/presentation/widgets/drawer_profile_component.dart';
-import 'package:drahkma/presentation/widgets/app_bar_widget.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
-import 'package:drahkma/presentation/widgets/drawer_menu_component.dart';
+import 'package:drahkma/core/presentation/widgets/app_bar_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drawer_menu_component.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 

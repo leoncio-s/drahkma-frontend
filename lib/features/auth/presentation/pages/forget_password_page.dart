@@ -3,10 +3,9 @@ import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
-import 'package:drahkma/core/presentation/dialogs/modal_dialog.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
 import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
@@ -24,17 +23,26 @@ class ForgetPasswordPage extends StatefulWidget {
 class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _email = TextEditingController();
+  bool loading = false;
 
   @override
   void initState() {
     if (widget.email != null) {
       _email.text = widget.email!;
     } else {
-      getIt<AuthLocalDatasource>().getStorageEmail().then((value) {
+      if(mounted){
+        getIt<AuthLocalDatasource>().getStorageEmail().then((value) {
         _email.text = value ?? '';
       });
+      }
     }
     super.initState();
+  }
+  
+  @override 
+  dispose()
+  {
+    super.dispose();
   }
 
   @override
@@ -80,11 +88,15 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
               height: 30,
             ),
             ElevatedButtonWidget(
-                title: "Redefinir Senha",
+                title: !loading ? "Redefinir Senha" : "",
+                icon: loading ? CircularProgressIndicator() : null,
                 foregroundHoverColor: AppColors.blueNavy,
+                readOnly: loading,
                 onPressed: () async {
+                  setState(() {
+                      loading = !loading;
+                  });
                   if (_formState.currentState!.validate()) {
-                    final closeModal = modalDialog(context, "loading");
                     late SnackBar snack;
                     try {
                       var ret = await getIt<AuthRemoteDatasource>()
@@ -92,22 +104,28 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
 
                       if (!mounted) return;
 
-                      if (ret!['message'] != null) {
+                      if (ret != null && ret['message'] != null) {
                         snack = SnackBarWidget(
                           content: Text(ret['message']),
                           backgroundColor: Colors.white,
                           closeIconColor: Colors.black,
                         );
-                        Navigator.of(context).push(MaterialPageRoute(
+                        if(mounted)
+                        {
+                          ScaffoldMessenger.of(context).showSnackBar(snack);
+                          // closeModal();
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context) =>
                                 ForgetPasswordCodeView(email: _email.text)));
+                        }
+                        // ScaffoldMessenger.of(context).removeCurrentSnackBar();
                       } else {
-                        snack = SnackBarWidget(content: ret['errors']);
+                        snack = SnackBarWidget(content: Text(ret?['errors'] ?? "Erro Desconhecido"));
+                        ScaffoldMessenger.of(context).showSnackBar(snack);
                       }
-
-                      ScaffoldMessenger.of(context).showSnackBar(snack);
+                      
                     } on ArgumentError catch (ex) {
-                      snack = SnackBarWidget(content: ex.message);
+                      snack = SnackBarWidget(content: Text(ex.message));
                       ScaffoldMessenger.of(context).showSnackBar(snack);
                     } on ClientException {
                       snack = SnackBarWidget(
@@ -122,7 +140,9 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                           stackTrace: s,
                           name: "Exception Forget password page");
                     } finally {
-                      closeModal();
+                      setState(() {
+                        loading = !loading;
+                      });
                     }
                   }
                 }),
@@ -142,9 +162,16 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                           }),
                           foregroundColor: WidgetStateProperty.fromMap(
                               {WidgetState.any: Colors.white})),
-                      child: const Text(
-                        "Página de Login",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_back),
+                          SizedBox(width: 5,),
+                          Text(
+                        "Voltar a página de Login",
                         textAlign: TextAlign.end,
+                      )
+                        ],
                       ),
                       onPressed: () {
                         Navigator.of(context).pushNamed("login");

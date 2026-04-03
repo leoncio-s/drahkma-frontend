@@ -8,14 +8,11 @@ class AppController extends ValueNotifier<AppState>
   final CheckNetworkUseCase _useCase;
   AppController(this._useCase) : super(AppInitialState());
 
-  Future<void>  checkNetwork() async
-  {
-    bool? result = await _useCase.call();
-    if(result!)
-    {
+  Future<void> checkNetwork() async {
+    final result = await _useCase.call() ?? false;
+    if (result) {
       value = HasNetworkState();
-    }else
-    {
+    } else {
       value = NoNetworkState();
     }
   }

@@ -1,5 +1,5 @@
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
-import 'package:drahkma/features/auth/data/source/remote/auth_remote_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
 import 'package:drahkma/features/auth/domain/entities/auth.dart';
 import 'package:drahkma/features/auth/domain/repositories/auth_repository.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
@@ -25,9 +25,9 @@ class AuthRepositoryImpl implements AuthRepository
 
   @override
   Future<User?> login({required Auth auth}) async {
-    await _localDatasource.saveStorageEmail(auth.getEmail!);
     User? ret = await _remoteDatasource.login(auth);
     await _localDatasource.saveAuthToken(ret as User);
+    await _localDatasource.saveStorageEmail(auth.getEmail!);
     return ret;
   }
 

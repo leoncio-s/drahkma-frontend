@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/usecases/card_delete.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
 import 'package:drahkma/features/card/utils/card_model_sort.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/card/presentation/forms/card_form.dart';
 
@@ -37,8 +37,6 @@ class CardsViewState extends State<CardView> {
         setState(() {
         _message = "Erro ao processar solicitação. Tente novamente!";
       });
-      print(e);
-      print(s);
       }
     });
   }

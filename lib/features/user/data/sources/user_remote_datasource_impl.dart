@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
-import 'package:drahkma/core/exceptions/update_password_exception.dart';
+import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/error/update_password_exception.dart';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';

@@ -20,6 +20,7 @@ dependencies:
   web: ^1.1.1
   shared_preferences: ^2.5.4
   get_it: ^9.2.0
+  equatable: ^2.0.8
 
 dev_dependencies:
   flutter_test:

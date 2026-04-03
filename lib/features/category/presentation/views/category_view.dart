@@ -1,10 +1,10 @@
-import 'package:drahkma/core/utils/text_scaler.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/domain/usecases/category_delete.dart';
 import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
 import 'package:drahkma/features/category/domain/util/category_model_sort.dart';
-import 'package:drahkma/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/category/presentation/forms/category_form.dart';
 

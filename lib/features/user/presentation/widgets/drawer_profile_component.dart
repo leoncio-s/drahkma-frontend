@@ -1,15 +1,15 @@
-import 'package:drahkma/core/exceptions/unauthenticated_exception.dart';
+import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
-import 'package:drahkma/features/auth/data/source/local/auth_local_datasource.dart';
+import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update.dart';
 import 'package:drahkma/features/user/presentation/pages/new_password_form_page.dart';
-import 'package:drahkma/presentation/dialogs/modal_dialog.dart';
-import 'package:drahkma/presentation/widgets/elevated_button_widget.dart';
-import 'package:drahkma/presentation/widgets/snack_bar_widget.dart';
-import 'package:drahkma/presentation/widgets/text_form_field_widget.dart';
+import 'package:drahkma/core/presentation/dialogs/modal_dialog.dart';
+import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
+import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';
+import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -31,7 +31,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
   
   void _toLogin(){
     SchedulerBinding.instance.addPostFrameCallback((_){
-      if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+      if(mounted) Navigator.of(context).pushReplacementNamed("login");
     });
   }
 
@@ -221,7 +221,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
       }on UnauthenticatedException catch (e)
       {
         snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.redAccent,);
-        if(mounted) Navigator.of(context).pushReplacementNamed("/auth/login");
+        if(mounted) Navigator.of(context).pushReplacementNamed("login");
       }on ArgumentError catch(e)
       {
         snack = SnackBarWidget(content: Text(e.invalidValue), backgroundColor: Colors.redAccent,);

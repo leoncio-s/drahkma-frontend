@@ -1,3 +1,4 @@
+import 'package:drahkma/core/presentation/notifiers/data_notifier_interface.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
 import 'package:drahkma/features/amount/domain/entities/dashboard.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
@@ -5,27 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:drahkma/di/injector.dart';
 
 
-class _DataNotifier with ChangeNotifier {
+class DataNotifier  with ChangeNotifier implements DataNotifierInterface {
   DashboardModel _data = DashboardModel();
+
+  @override
   DashboardModel get data => _data;
 
-  _DataNotifier();
+  DataNotifier();
 
-  void _setData(DashboardModel value){
-    _data = value;
-    notifyListeners();
-  }
+  // void _setData(DashboardModel value){
+  //   _data = value;
+  //   notifyListeners();
+  // }
 
-  void getData(DateTimeRange dateRange) {
+  @override
+  Future<void> fetchData(DateTimeRange dateRange) async {
 
-    getIt<AmountRepository>().fetchData(
+    Dashboard? data = await getIt<AmountRepository>().fetchData(
       startDate: dateRange.start,
-      endDate: dateRange.end).then((Dashboard? onValue) {
-        _setData(onValue as DashboardModel);
-    });
-    return;
+      endDate: dateRange.end);
+    _data = data as DashboardModel;
+    notifyListeners();
   }
 
 }
 
-var dataNotifier = _DataNotifier();
+var dataNotifier = DataNotifier();

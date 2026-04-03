@@ -4,10 +4,10 @@ import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/domain/usecases/category_save.dart';
 import 'package:drahkma/features/category/domain/usecases/category_update.dart';
-import 'package:drahkma/presentation/styles/input_text_style.dart';
+import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:drahkma/core/utils/string_regex_validate.dart';
+import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 
 // ignore: must_be_immutable
 class CategoryForm extends StatefulWidget {
@@ -63,7 +63,7 @@ class CategoryStateForm extends State<CategoryForm> {
                 cursorColor: Colors.white,
                 maxLength: 30,
                 keyboardType: TextInputType.name,
-                style: inputTextStyle(),
+                style: AppTextStyle.inputTextStyle,
                 inputFormatters: [
                   FilteringTextInputFormatter.singleLineFormatter,
                   LengthLimitingTextInputFormatter(30),
@@ -78,7 +78,7 @@ class CategoryStateForm extends State<CategoryForm> {
                   if (value!.length < 3 || value.length > 30) {
                     return "O tamano minimo é 3 e o máximo é 30";
                   } else if (RegExp(r"[\w\s]+").hasMatch(value) &&
-                      StringValidators.sqlInjection(value)) {
+                      value.isSqlInjection) {
                     return "O campo possui caracteres ou expressões inválidas";
                   }
                   return null;
