@@ -1,38 +1,73 @@
-import 'package:drahkma/features/card/data/models/card_dto.dart';
-import 'package:drahkma/features/card/data/models/card_model.dart';
+import 'dart:developer';
+
+import 'package:drahkma/features/card/data/mappers/card_mapper.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
+import 'package:drahkma/features/card/data/sources/local/card_local_datasource.dart';
 import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/domain/repositories/card_repository.dart';
 
 class CardRepositoryImpl implements CardRepository
 {
-
-  final CardRemoteDatasource _datasource;
-  CardRepositoryImpl(CardRemoteDatasource datasource): _datasource = datasource;
+  final CardRemoteDatasource _remoteDatasource;
+  final CardLocalDatasource _localDatasource;
+  
+  CardRepositoryImpl(CardRemoteDatasource remoteDatasource, CardLocalDatasource localDatasource)
+    : _remoteDatasource = remoteDatasource,
+      _localDatasource = localDatasource;
 
   @override
   Future<void> delete(Card card) async {
-    return await _datasource.delete(card as CardModel);
+    try {
+      await _remoteDatasource.delete(CardMapper.toModel(card));
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
   Future<List<Card>?> getAll() async {
-    return await _datasource.getAll();
+    try {
+      List<Card>? cards = await _remoteDatasource.getAll() as List<Card>?;
+      if (cards != null) {
+        await _localDatasource.saveCards(cards);
+      }
+      return cards;
+    } catch (e, s) {
+      log(e.toString(), stackTrace: s, name: "Repo Load Cards");
+      // Fallback to local datasource on network error
+      return await _localDatasource.getCards();
+    }
   }
 
   @override
   Future<Card?> getBy({int? id}) async {
-    return await _datasource.getBy(id:id);
+    var data = await _remoteDatasource.getBy(id:id);
+    return CardMapper.toEntity(data!);
   }
 
   @override
   Future<Card?> save(Card card) async {
-    return await _datasource.save(card as CardDTO);
+    try {
+      var data = await _remoteDatasource.save(CardMapper.fromEntityToDTO(card));
+      Card? savedCard = CardMapper.toEntity(data!);
+      await _localDatasource.saveCards([savedCard]);
+      return savedCard;
+    } catch (e) {
+      await _localDatasource.getCards().then((cards) => cards?.isEmpty ?? true ? null : cards?.first);
+      rethrow;
+    }
   }
 
   @override
   Future<void> update(Card card) async {
-    return await _datasource.update(card as CardDTO);
+    try {
+      await _remoteDatasource.update(CardMapper.fromEntityToDTO(card));
+      await _localDatasource.saveCards([card]);
+    } catch (e) {
+      // On network error, at least save to local
+      await _localDatasource.saveCards([card]);
+      rethrow;
+    }
   }
   
 }
