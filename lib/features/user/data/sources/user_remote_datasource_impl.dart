@@ -19,29 +19,38 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   UserRemoteDatasourceImpl(AuthLocalDatasource authLocalDatasource) : _authLocalSource = authLocalDatasource;
 
   @override
-  Future<UserModel?> profile() async {
-    User? loggedUser = await _authLocalSource.getAuthToken();
-    loggedUser as UserModel?;
+  Future<User?> profile() async {
+    UserModel? loggedUser = await _authLocalSource.getAuthToken() as UserModel?;
 
     if(loggedUser == null) return null;
 
+    UserModel? userModel = loggedUser;
     var request = await http.get(_url, headers: {
-      'Authorization': " Bearer ${loggedUser.token ?? ''}",
+      'Authorization': " Bearer ${userModel.token ?? ''}",
       'Content-type': 'application/json',
     }).timeout(Duration(seconds: 10));
 
     if (request.statusCode != 200) {
       throw UnauthenticatedException();
     }
-    var user = UserModel();
     var json = jsonDecode(request.body);
-    user = UserModel.fromJson(json);
-    user.token = loggedUser.token;
-    return user;
+    userModel = UserModel.fromJson(json);
+    userModel = UserModel(
+      id: userModel.id,
+      fullname: userModel.fullname,
+      email: userModel.email,
+      phoneNumber: userModel.phoneNumber,
+      actived: userModel.actived,
+      emailVerifiedAt: userModel.emailVerifiedAt,
+      createdAt: userModel.createdAt,
+      updatedAt: userModel.updatedAt,
+      token: userModel.token
+    );
+    return userModel;
   }
 
   @override
-  Future<UserModel?> save(User data) async {
+  Future<User?> save(User data) async {
     try {
       var request = await http.post(_url,
           body: jsonEncode((data as UserDTO).toMap()),
@@ -51,7 +60,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
       late Map json;
       if (request.statusCode == 201) {
         json = jsonDecode(request.body);
-        return UserModel.fromJson(json);
+        return UserModel.fromJson(json) as User?;
       } else if (request.statusCode == 400) {
         json = jsonDecode(request.body);
         throw ArgumentError(jsonEncode(json), 'Erro(s) na validação do cadastro');
@@ -67,16 +76,16 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   {
     try{
       User? loggedUser = await _authLocalSource.getAuthToken();
-      loggedUser as UserModel?;
+      UserModel? loggedUserModel = loggedUser as UserModel?;
 
-      if(loggedUser == null) throw UnauthenticatedException();
+      if(loggedUserModel == null) throw UnauthenticatedException();
 
       var request = await http.put(
         _url, 
         body: jsonEncode((user as UserDTO).toMap()),
         headers: {
           'Content-type': 'application/json', 
-          'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
+          'Authorization' :  " Bearer ${loggedUserModel.token ?? ''}",
         }
         )
         .timeout(Duration(seconds: 10));
@@ -84,7 +93,6 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
       if(request.statusCode == 401){
         throw UnauthenticatedException();
       }else if(request.statusCode == 200){
-        user.token = loggedUser.token;
         getIt<AuthLocalDatasource>().saveAuthToken(user);
         return;
       }
@@ -101,7 +109,6 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
     }on UnauthenticatedException{
       rethrow;
     }catch(e){
-      
       rethrow;
     }
   }
@@ -109,11 +116,10 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   @override
   Future<void> updatePassword({required String currentPassword, required String newPassword, required String confirmNewPassword}) async
   {
-
     User? loggedUser = await _authLocalSource.getAuthToken();
-    loggedUser as UserModel?;
+    UserModel? loggedUserModel = loggedUser as UserModel?;
 
-    if(loggedUser == null) throw UnauthenticatedException();
+    if(loggedUserModel == null) throw UnauthenticatedException();
 
     var data = {
       'password': currentPassword,
@@ -126,7 +132,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
         body: jsonEncode(data), 
         headers: {
           'Content-type': 'application/json', 
-          'Authorization' :  " Bearer ${loggedUser.token ?? ''}",
+          'Authorization' :  " Bearer ${loggedUserModel.token ?? ''}",
         }
     ).timeout(Duration(seconds: 20));
 

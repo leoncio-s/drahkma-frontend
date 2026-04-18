@@ -21,30 +21,30 @@ class UserController extends ValueNotifier<AppState> {
   Future<void> loadProfile() async {
     value = AppLoading();
     try {
-      var result = await _userProfile.call();
+      await _userProfile.call();
       value = AppSuccess(message: 'Profile carregado');
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
   Future<void> registerUser(dynamic user) async {
     value = AppLoading();
     try {
-      var result = await _userRegister.call(user: user);
+      await _userRegister.call(user: user);
       value = AppSuccess(message: 'Usuário registrado com sucesso');
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
   Future<void> updateUser(dynamic user) async {
     value = AppLoading();
     try {
-      var result = await _userUpdate.call(user: user);
+      await _userUpdate.call(user: user);
       value = AppSuccess(message: 'Usuário atualizado');
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
@@ -54,7 +54,7 @@ class UserController extends ValueNotifier<AppState> {
       await _userUpdatePassword.call();
       value = AppSuccess(message: 'Senha atualizada');
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 }
@@ -63,5 +63,5 @@ class AppInitial extends AppState {}
 class AppLoading extends AppState {}
 class AppSuccess extends AppState {
   final String message;
-  AppSuccess({required this.message});
+  const AppSuccess({required this.message});
 }
