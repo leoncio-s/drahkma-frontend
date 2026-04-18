@@ -1,4 +1,5 @@
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/domain/util/category_model_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
@@ -39,16 +40,16 @@ class CategoryViewState extends State<CategoryView> {
   void _onControllerStateChanged() {
     if (mounted) {
       final state = widget.categoryController.value;
-      if (state is CategoriesLoaded) {
+      if (state is CategoryLoaded) {
         setState(() {
-          category = state.data;
+          category = widget.categoryController.data;
           _message = null;
         });
       } else if (state is AppStateError) {
         setState(() {
           _message = state.message ?? "Erro ao processar a solicitação. Tente novamente!";
         });
-      } else if (state is AppStateLoading) {
+      } else if (state is CategoryLoading) {
         setState(() {
           _message = null;
         });
@@ -129,11 +130,9 @@ class CategoryViewState extends State<CategoryView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            CategoryModel? data = await Navigator.of(context)
+            await Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => CategoryForm(categoryController: widget.categoryController)));
-            if (data != null) {
-              _loadData();
-            }
+              _loadData();            
           },
           label: const Text("Adicionar Categoria")),
     );
@@ -150,14 +149,11 @@ class CategoryViewState extends State<CategoryView> {
                               contentPadding: const EdgeInsets.all(5),
                               titleAlignment: ListTileTitleAlignment.center,
                               onTap: () async {
-                                CategoryModel? data =
-                                    await Navigator.of(context).push(
+                                await Navigator.of(context).push(
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 CategoryForm(category: el, categoryController: widget.categoryController)));
-                                if (data != null) {
                                   _loadData();
-                                }
                               },
                               trailing: IconButton(
                                   splashRadius: 20.0,
@@ -165,10 +161,20 @@ class CategoryViewState extends State<CategoryView> {
                                   onPressed: () async {
                                     await widget.categoryController
                                         .deleteCategory(el);
+                                    _loadData();
                                     if (mounted) {
+                                      if(_message != null)
+                                      {
+                                        ScaffoldMessenger.of(context)
+                                          .showSnackBar(_snackBarError(
+                                              _message!));
+                                        return;
+                                      }
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(_snackBarError(
-                                              "Categoria excluida com sucesso"));
+                                              "Categoria excluida com sucesso", 
+                                              backgroundColor: AppColors.redError
+                                              ));
                                     } else {
                                       return;
                                     }
@@ -187,10 +193,10 @@ class CategoryViewState extends State<CategoryView> {
             : Center(child: _replayData());
   }
 
-  SnackBar _snackBarError(String message) {
+  SnackBar _snackBarError(String message, {Color backgroundColor = AppColors.redError}) {
     return SnackBar(
       content: Text(message),
-      backgroundColor: Colors.red,
+      backgroundColor: backgroundColor,
       closeIconColor: Colors.white,
       showCloseIcon: true,
     );

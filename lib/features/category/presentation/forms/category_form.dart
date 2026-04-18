@@ -1,4 +1,5 @@
-
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
@@ -20,6 +21,35 @@ class CategoryForm extends StatefulWidget {
 class CategoryStateForm extends State<CategoryForm> {
   final GlobalKey<FormState> _formState = GlobalKey();
   final TextEditingController _description = TextEditingController();
+  String? _message;
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.categoryController!.value;
+      if (state is AppStateError) {
+        setState(() {
+          _message = state.message ??
+              "Erro ao processar solicitação. Tente novamente!";
+        });
+        SnackBar snackBar = SnackBar(
+          content: Text(
+            _message ?? "Erro ao processar solicitação",
+            style: const TextStyle(color: Colors.white),
+          ),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+          closeIconColor: Colors.white,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is CategoryLoading) {
+        setState(() {
+          _message = null;
+        });
+      } else if (state is CategorySaved) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -27,17 +57,27 @@ class CategoryStateForm extends State<CategoryForm> {
       _description.text = widget.category!.description ?? "";
     }
     super.initState();
+    widget.categoryController?.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.categoryController?.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(padding: const EdgeInsets.all(15.0), child: _form(),));
+        body: Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: _form(),
+    ));
   }
 
-  Widget _form(){
+  Widget _form() {
     return Center(
-            child: ConstrainedBox(
+        child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),
       child: Form(
           key: _formState,
@@ -69,10 +109,9 @@ class CategoryStateForm extends State<CategoryForm> {
                 ],
                 // decoration: const InputDecoration(
                 //     label: Text("Descrição"), counterText: ""),
-                decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
-                      labelText: "Descrição",
-                      counterText: ""
-                    ),
+                decoration: (const InputDecoration())
+                    .applyDefaults(Theme.of(context).inputDecorationTheme)
+                    .copyWith(labelText: "Descrição", counterText: ""),
                 validator: (value) {
                   if (value!.length < 3 || value.length > 30) {
                     return "O tamano minimo é 3 e o máximo é 30";
@@ -103,37 +142,33 @@ class CategoryStateForm extends State<CategoryForm> {
                         },
                         child: const Text("Cancelar")),
                   ),
-                  const SizedBox(width: 30,),
+                  const SizedBox(
+                    width: 30,
+                  ),
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.fromMap({
+                          WidgetState.hovered: AppColors.lightGold,
+                          WidgetState.any: AppColors.gold
+                        })),
                         onPressed: () async {
                           if (_formState.currentState!.validate()) {
-                            dynamic ret;
-                            if(widget.category?.id != null){
-                              await widget.categoryController?.updateCategory(CategoryModel(
-                                id: widget.category!.id, 
-                                description: _description.text.toUpperCase()
-                              ));
-                            }else{
-                              ret = await widget.categoryController?.saveCategory(CategoryModel(
-                                    description:
-                                        _description.text.toUpperCase()));
-                            }
-                            if(!mounted) return;
-                            if (ret is CategoryModel) {
-                              Navigator.of(context).pop(ret);
+                            if (widget.category?.id != null) {
+                              await widget.categoryController?.updateCategory(
+                                  CategoryDTO(
+                                      id: widget.category!.id,
+                                      description:
+                                          _description.text.toUpperCase()));
                             } else {
-                              SnackBar snackBar = SnackBar(
-                                  content: Text(
-                                    ret?['error'] ?? 'Erro ao salvar', style: const TextStyle(color: Colors.white),),
-                                  showCloseIcon: true,
-                                  backgroundColor: Colors.red,
-                                  closeIconColor: Colors.white, 
-                                  
-                                  );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              await widget.categoryController?.saveCategory(
+                                  CategoryDTO(
+                                      description:
+                                          _description.text.toUpperCase()));
+                            }
+                            if (mounted) {
+                              Navigator.pop(context);
                             }
                           }
                         },
