@@ -1,16 +1,13 @@
-class BankAccountModel {
-  final int? id;
-  final String? bankCode;
-  final String? accountNumber;
-  final String? agency;
-  final String? bankName;
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
+
+class BankAccountModel extends BankAccount {
 
   BankAccountModel(
-      {this.id,
-      this.bankCode,
-      this.accountNumber,
-      this.agency,
-      this.bankName});
+      {super.id,
+      super.bankCode,
+      super.accountNumber,
+      super.agency,
+      super.bankName});
 
   factory BankAccountModel.fromJson(Map<String, dynamic> data) {
     int? id = data['id'] ?? 0;
