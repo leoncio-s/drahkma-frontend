@@ -1,14 +1,10 @@
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/amount/presentation/pages/dashboard_amount_page.dart';
 import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
-import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
 import 'package:drahkma/features/card/presentation/views/card_view.dart';
-import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
-import 'package:drahkma/features/category/presentation/views/Category_view.dart';
-import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
+import 'package:drahkma/features/category/presentation/views/category_view.dart';
 import 'package:drahkma/features/item/presentation/views/income_item_view.dart';
 import 'package:drahkma/features/item/presentation/views/expense_item_view.dart';
-import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
 import 'package:drahkma/core/presentation/widgets/app_bar_navigator_widget.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
@@ -48,12 +44,12 @@ class HomeViewState extends State<HomeView> {
       return AppBarNavigatorWidget(
       childrens: <DrahkmaStatefulWidget>[
         // AmountsPage(),
-        DashboardAmountPage(),
-        IncomeItemView(itemController: getIt<ItemController>()),
-        ExpenseItemView(itemController: getIt<ItemController>()),
-        CategoryView(categoryController: getIt<CategoryController>()),
-        BankAccountView(bankAccountController: getIt<BankAccountController>()),
-        CardView(cardController: getIt<CardController>())
+        DashboardAmountPage(amountController: getIt(),),
+        IncomeItemView(itemController: getIt()),
+        ExpenseItemView(itemController: getIt()),
+        CategoryView(categoryController: getIt()),
+        BankAccountView(bankAccountController: getIt()),
+        CardView(cardController: getIt())
       ],
     );
     });
