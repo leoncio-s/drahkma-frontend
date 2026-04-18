@@ -32,7 +32,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   void dispose() {
-    widget.controller.dispose();
+    // widget.controller.dispose();
     _login.dispose();
     _password.dispose();
     _loginFocusNode.dispose();
@@ -73,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
         }
       });
       widget.controller.value = AuthInitial();
-    } else if (state is ErrorState && _lastProcessedStateType is! ErrorState) {
+    } else if (state is AppStateError && _lastProcessedStateType is! AppStateError) {
       _lastProcessedStateType = state;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {

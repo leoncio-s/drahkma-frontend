@@ -3,6 +3,8 @@ import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
+import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/presentation/views/forget_password_code_view.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/snack_bar_widget.dart';

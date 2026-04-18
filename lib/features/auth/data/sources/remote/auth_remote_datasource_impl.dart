@@ -16,7 +16,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   static final Uri _url = Uri.parse("${Config.urlApi}auth");
 
   @override
-  Future<UserModel?> login(Auth auth) async {
+  Future<User?> login(Auth auth) async {
     var url = _url.replace(pathSegments: [..._url.pathSegments, 'login']);
     final response = await http.post(
       url,
@@ -86,11 +86,13 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
   @override
   Future<bool> checkSession(User data) async {
-    data = data as UserModel;
+
+
+    UserModel nData = data as UserModel;
 
     try{
       var request = await http.get(Uri.parse("${Config.urlApi}user"), headers: {
-      'Authorization': " Bearer ${data.token ?? ''}",
+      'Authorization': " Bearer ${nData.token ?? ''}",
       'Content-type': 'application/json'
       }).timeout(Duration(seconds: 10), onTimeout: (){
         throw TimeoutException("O servidor demorou para responder");

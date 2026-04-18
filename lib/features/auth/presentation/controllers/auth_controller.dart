@@ -38,9 +38,10 @@ class AuthController extends ValueNotifier<AppState>
     }on TimeoutException catch(e)
     {
       value = TimeoutConnectState(message: e.message);
-    }catch(e)
+    }catch(e, s)
     {
-      value = ErrorState(message: e.toString());
+      debugPrintStack(stackTrace: s, label: "App State Error. AppController");
+      value = AppStateError(message: e.toString());
     }
   }
 
@@ -74,10 +75,11 @@ class AuthController extends ValueNotifier<AppState>
       value = TimeoutConnectState(message: e.message);
     }on ClientException catch(e)
     {
-      value = ErrorState(message: "Erro interno no servidor: ${e.message}");
-    }catch(e)
+      value = AppStateError(message: "Erro interno no servidor: ${e.message}");
+    }catch(e, s)
     {
-      value = ErrorState(message: e.toString());
+      debugPrintStack(stackTrace: s, label: "Call Auth Endpoint");
+      value = AppStateError(message: e.toString());
     }
   }
   
