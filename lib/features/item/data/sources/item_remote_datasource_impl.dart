@@ -20,7 +20,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
   @override
   Future<List<ItemModel>?> getIncome(DateTime start, DateTime end) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
 
     DateFormat dateFormat = DateFormat("yyyyMMdd");
@@ -29,7 +29,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
         'start_date': dateFormat.format(start),
         'finish_date': dateFormat.format(end)
       }),
-      headers: {'Authorization': " Bearer ${user.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
     List<ItemModel>? ret = [];
 
@@ -51,7 +51,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
   @override
   Future<List<ItemModel>?> getExpense(DateTime start, DateTime end) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     DateFormat dateFormat = DateFormat("yyyyMMdd");
     Response response = await http.get(
@@ -59,7 +59,7 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
           'start_date': dateFormat.format(start),
           'finish_date': dateFormat.format(end)
         }),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}"});
+        headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"});
     List<ItemModel>? ret = [];
 
     if (response.statusCode == 200) {
@@ -80,10 +80,10 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
   @override
   Future delete(Item item) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     Response response = await http.delete(_url.resolve("${item.id}"),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}"});
+        headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"});
 
     if (response.statusCode == 200) {
       return;
@@ -99,11 +99,11 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
   @override
   Future<ItemModel?> save(ItemDTO item) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     Response response = await http.post(_url,
         body: jsonEncode(item.toMap()),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}", "Content-type":"application/json"});
+        headers: {'Authorization': " Bearer ${userModel?.token ?? ''}", "Content-type":"application/json"});
 
     late Map json;
     if (response.statusCode == 201) {
@@ -121,11 +121,11 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
   @override
   Future<void> update(ItemDTO item) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     Response response = await http.put(_url,
         body: jsonEncode(item.toMap()),
-        headers: {'Authorization': " Bearer ${user.token ?? ''}", "Content-type":"application/json"});
+        headers: {'Authorization': " Bearer ${userModel?.token ?? ''}", "Content-type":"application/json"});
 
     if (response.statusCode == 200) {
       return;

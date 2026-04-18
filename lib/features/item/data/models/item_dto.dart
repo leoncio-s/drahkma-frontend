@@ -1,6 +1,7 @@
 import 'package:drahkma/features/card/domain/entities/card.dart';
-import 'package:drahkma/features/category/domain/entities/Category.dart';
+import 'package:drahkma/features/category/domain/entities/category.dart';
 import 'package:drahkma/features/item/data/models/transfer_bank_dto.dart';
+import 'package:drahkma/features/item/domain/entities/item.dart';
 import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 import 'package:intl/intl.dart';
 
@@ -24,6 +25,19 @@ class ItemDTO {
     this.transferBank, 
     this.value
   });
+
+  factory ItemDTO.fromModel(Item item) {
+    return ItemDTO(
+      id: item.id,
+      description: item.description,
+      expense: item.expense,
+      value: item.value,
+      date: item.date,
+      category: item.category,
+      card: item.card,
+      transferBank: item.transferBank,
+    );
+  }
 
   Map<String, dynamic> toMap() {
       return {

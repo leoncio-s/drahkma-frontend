@@ -1,6 +1,7 @@
 
 import 'package:drahkma/features/card/data/models/card_model.dart';
-import 'package:drahkma/features/category/data/models/Category_model.dart';
+import 'package:drahkma/features/category/data/mappers/category_mapper.dart';
+import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/item/data/models/transferbank_model.dart';
 import 'package:drahkma/features/item/domain/entities/item.dart';
 import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
@@ -64,7 +65,7 @@ class ItemModel {
           expense: expense,
           value: value,
           date: date,
-          category: category,
+          category: CategoryMapper.toEntity(category!),
           card: card,
           transferBank: transferBank as TransferBank
         );
