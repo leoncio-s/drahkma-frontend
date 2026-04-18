@@ -15,7 +15,7 @@ dependencies:
   intl: ^0.20.2
   flutter_localizations:
     sdk: flutter
-  syncfusion_flutter_charts: ^32.1.22
+  syncfusion_flutter_charts: ^33.1.46
   ini: ^2.1.0
   web: ^1.1.1
   shared_preferences: ^2.5.4
