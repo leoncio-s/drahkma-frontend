@@ -5,7 +5,6 @@ import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/user/data/models/user_dto.dart';
-import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
@@ -24,7 +23,7 @@ class CreateUserPage extends StatefulWidget {
 class _CreateUserPageState extends State<CreateUserPage> {
   bool notShowPassword = true;
   bool notShowPassword2 = true;
-  late CreateUserController controller;
+  late UserController controller;
   _CreateUserPageState();
 
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -35,16 +34,11 @@ class _CreateUserPageState extends State<CreateUserPage> {
   final TextEditingController _phoneNumberController =
       MaskedTextController(mask: "(00) 0 0000-0000");
   late Map? errors;
-  final ButtonStyle _textButtonStyle = ButtonStyle(
-      backgroundColor:
-          WidgetStateProperty.fromMap({WidgetState.hovered: AppColors.gold}),
-      foregroundColor:
-          WidgetStateColor.fromMap({WidgetState.any: Colors.white}));
 
   @override
   void initState() {
     errors = null;
-    controller = widget.controller;
+    controller = widget.userController;
     super.initState();
   }
 
@@ -280,7 +274,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         await widget.userController.registerUser(user);
         
         var state = widget.userController.value;
-        if (state is ErrorState) {
+        if (state is AppStateError) {
           setState(() {
             errors = {'error': state.message};
           });

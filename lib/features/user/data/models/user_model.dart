@@ -1,23 +1,17 @@
-class UserModel {
-    final int? id;
-    final String? fullname;
-    final String? email;
-    final String? phoneNumber;
-    final bool? actived;
-    final DateTime? emailVerifiedAt;
-    final DateTime? createdAt;
-    final DateTime? updatedAt;
+import 'package:drahkma/features/user/domain/entities/user.dart';
+
+class UserModel extends User{
     final String? token;
 
     UserModel({
-      this.id, 
-      this.fullname, 
-      this.email, 
-      this.actived, 
-      this.phoneNumber, 
-      this.emailVerifiedAt, 
-      this.createdAt, 
-      this.updatedAt, 
+      super.id, 
+      super.fullname, 
+      super.email, 
+      super.actived, 
+      super.phoneNumber, 
+      super.emailVerifiedAt, 
+      super.createdAt, 
+      super.updatedAt, 
       this.token
     });
 
