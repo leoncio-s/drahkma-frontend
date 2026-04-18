@@ -29,10 +29,12 @@ void exceptionHandler(Object e, StackTrace s) {
       alertDialog<String>(context, e.message, title: "Erro ao atualizar senha");
     } else {
       log(e.toString(), stackTrace: s, level: 1, name: "Drahkma App");
+      debugPrintStack(stackTrace: s);
       alertDialog<String>(context, e.toString(), title: "Format Invalid Error");
     }
   } catch (dialogError, e)
   {
+    debugPrintStack(stackTrace: s, label: "Dialog Main Error Handler");
     log(e.toString(), stackTrace: s, level: 1, name: "Drahkma App");
   }
 }
