@@ -1,21 +1,23 @@
 import 'dart:ui';
 
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_bank.dart';
-import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
-import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
+import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 
-
 class BankAccountForm extends StatefulWidget {
+  final BankAccountController bankAccountController;
   final BankAccountModel? bankAccounts;
-  const BankAccountForm({super.key, this.bankAccounts});
+  const BankAccountForm(
+      {super.key, this.bankAccounts, required this.bankAccountController});
 
   @override
   State<BankAccountForm> createState() => BankAccountsStateForm();
@@ -27,6 +29,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
   final TextEditingController _bankCode = TextEditingController();
   final TextEditingController _agency = TextEditingController();
   final TextEditingController _accountNumber = TextEditingController();
+  String? _message;
   List<BankModel> _banks = [];
 
   void _getBanks() async {
@@ -38,7 +41,36 @@ class BankAccountsStateForm extends State<BankAccountForm> {
     }
   }
 
-  static String _displayStringForBanksOption(BankModel bank) => bank.fullName ?? "";
+  static String _displayStringForBanksOption(BankModel bank) =>
+      bank.fullName ?? "";
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.bankAccountController.value;
+      if (state is AppStateError) {
+        setState(() {
+          _message = state.message ??
+              "Erro ao processar solicitação. Tente novamente!";
+        });
+        SnackBar snackBar = SnackBar(
+          content: Text(
+            _message ?? "Erro ao processar solicitação",
+            style: const TextStyle(color: Colors.white),
+          ),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+          closeIconColor: Colors.white,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is BankAccountLoading) {
+        setState(() {
+          _message = null;
+        });
+      } else if (state is BankAccountSaved) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -50,6 +82,13 @@ class BankAccountsStateForm extends State<BankAccountForm> {
       _accountNumber.text = widget.bankAccounts!.accountNumber.toString();
     }
     super.initState();
+    widget.bankAccountController.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.bankAccountController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -83,9 +122,9 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                 child: Autocomplete<BankModel>(
                   displayStringForOption: _displayStringForBanksOption,
                   initialValue: _bankName.value,
-                  fieldViewBuilder: (context, controller, focusNode,
-                          onFieldSubmitted) =>
-                      TextFormField(
+                  fieldViewBuilder:
+                      (context, controller, focusNode, onFieldSubmitted) =>
+                          TextFormField(
                     autofocus: true,
                     autocorrect: true,
                     controller: controller,
@@ -99,14 +138,15 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                     style: AppTextStyle.inputTextStyle,
                     selectionHeightStyle: BoxHeightStyle.includeLineSpacingTop,
                     inputFormatters: [
-                    FilteringTextInputFormatter.singleLineFormatter,
-                    LengthLimitingTextInputFormatter(100),
+                      FilteringTextInputFormatter.singleLineFormatter,
+                      LengthLimitingTextInputFormatter(100),
                     ],
-                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
-                      labelText: "Nome do banco",
-                      contentPadding: const EdgeInsets.all(15.0),
-                      counterText: ""
-                    ),
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                            labelText: "Nome do banco",
+                            contentPadding: const EdgeInsets.all(15.0),
+                            counterText: ""),
                     validator: (value) {
                       if (value!.length < 3 || value.length > 100) {
                         return "O tamano minimo é 1 e o máximo é 100";
@@ -122,10 +162,19 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                   ),
                   optionsBuilder: (TextEditingValue txt) async {
                     if (txt.text == "") {
-                      return (await getIt<BankAccountBank>().call()) ?? Iterable<BankModel>.generate(1, (int i)=>BankModel(ispb: null, name: 'Itau', code: 341, fullName: 'BCO Itau S.A'));
+                      return (await getIt<BankAccountBank>().call()) ??
+                          Iterable<BankModel>.generate(
+                              1,
+                              (int i) => BankModel(
+                                  ispb: null,
+                                  name: 'Itau',
+                                  code: 341,
+                                  fullName: 'BCO Itau S.A'));
                     }
-                    return _banks.where((BankModel? obj) =>
-                        obj!.fullName.toString().toUpperCase().contains(txt.text.toUpperCase()));
+                    return _banks.where((BankModel? obj) => obj!.fullName
+                        .toString()
+                        .toUpperCase()
+                        .contains(txt.text.toUpperCase()));
                   },
                   onSelected: (BankModel? bank) {
                     setState(() {
@@ -135,7 +184,6 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                   },
                 ),
               ),
-
 
               const SizedBox(height: 20.0),
 
@@ -154,11 +202,12 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       LengthLimitingTextInputFormatter(10),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,10}"))
                     ],
-                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
-                      labelText: "Código do Banco",
-                      contentPadding: const EdgeInsets.all(15.0),
-                      counterText: ""
-                    ),
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                            labelText: "Código do Banco",
+                            contentPadding: const EdgeInsets.all(15.0),
+                            counterText: ""),
                     validator: (value) {
                       if (value!.isEmpty || value.length > 10) {
                         return "O tamano minimo é 1 e o máximo é 10";
@@ -187,11 +236,12 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       LengthLimitingTextInputFormatter(8),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,8}"))
                     ],
-                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
-                      labelText: "Agencia",
-                      contentPadding: const EdgeInsets.all(15.0),
-                      counterText: ""
-                    ),
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                            labelText: "Agencia",
+                            contentPadding: const EdgeInsets.all(15.0),
+                            counterText: ""),
                     validator: (value) {
                       if (value!.isEmpty || value.length > 8) {
                         return "O tamano minimo é 3 e o máximo é 8";
@@ -204,6 +254,7 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                   )),
 
               const SizedBox(height: 20.0),
+
               /// account number
               ///
               ///
@@ -221,11 +272,12 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                       LengthLimitingTextInputFormatter(10),
                       FilteringTextInputFormatter.allow(RegExp("[0-9]{1,10}"))
                     ],
-                    decoration: (const InputDecoration()).applyDefaults(Theme.of(context).inputDecorationTheme).copyWith(
-                      labelText: "Número da Conta",
-                      contentPadding: const EdgeInsets.all(15.0),
-                      counterText: ""
-                    ),
+                    decoration: (const InputDecoration())
+                        .applyDefaults(Theme.of(context).inputDecorationTheme)
+                        .copyWith(
+                            labelText: "Número da Conta",
+                            contentPadding: const EdgeInsets.all(15.0),
+                            counterText: ""),
                     validator: (value) {
                       if (value!.length < 2 || value.length > 10) {
                         return "O tamano minimo é 2 e o máximo é 10";
@@ -262,44 +314,30 @@ class BankAccountsStateForm extends State<BankAccountForm> {
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
+                       style: ButtonStyle(backgroundColor:
+                            WidgetStateProperty.fromMap({
+                              WidgetState.hovered: AppColors.lightGold,
+                              WidgetState.any: AppColors.gold
+                            })),
                         onPressed: () async {
                           if (_formState.currentState!.validate()) {
-                            dynamic ret;
                             if (widget.bankAccounts?.id != null) {
-                              BankAccountDTO dto= BankAccountDTO (
-                                      id: widget.bankAccounts!.id,
-                                      bankCode: _bankCode.text,
-                                      bankName: _bankName.text,
-                                      agency: _agency.text,
-                                      accountNumber: _accountNumber.text);
-
-                              await getIt<BankAccountUpdate>().call(dto: dto);
-
+                              BankAccountDTO dto = BankAccountDTO(
+                                  id: widget.bankAccounts!.id,
+                                  bankCode: _bankCode.text,
+                                  bankName: _bankName.text,
+                                  agency: _agency.text,
+                                  accountNumber: _accountNumber.text);
+                              await widget.bankAccountController
+                                  .updateBankAccount(dto);
                             } else {
-                              ret = await getIt<BankAccountSave>().call(
-                                dto: BankAccountDTO(
-                                      bankCode: _bankCode.text,
-                                      bankName: _bankName.text,
-                                      agency: _agency.text,
-                                      accountNumber: _accountNumber.text));
-                            }
-
-                            if (!mounted) return;
-
-                            if (ret is BankAccountModel) {
-                              Navigator.of(context).pop(ret);
-                            } else {
-                              SnackBar snackBar = SnackBar(
-                                content: Text(
-                                  ret['errors'],
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                showCloseIcon: true,
-                                backgroundColor: Colors.red,
-                                closeIconColor: Colors.white,
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                              BankAccountDTO dto = BankAccountDTO(
+                                  bankCode: _bankCode.text,
+                                  bankName: _bankName.text,
+                                  agency: _agency.text,
+                                  accountNumber: _accountNumber.text);
+                              await widget.bankAccountController
+                                  .saveBankAccount(dto);
                             }
                           }
                         },

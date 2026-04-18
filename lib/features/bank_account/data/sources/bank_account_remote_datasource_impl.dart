@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
-import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
+import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
@@ -15,12 +15,12 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
   static final Uri _url = Uri.parse("${Config.urlApi}banks");
 
   @override
-  Future<List<BankAccountModel>> getAll() async {
+  Future<List<BankAccount>?> getAll() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var request = await http.get(
       _url,
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     List<BankAccountModel>? toRet = [];
@@ -31,26 +31,26 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
         toRet.add(BankAccountModel.fromJson(el));
       }
     }
-
+    
     return toRet;
   }
 
   @override
-  Future<BankAccountModel?> save(data) async {
-    (data as BankAccountDTO);
+  Future<BankAccount?> save(data) async {
+    var dataDto = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var response = await http.post(
       _url,
-      body: jsonEncode(data.toMap()),
+      body: jsonEncode(dataDto.toMap()),
       headers: {
-        'Authorization': " Bearer ${user?.token ?? ''}",
+        'Authorization': " Bearer ${userModel?.token ?? ''}",
         'Content-type': 'application/json'
       },
     );
 
     if (response.statusCode == 201) {
-      return BankAccountModel.fromJson(jsonDecode(response.body));
+      return BankAccountMapper.toEntity(BankAccountModel.fromJson(jsonDecode(response.body)));
     } else {
       var toRet = jsonDecode(response.body);
       return toRet;
@@ -59,16 +59,16 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
 
   @override
   Future delete(BankAccount data) async {
-    (data as BankAccountDTO);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var response = await http.delete(
-      _url.resolve("/${data.id}"),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      _url.replace(path:"${_url.path}/${data.id}"),
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     if (response.statusCode != 200) {
-      return jsonDecode(response.body);
+      var json = jsonDecode(response.body);
+      throw http.ClientException(json['error']);
     } else {
       return true;
     }
@@ -76,20 +76,20 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
 
   @override
   Future update(data) async {
-    (data as BankAccountDTO);
+    var dataDTO = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var response = await http.put(
       _url, 
-      body: jsonEncode(data.toMap()), 
+      body: jsonEncode(dataDTO.toMap()),
       headers: {
-      'Authorization': " Bearer ${user?.token ?? ''}",
+      'Authorization': " Bearer ${userModel?.token ?? ''}",
       'Content-type': 'application/json'
     });
 
     if (response.statusCode != 200) {
       var toRet = jsonDecode(response.body);
-      return toRet;
+      throw http.ClientException(toRet['error']);
     } else {
       var toRet = BankAccountModel.fromJson(jsonDecode(response.body));
       return toRet;

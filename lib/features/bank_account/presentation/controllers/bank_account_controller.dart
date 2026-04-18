@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
+import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_bank.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delete.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class BankAccountController extends ValueNotifier<AppState> {
   final BankAccountBank _bank;
@@ -12,6 +17,7 @@ class BankAccountController extends ValueNotifier<AppState> {
   final BankAccountSave _save;
   final BankAccountUpdate _update;
   final BankAccountDelete _delete;
+  dynamic data;
 
   BankAccountController(
     this._bank,
@@ -24,47 +30,52 @@ class BankAccountController extends ValueNotifier<AppState> {
   Future<void> loadBanks() async {
     value = BankAccountLoading();
     try {
-      await _bank.call();
+      data = await _bank.call();
       value = BankAccountLoaded();
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
   Future<void> loadBankAccounts() async {
     value = BankAccountLoading();
     try {
-      await _getAll.call();
+      data = await _getAll.call();
       value = BankAccountLoaded();
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
-  Future<void> saveBankAccount(dynamic account) async {
+  Future<void> saveBankAccount(BankAccountDTO account) async {
     try {
-      await _save.call(account: account);
+      data = await _save.call(dto: account);
       await loadBankAccounts();
+      value = BankAccountSaved();
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
-  Future<void> updateBankAccount(dynamic account) async {
+  Future<void> updateBankAccount(BankAccountDTO account) async {
     try {
-      await _update.call(account: account);
+      await _update.call(dto: account);
       await loadBankAccounts();
+      value = BankAccountSaved();
     } catch (e) {
-      value = ErrorState(message: e.toString());
+      value = AppStateError(message: e.toString());
     }
   }
 
-  Future<void> deleteBankAccount(int accountId) async {
+  Future<void> deleteBankAccount(BankAccountDTO accountId) async {
     try {
-      await _delete.call(id: accountId);
+      await _delete.call(dto: BankAccountMapper.fromDTOToEntity(accountId));
       await loadBankAccounts();
-    } catch (e) {
-      value = ErrorState(message: e.toString());
+    } on ClientException catch (e) {
+      value = AppStateError(message: e.message);
+    }catch(e, s)
+    {
+      log(e.toString(), stackTrace: s, name: "Delete Bank Account", error: accountId);
     }
   }
 }
@@ -72,3 +83,4 @@ class BankAccountController extends ValueNotifier<AppState> {
 class BankAccountInitial extends AppState {}
 class BankAccountLoading extends AppState {}
 class BankAccountLoaded extends AppState {}
+class BankAccountSaved extends AppState {}

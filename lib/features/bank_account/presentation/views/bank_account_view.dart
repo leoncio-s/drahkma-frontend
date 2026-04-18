@@ -1,17 +1,18 @@
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
-import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
+import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/utils/bank_account_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
-import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
 
 class BankAccountView extends DrahkmaStatefulWidget {
   final BankAccountController bankAccountController;
   const BankAccountView(
-      {super.key, super.name = "Contas Bancárias",
+      {super.key,
+      super.name = "Contas Bancárias",
       super.icon = const Icon(Icons.category, size: 20),
       required this.bankAccountController});
 
@@ -31,16 +32,17 @@ class BankAccountsViewState extends State<BankAccountView> {
   void _onControllerStateChanged() {
     if (mounted) {
       final state = widget.bankAccountController.value;
-      if (state is BankAccountsLoaded) {
+      if (state is BankAccountLoaded) {
         setState(() {
-          bankAccounts = state.data;
+          bankAccounts = widget.bankAccountController.data;
           _message = null;
         });
       } else if (state is AppStateError) {
         setState(() {
-          _message = state.message ?? "Erro ao processar solicitação. Tente novamente!";
+          _message = state.message ??
+              "Erro ao processar solicitação. Tente novamente!";
         });
-      } else if (state is AppStateLoading) {
+      } else if (state is BankAccountLoading) {
         setState(() {
           _message = null;
         });
@@ -61,7 +63,6 @@ class BankAccountsViewState extends State<BankAccountView> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,15 +77,17 @@ class BankAccountsViewState extends State<BankAccountView> {
               const SizedBox(
                 height: 30,
               ),
-              MediaQuery.of(context).size.width < 500 ? Text(
-                "Contas bancárias",
-                style: const TextStyle(
-                  fontSize: 20.0,
-                ),
-                textAlign: TextAlign.center,
-                textScaler: TextScaler.linear(
-                    principalCardScaller(MediaQuery.of(context).size.width)),
-              ) : const SizedBox(),
+              MediaQuery.of(context).size.width < 500
+                  ? Text(
+                      "Contas bancárias",
+                      style: const TextStyle(
+                        fontSize: 20.0,
+                      ),
+                      textAlign: TextAlign.center,
+                      textScaler: TextScaler.linear(principalCardScaller(
+                          MediaQuery.of(context).size.width)),
+                    )
+                  : const SizedBox(),
               bankAccounts != null && bankAccounts!.isNotEmpty
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -129,7 +132,7 @@ class BankAccountsViewState extends State<BankAccountView> {
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
             BankAccountModel? data = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BankAccountForm()));
+                MaterialPageRoute(builder: (context) => BankAccountForm(bankAccountController: widget.bankAccountController,)));
             if (data != null) {
               _loadData();
             }
@@ -141,9 +144,6 @@ class BankAccountsViewState extends State<BankAccountView> {
   Widget listTileCategory() {
     return bankAccounts != null
         ? Column(
-            // scrollDirection: Axis.vertical,
-            // shrinkWrap: true,
-            // padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
             children: ListTile.divideTiles(
                     context: context,
                     tiles: bankAccounts!
@@ -154,12 +154,11 @@ class BankAccountsViewState extends State<BankAccountView> {
                               contentPadding: const EdgeInsets.all(5),
                               titleAlignment: ListTileTitleAlignment.center,
                               onTap: () async {
-                                BankAccountModel? data =
-                                    await Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                BankAccountForm(
-                                                    bankAccounts: el)));
+                                BankAccountModel? data = await Navigator.of(
+                                        context)
+                                    .push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            BankAccountForm(bankAccounts: el, bankAccountController: widget.bankAccountController,)));
                                 if (data != null) {
                                   _loadData();
                                 }
@@ -168,18 +167,23 @@ class BankAccountsViewState extends State<BankAccountView> {
                                   splashRadius: 20.0,
                                   hoverColor: Colors.white,
                                   onPressed: () async {
-                                    dynamic ret = false;
-                                    await widget.bankAccountController.deleteBankAccount(el);
-                                    if (ret == true) {
-                                      _loadData();
-                                    } else {
-                                      if (context.mounted) {
-                                        // ignore: use_build_context_synchronously
+                                    await widget.bankAccountController
+                                        .deleteBankAccount(
+                                            BankAccountMapper.fromEntityToDTO(el));
+                                    if (_message != null) {
+                                      if (mounted) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
-                                                _snackBarError(ret['error']));
+                                                _snackBarError(_message!));
                                       }
+                                      return;
                                     }
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(_snackBarError(
+                                              "Item excluido com sucesso"));
+                                    }
+                                    return;
                                   },
                                   icon: const Icon(
                                     Icons.delete,
