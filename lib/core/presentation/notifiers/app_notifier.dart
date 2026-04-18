@@ -1,3 +1,4 @@
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppNotifier with ChangeNotifier{
@@ -9,6 +10,18 @@ class AppNotifier with ChangeNotifier{
       Future<DateTimeRange?> selectDateRange(BuildContext context) async {
         DateTimeRange? dateRange = await showDateRangePicker(
               context: context,
+              builder: (context, child) {
+                              return Theme(
+                                  data: ThemeData.dark().copyWith(
+                                      datePickerTheme: DatePickerThemeData(
+                                        rangeSelectionBackgroundColor: AppColors.lightGold.withAlpha(70)
+                                      ),
+                                      colorScheme: const ColorScheme.dark(
+                                          primary: AppColors.gold,
+                                          onPrimary: Colors.white,
+                                          onSurface: AppColors.gold,)),
+                                  child: child!);
+                            },
               initialDateRange: _dateTimeRange,
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
