@@ -9,7 +9,7 @@ class CardUpdate implements UseCases
 
   @override
   Future<void> call({Card? dto}) async{
-    await _repository.delete(dto!);
+    await _repository.update(dto!);
     return;
   }
   

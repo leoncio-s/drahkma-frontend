@@ -1,10 +1,16 @@
 enum CardFlagEnum{
-    visa('visa'),
-    mastercard('Mastercard'),
-    elo('Elo'),
-    aExp('American_Express'), // American Expres)s
-    hipercard('Hipercard'),
-    others('Others');
+    // ignore: constant_identifier_names
+    Visa('Visa'),
+    // ignore: constant_identifier_names
+    Mastercard('Mastercard'),
+    // ignore: constant_identifier_names
+    Elo('Elo'),
+    // ignore: constant_identifier_names
+    AExp('American_Express'),
+    // ignore: constant_identifier_names
+    Hipercard('Hipercard'),
+    // ignore: constant_identifier_names
+    Others('Outros');
 
     const CardFlagEnum(String type);
 
@@ -12,19 +18,19 @@ enum CardFlagEnum{
       CardFlagEnum? value;
       switch (data){
         case "visa":
-          value = CardFlagEnum.visa;
+          value = CardFlagEnum.Visa;
           break;
         case "Mastercard":
-          value = CardFlagEnum.mastercard;
+          value = CardFlagEnum.Mastercard;
           break;
         case "Elo":
-          value = CardFlagEnum.elo;
+          value = CardFlagEnum.Elo;
           break;
         case "Hipercard":
-          value = CardFlagEnum.hipercard;
+          value = CardFlagEnum.Hipercard;
           break;
         case "Others":
-          value = CardFlagEnum.others;
+          value = CardFlagEnum.Others;
           break;
         default:
           value = null;

@@ -10,18 +10,16 @@ import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
-class CardRemoteDatasourceImpl implements CardRemoteDatasource{
-
+class CardRemoteDatasourceImpl implements CardRemoteDatasource {
   static final Uri _url = Uri.parse("${Config.urlApi}cards/");
-
 
   @override
   Future<List<CardModel>?> getAll() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var request = await http.get(
       _url,
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     List<CardModel>? cards = [];
@@ -38,77 +36,85 @@ class CardRemoteDatasourceImpl implements CardRemoteDatasource{
 
   @override
   Future<CardModel?> save(CardDTO data) async {
-    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    try {
+      User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+      UserModel? userModel = user as UserModel?;
       var response = await http.post(
-      _url,
-      body: jsonEncode(data.toMap()),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'},
-    );
+        _url,
+        body: jsonEncode(data.toMap()),
+        headers: {
+          'Authorization': " Bearer ${userModel?.token ?? ''}",
+          'Content-type': 'application/json'
+        },
+      );
 
-    if(response.statusCode == 201){
-      return CardModel.fromJson(jsonDecode(response.body));
-    }else{
-      var toRet=jsonDecode(response.body);
-      return toRet;
+      if (response.statusCode == 201) {
+        return CardModel.fromJson(jsonDecode(response.body));
+      } else {
+        throw http.ClientException(response.body, _url);
+      }
+    } catch (e) {
+      rethrow;
     }
   }
-  
+
   @override
   Future<void> delete(CardModel data) async {
-      User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-      user as UserModel?;
-      var response = await http.delete(
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    UserModel? userModel = user as UserModel?;
+    var response = await http.delete(
       _url.resolve("${data.id}"),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
-    if(response.statusCode == 404){
+    if (response.statusCode == 404) {
       throw http.ClientException("Página ou cartão não encontrado", _url);
-    }else if(response.statusCode > 499 || response.statusCode != 200){
+    } else if (response.statusCode > 499) {
       throw HttpException("Erro interno no servidor");
-    }else
-    {
+    } else if (response.statusCode == 400) {
+      var json = response.body.isNotEmpty ? jsonDecode(response.body) : {};
+      throw http.ClientException(json['errors'], _url);
+    } else {
+      throw http.ClientException("Ocorreu um problema para realizar sua solicitação. Tente novamente mais tarde!", _url);
+    }
+  }
+
+  @override
+  Future<void> update(CardDTO data) async {
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    UserModel? userModel = user as UserModel?;
+    var response =
+        await http.put(_url, body: jsonEncode(data.toMap()), headers: {
+      'Authorization': " Bearer ${userModel?.token ?? ''}",
+      'Content-type': 'application/json'
+    });
+
+    if (response.statusCode == 404) {
+      throw http.ClientException("Página ou cartão não encontrado", _url);
+    } else if (response.statusCode > 499 || response.statusCode != 200) {
+      throw HttpException("Erro interno no servidor");
+    } else {
       return;
     }
   }
-  
-  @override
-  Future<void> update(CardDTO data) async {
-      User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-      user as UserModel?;
-      var response = await http.put(
-      _url,
-      body: jsonEncode(data.toMap()),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'});
 
-      if(response.statusCode == 404){
-        throw http.ClientException("Página ou cartão não encontrado", _url);
-      }else if(response.statusCode > 499 || response.statusCode != 200){
-        throw HttpException("Erro interno no servidor");
-      }else
-      {
-        return;
-      }
-  }
-  
   @override
   Future<CardModel?> getBy({int? id}) async {
-      User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-      user as UserModel?;
-      var response = await http.get(
-      _url.resolve("/$id"),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}", 'Content-type': 'application/json'});
+    User? user = await getIt<AuthLocalDatasource>().getAuthToken();
+    UserModel? userModel = user as UserModel?;
+    var response = await http.get(_url.resolve("/$id"), headers: {
+      'Authorization': " Bearer ${userModel?.token ?? ''}",
+      'Content-type': 'application/json'
+    });
 
-      if(response.statusCode == 404){
-        throw http.ClientException("Página ou cartão não encontrado", _url);
-      }else if(response.statusCode > 499 || response.statusCode != 200){
-        throw HttpException("Erro interno no servidor");
-      }else
-      {
-        Map<String, dynamic> json = jsonDecode(response.body);
-        CardModel card = CardModel.fromJson(json);
-        return card;
-      }
+    if (response.statusCode == 404) {
+      throw http.ClientException("Página ou cartão não encontrado", _url);
+    } else if (response.statusCode > 499 || response.statusCode != 200) {
+      throw HttpException("Erro interno no servidor");
+    } else {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      CardModel card = CardModel.fromJson(json);
+      return card;
+    }
   }
 }

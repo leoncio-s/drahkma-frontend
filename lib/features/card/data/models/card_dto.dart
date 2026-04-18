@@ -26,7 +26,7 @@ class CardDTO with DTOMixin {
     Map<String, dynamic> toMap() {
     return {
       'id' : id,
-      'type' : type,
+      'type' : type!.name,
       'brand' : brand,
       'expires_at' : DateFormat('MMyy').format(expiresAt!),
       'flag' : flag!.name,

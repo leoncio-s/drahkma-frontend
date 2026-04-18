@@ -1,6 +1,8 @@
 import 'dart:ui';
 
-import 'package:drahkma/features/card/data/models/card_dto.dart';
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
+import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart' hide Card;
@@ -29,14 +31,42 @@ class CardsStateForm extends State<CardForm> {
   int? _expYear = DateTime.now().year;
   final TextEditingController _last4Digits = TextEditingController();
   int? _invoiceDay;
-  CardTypeEnum? _type = CardTypeEnum.credit;
-  CardFlagEnum? _flag = CardFlagEnum.mastercard;
+  CardTypeEnum? _type = CardTypeEnum.Credit;
+  CardFlagEnum? _flag = CardFlagEnum.Mastercard;
+  String? _message;
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.cardController!.value;
+      if (state is AppStateError) {
+        setState(() {
+          _message = state.message ??
+              "Erro ao processar solicitação. Tente novamente!";
+        });
+        SnackBar snackBar = SnackBar(
+          content: Text(
+            _message ?? "Erro ao processar solicitação",
+            style: const TextStyle(color: Colors.white),
+          ),
+          showCloseIcon: true,
+          backgroundColor: Colors.red,
+          closeIconColor: Colors.white,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (state is CardLoading) {
+        setState(() {
+          _message = null;
+        });
+      } else if (state is CardSaved) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   void initState() {
     if (widget.cards != null) {
       _brand.text = widget.cards!.brand ?? "";
-      // _expiresAt = widget.cards!.expires_at;
       _expMonth = Month.values
           .firstWhere((el) => el.month == widget.cards!.expiresAt!.month);
       _expYear = widget.cards!.expiresAt!.year;
@@ -46,6 +76,13 @@ class CardsStateForm extends State<CardForm> {
       _flag = widget.cards!.flag;
     }
     super.initState();
+    widget.cardController?.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.cardController?.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -195,14 +232,9 @@ class CardsStateForm extends State<CardForm> {
                 },
               ),
 
-              // const SizedBox(
-              //   height: 25.0,
-              // ),
-
               const SizedBox(
                 height: 25.0,
               ),
-
 
               Row(
                 // direction: Axis.horizontal,
@@ -249,9 +281,7 @@ class CardsStateForm extends State<CardForm> {
                     width: 15.0,
                   ),
 
-                                //// Expires At
-              ///
-              ///
+                  ///
                   Row(
                     children: [
                       DropdownButtonFormField<Month>(
@@ -271,7 +301,9 @@ class CardsStateForm extends State<CardForm> {
                                   value: el,
                                   child: Text(
                                     el.name,
-                                    style: const TextStyle(color: Colors.white,),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ))
@@ -364,45 +396,32 @@ class CardsStateForm extends State<CardForm> {
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
+                       style: ButtonStyle(backgroundColor:
+                            WidgetStateProperty.fromMap({
+                              WidgetState.hovered: AppColors.lightGold,
+                              WidgetState.any: AppColors.gold
+                            })),
                         onPressed: () async {
                           if (_formState.currentState!.validate()) {
-                            dynamic ret;
                             if (widget.cards?.id != null) {
-                              await widget.cardController?.updateCard(
-                                CardModel(
+                              await widget.cardController?.updateCard(Card(
                                   id: widget.cards!.id,
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
-                                  expiresAt: DateTime(_expYear!, _expMonth!.month),
+                                  expiresAt:
+                                      DateTime(_expYear!, _expMonth!.month),
                                   flag: _flag,
                                   type: _type));
                             } else {
-                              ret = await widget.cardController?.saveCard(
-                                CardModel(
+                              await widget.cardController?.saveCard(Card(
                                   brand: _brand.text,
                                   invoiceDay: _invoiceDay,
                                   last4Digits: _last4Digits.text,
-                                  expiresAt: DateTime(_expYear!, _expMonth!.month),
+                                  expiresAt:
+                                      DateTime(_expYear!, _expMonth!.month),
                                   flag: _flag,
                                   type: _type));
-                            }
-                            if (ret is CardModel) {
-                              // ignore: use_build_context_synchronously
-                              Navigator.pop(context, ret);
-                            } else {
-                              SnackBar snackBar = SnackBar(
-                                content: Text(
-                                  ret?['errors']?.toString() ?? 'Erro ao salvar',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                showCloseIcon: true,
-                                backgroundColor: Colors.red,
-                                closeIconColor: Colors.white,
-                              );
-                              // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
                             }
                           }
                         },
