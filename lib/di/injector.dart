@@ -7,6 +7,8 @@ import 'package:drahkma/core/domain/usecases/check_network_use_case.dart';
 import 'package:drahkma/core/presentation/controllers/app_controller.dart';
 import 'package:drahkma/features/amount/data/sources/remote/amount_remote_datasource.dart';
 import 'package:drahkma/features/amount/data/sources/remote/amount_remote_datasource_impl.dart';
+import 'package:drahkma/features/amount/data/sources/local/amount_local_datasource.dart';
+import 'package:drahkma/features/amount/data/sources/local/amount_local_datasource_impl.dart';
 import 'package:drahkma/features/amount/data/repositories/amount_repository_impl.dart';
 import 'package:drahkma/features/amount/domain/repositories/amount_repository.dart';
 import 'package:drahkma/features/amount/domain/usecases/amount_fetchdata.dart';
@@ -25,6 +27,8 @@ import 'package:drahkma/features/auth/presentation/controllers/auth_controller.d
 import 'package:drahkma/features/bank_account/data/repositories/bank_accounts_repository_impl.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource_impl.dart';
+import 'package:drahkma/features/bank_account/data/sources/local/bank_account_local_datasource.dart';
+import 'package:drahkma/features/bank_account/data/sources/local/bank_account_local_datasource_impl.dart';
 import 'package:drahkma/features/bank_account/domain/repositories/bank_account_repository.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_bank.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_delete.dart';
@@ -33,6 +37,8 @@ import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
 import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
 import 'package:drahkma/features/card/data/repositories/card_repository_impl.dart';
+import 'package:drahkma/features/card/data/sources/local/card_local_datasource.dart';
+import 'package:drahkma/features/card/data/sources/local/card_local_datasource_impl.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
 import 'package:drahkma/features/card/data/sources/card_remote_datasource_impl.dart';
 import 'package:drahkma/features/card/domain/repositories/card_repository.dart';
@@ -42,6 +48,8 @@ import 'package:drahkma/features/card/domain/usecases/card_save.dart';
 import 'package:drahkma/features/card/domain/usecases/card_update.dart';
 import 'package:drahkma/features/card/presentation/controllers/card_controller.dart';
 import 'package:drahkma/features/category/data/repositories/category_repository_impl.dart';
+import 'package:drahkma/features/category/data/sources/local/category_local_datasource.dart';
+import 'package:drahkma/features/category/data/sources/local/category_local_datasource_impl.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
 import 'package:drahkma/features/category/data/sources/category_remote_datasource_impl.dart';
 import 'package:drahkma/features/category/domain/repositories/category_repository.dart';
@@ -51,6 +59,8 @@ import 'package:drahkma/features/category/domain/usecases/category_get_all_by_us
 import 'package:drahkma/features/category/domain/usecases/category_save.dart';
 import 'package:drahkma/features/category/domain/usecases/category_update.dart';
 import 'package:drahkma/features/category/presentation/controllers/category_controller.dart';
+import 'package:drahkma/features/item/data/sources/local/item_local_datasource.dart';
+import 'package:drahkma/features/item/data/sources/local/item_local_datasource_impl.dart';
 import 'package:drahkma/features/item/data/repositories/item_repository_impl.dart';
 import 'package:drahkma/features/item/data/sources/item_remote_datasource.dart';
 import 'package:drahkma/features/item/data/sources/item_remote_datasource_impl.dart';
@@ -61,16 +71,18 @@ import 'package:drahkma/features/item/domain/usecases/item_get_income.dart';
 import 'package:drahkma/features/item/domain/usecases/item_save.dart';
 import 'package:drahkma/features/item/domain/usecases/item_update.dart';
 import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
-import 'package:drahkma/features/user/data/repositories/user_repository_impl.dart';
+import 'package:drahkma/features/user/data/sources/local/user_local_datasource.dart';
+import 'package:drahkma/features/user/data/sources/local/user_local_datasource_impl.dart';
 import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
 import 'package:drahkma/features/user/data/sources/user_remote_datasource_impl.dart';
 import 'package:drahkma/features/user/domain/repositories/user_repository.dart';
+import 'package:drahkma/features/user/data/repositories/user_repository_impl.dart';
 import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
 import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
-import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
 import 'package:drahkma/features/user/presentation/controllers/user_controller.dart';
+import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -98,7 +110,8 @@ void initializeDependencies()
 
   //// User
   getIt.registerFactory<UserRemoteDatasource>(()=>UserRemoteDatasourceImpl(getIt<AuthLocalDatasource>()));
-  getIt.registerFactory<UserRepository>(() =>UserRepositoryImpl(getIt<UserRemoteDatasource>()));
+  getIt.registerFactory<UserLocalDatasource>(()=>UserLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<UserRepository>(() =>UserRepositoryImpl(getIt<UserRemoteDatasource>(), getIt<UserLocalDatasource>()));
   getIt.registerFactory<UserUpdate>(()=>UserUpdate(getIt<UserRepository>()));
   getIt.registerFactory<UserRegister>(()=>UserRegister(getIt<UserRepository>()));
   getIt.registerFactory<UserProfile>(()=>UserProfile(getIt<UserRepository>()));
@@ -109,13 +122,15 @@ void initializeDependencies()
 
   ///// Amounts
   getIt.registerFactory<AmountRemoteDatasource>(()=>AmountRemoteDatasourceImpl());
-  getIt.registerFactory<AmountRepository>(()=>AmountRepositoryImpl(getIt<AmountRemoteDatasource>()));
+  getIt.registerFactory<AmountLocalDatasource>(()=>AmountLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<AmountRepository>(()=>AmountRepositoryImpl(getIt<AmountRemoteDatasource>(), getIt<AmountLocalDatasource>()));
   getIt.registerFactory<AmountsFetchdata>(() => AmountsFetchdata(getIt<AmountRepository>()));
   getIt.registerSingleton<AmountController>(AmountController(getIt()));
 
   //// BankAccounts
   getIt.registerFactory<BankAccountRemoteDatasource>(()=>BankAccountRemoteDatasourceImpl());
-  getIt.registerFactory<BankAccountRepository>(()=>BankAccountRepositoryImpl(getIt<BankAccountRemoteDatasource>()));
+  getIt.registerFactory<BankAccountLocalDatasource>(()=>BankAccountLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<BankAccountRepository>(()=>BankAccountRepositoryImpl(getIt<BankAccountRemoteDatasource>(), getIt<BankAccountLocalDatasource>()));
   getIt.registerFactory<BankAccountSave>(()=>BankAccountSave(getIt<BankAccountRepository>()));
   getIt.registerFactory<BankAccountUpdate>(()=>BankAccountUpdate(getIt<BankAccountRepository>()));
   getIt.registerFactory<BankAccountDelete>(()=>BankAccountDelete(getIt<BankAccountRepository>()));
@@ -125,7 +140,8 @@ void initializeDependencies()
 
   //// Cards
   getIt.registerFactory<CardRemoteDatasource>(()=>CardRemoteDatasourceImpl());
-  getIt.registerFactory<CardRepository>(()=>CardRepositoryImpl(getIt<CardRemoteDatasource>()));
+  getIt.registerFactory<CardLocalDatasource>(()=>CardLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<CardRepository>(()=>CardRepositoryImpl(getIt<CardRemoteDatasource>(), getIt<CardLocalDatasource>()));
   getIt.registerFactory<CardSave>(()=>CardSave(getIt<CardRepository>()));
   getIt.registerFactory<CardUpdate>(()=>CardUpdate(getIt<CardRepository>()));
   getIt.registerFactory<CardDelete>(()=>CardDelete(getIt<CardRepository>()));
@@ -134,7 +150,8 @@ void initializeDependencies()
 
   //// Category
   getIt.registerFactory<CategoryRemoteDatasource>(()=>CategoryRemoteDatasourceImpl());
-  getIt.registerFactory<CategoryRepository>(()=>CategoryRepositoryImpl(getIt<CategoryRemoteDatasource>()));
+  getIt.registerFactory<CategoryLocalDatasource>(()=>CategoryLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<CategoryRepository>(()=>CategoryRepositoryImpl(getIt<CategoryRemoteDatasource>(), getIt<CategoryLocalDatasource>()));
   getIt.registerFactory<CategorySave>(()=>CategorySave(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryUpdate>(()=>CategoryUpdate(getIt<CategoryRepository>()));
   getIt.registerFactory<CategoryDelete>(()=>CategoryDelete(getIt<CategoryRepository>()));
@@ -144,11 +161,12 @@ void initializeDependencies()
 
   //// Item
   getIt.registerFactory<ItemRemoteDatasource>(()=>ItemRemoteDatasourceImpl());
-  getIt.registerFactory<ItemRepository>(()=>ItemRepositoryImpl(getIt<ItemRemoteDatasource>()));
+  getIt.registerFactory<ItemLocalDatasource>(()=>ItemLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
+  getIt.registerFactory<ItemRepository>(()=>ItemRepositoryImpl(getIt<ItemRemoteDatasource>(), getIt<ItemLocalDatasource>()));
   getIt.registerFactory<ItemSave>(()=>ItemSave(getIt<ItemRepository>()));
   getIt.registerFactory<ItemUpdate>(()=>ItemUpdate(getIt<ItemRepository>()));
   getIt.registerFactory<ItemDelete>(()=>ItemDelete(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetIncome>(()=>ItemGetIncome(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetExpense>(()=>ItemGetExpense(getIt<ItemRepository>()));
-  getIt.registerSingleton<ItemController>(ItemController(getIt(), getIt(), getIt()));
+  getIt.registerSingleton<ItemController>(ItemController(getIt(), getIt(), getIt(), getIt(), getIt()));
 }
