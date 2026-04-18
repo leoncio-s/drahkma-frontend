@@ -14,12 +14,12 @@ class AmountRemoteDatasourceImpl implements AmountRemoteDatasource
   @override
   Future<Map<String, dynamic>?> fetchAmounts(DateTime startDate, DateTime endDate) async {
     var user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var start = DateFormat('yyyyMMdd').format(startDate);
     var end = DateFormat('yyyyMMdd').format(endDate);
 
     var response = await http.get(_url.replace(queryParameters: {"start_date": start, "finish_date": end}),
-        headers: {'Authorization': " Bearer ${user!.token ?? ''}"});
+        headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"});
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);

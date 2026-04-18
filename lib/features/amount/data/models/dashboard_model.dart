@@ -72,21 +72,7 @@ class DashboardModel extends Dashboard {
 
   @override
   String toString() {
-    return {
-      'inflow': inflow,
-      'outflow': outflow,
-      'amount': amount,
-      'totalAmountInflowCards': totalAmountInflowCards,
-      'totalAmountInflowTransferBank': totalAmountInflowTransferBank,
-      'totalAmountOutflowCards': totalAmountOutflowCards,
-      'totalAmountOutflowTransferBank': totalAmountOutflowTransferBank,
-      'amountInflowCard': amountInflowCard,
-      'amountInflowCategory': amountInflowCategory,
-      'amountInflowTransferBank': amountInflowTransferBank,
-      'amountOutflowCard': amountOutflowCard,
-      'amountOutflowCategory': amountOutflowCategory,
-      'amountOutflowTransferBank': amountOutflowTransferBank
-    }.toString();
+    return toMap().toString();
   }
 
   Map<String, dynamic> toMap() {
@@ -98,12 +84,12 @@ class DashboardModel extends Dashboard {
       'totalAmountInflowTransferBank': totalAmountInflowTransferBank,
       'totalAmountOutflowCards': totalAmountOutflowCards,
       'totalAmountOutflowTransferBank': totalAmountOutflowTransferBank,
-      'amountInflowCard': amountInflowCard,
-      'amountInflowCategory': amountInflowCategory,
-      'amountInflowTransferBank': amountInflowTransferBank,
-      'amountOutflowCard': amountOutflowCard,
-      'amountOutflowCategory': amountOutflowCategory,
-      'amountOutflowTransferBank': amountOutflowTransferBank
+      'amountInflowCard': amountInflowCard!.map((e)=> e.toMap()).toList(),
+      'amountInflowCategory': amountInflowCategory!.map((e)=> e.toMap()).toList(),
+      'amountInflowTransferBank': amountInflowTransferBank!.map((e)=> e.toMap()).toList(),
+      'amountOutflowCard': amountOutflowCard!.map((e)=> e.toMap()).toList(),
+      'amountOutflowCategory': amountOutflowCategory!.map((e)=> e.toMap()).toList(),
+      'amountOutflowTransferBank': amountOutflowTransferBank!.map((e)=> e.toMap()).toList()
     };
   }
 }

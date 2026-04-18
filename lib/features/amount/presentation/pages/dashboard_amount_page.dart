@@ -3,18 +3,21 @@ import 'dart:ui';
 
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
-import 'package:drahkma/core/presentation/notifiers/data_notifier.dart' as dt;
-import 'package:drahkma/core/presentation/notifiers/data_notifier_interface.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
+import 'package:drahkma/features/amount/presentation/controllers/amount_controller.dart';
 import 'package:drahkma/features/amount/presentation/pages/chart_page.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 
 class DashboardAmountPage extends DrahkmaStatefulWidget{
+  final AmountController amountController;
   const DashboardAmountPage(
-      {super.key,
-      super.name = "Dashboard",
-      super.icon = const Icon(Icons.dashboard, size: 20)});
+      {
+        required this.amountController,
+        super.key,
+        super.name = "Dashboard",
+        super.icon = const Icon(Icons.dashboard, size: 20),});
 
   @override
   State<DashboardAmountPage> createState() => _DashboardState();
@@ -33,7 +36,7 @@ class _DashboardState extends State<DashboardAmountPage> {
     return Scaffold(
         body: _Cards(
       notifier: _notifier,
-      dataNotifier: dt.dataNotifier,
+      amountController: widget.amountController,
     )
         );
   }
@@ -43,8 +46,8 @@ class _DashboardState extends State<DashboardAmountPage> {
 class _Cards extends StatefulWidget
 {
   final AppNotifier notifier;
-  final DataNotifierInterface dataNotifier;
-  const _Cards({required this.notifier, required this.dataNotifier});
+  final AmountController amountController;
+  const _Cards({required this.notifier, required this.amountController});
 
   @override
   State<_Cards> createState() => _CardsState();
@@ -59,21 +62,20 @@ class _CardsState extends State<_Cards> {
 
   void _onTimerListener(){
     _refreshTimer?.cancel();
-    _refreshTimer= Timer.periodic(const Duration(seconds: 3), (Timer timer)=> widget.dataNotifier.fetchData(notifier.dateTimeRange));
+    _refreshTimer= Timer.periodic(const Duration(seconds: 2), (Timer timer)=> widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end));
   }
 
   @override
   void initState() {
     notifier = widget.notifier;
-    data = widget.dataNotifier.data;
-    widget.dataNotifier.fetchData(notifier.dateTimeRange);
     notifier.addListener(_onTimerListener);
+    widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
+    data = widget.amountController.data ?? DashboardModel();
     super.initState();
   }
 
   @override
   void dispose() {
-    // notifier.dispose();
     _refreshTimer?.cancel();
     notifier.removeListener(_onTimerListener);
     super.dispose();
@@ -102,53 +104,53 @@ class _CardsState extends State<_Cards> {
               size: const Size.fromHeight(30.0),
             ),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balance(context, data.amount);
                 }),
 
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflow(context, data.inflow);
                 }),
 
             
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceOutflow(context, data.outflow);
                 }),
             
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflowCards(
                       context, data.totalAmountInflowCards);
                 }),
             
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceOutflowCards(
                       context, data.totalAmountOutflowCards);
                 }),
             
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflowTransferBank(
                       context, data.totalAmountInflowTransferBank);
                 }),
             
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceOutflowTransferBank(context,
                       data.totalAmountOutflowTransferBank);
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
                     data: data.amountInflowCategory,
@@ -156,7 +158,7 @@ class _CardsState extends State<_Cards> {
                   );
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
                     data: data.amountInflowCard,
@@ -164,7 +166,7 @@ class _CardsState extends State<_Cards> {
                   );
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
                     data: data.amountOutflowCategory,
@@ -172,7 +174,7 @@ class _CardsState extends State<_Cards> {
                   );
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountGroup(
                     data: data.amountOutflowCard,
@@ -180,7 +182,7 @@ class _CardsState extends State<_Cards> {
                   );
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountTranferBank(
                     data: data.amountInflowTransferBank,
@@ -188,7 +190,7 @@ class _CardsState extends State<_Cards> {
                   );
                 }),
             ListenableBuilder(
-                listenable: widget.dataNotifier,
+                listenable: widget.amountController,
                 builder: (c, w) {
                   return ChartsWidgetTotalAmountTranferBank(
                     data: data.amountOutflowTransferBank,
@@ -230,11 +232,11 @@ class _CardsState extends State<_Cards> {
               width: 250,
               child: Center(
                 child: TextButton.icon(
-                    icon: const Icon(Icons.calendar_month),
+                    icon: const Icon(Icons.calendar_month, color:AppColors.gold,),
                     onPressed: () async {
                       notifier.selectDateRange(context);
                     },
-                    label: const Text("Selecionar Período", textAlign: TextAlign.center)),
+                    label: const Text("Selecionar Período", textAlign: TextAlign.center, style: TextStyle(color: AppColors.gold),)),
               ),
             ))
           ],
