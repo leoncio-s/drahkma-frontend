@@ -3,6 +3,6 @@ import 'package:flutter/material.dart';
 
 abstract interface class DataNotifierInterface with ChangeNotifier
 {
-  DashboardModel get data;
+  DashboardModel? get data;
   Future<void> fetchData(DateTimeRange dateRange);
 }
