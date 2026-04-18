@@ -14,7 +14,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   AuthLocalDatasourceImpl({required this.storage});
 
   @override
-  Future<UserModel?> getAuthToken() async {
+  Future<User?> getAuthToken() async {
     String? token = await storage.getString(Config.keyStorageAuthToken);
     if (token != null) {
       var json = JsonDecoder().convert(token);
@@ -25,7 +25,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   }
 
   @override
-  Future<void> saveAuthToken(User user) async {
+  Future<void> saveAuthToken(covariant User user) async {
     UserDTO userDTO = UserDTO.fromModel(user as UserModel);
     storage.setString(
         Config.keyStorageAuthToken,
