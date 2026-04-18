@@ -1,6 +1,7 @@
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
@@ -12,7 +13,7 @@ import 'package:drahkma/core/config.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
-class ItemsView extends StatefulWidget{
+class ItemsView extends StatefulWidget {
   final String title;
   final ItemController itemController;
   final bool expense;
@@ -26,7 +27,7 @@ class ItemsView extends StatefulWidget{
   State<StatefulWidget> createState() => _ItemsViewState();
 }
 
-class _ItemsViewState extends State<ItemsView>{
+class _ItemsViewState extends State<ItemsView> {
   DateTime startDate = appNotifier.dateTimeRange.start;
   DateTime finishDate = appNotifier.dateTimeRange.end;
   List<ItemModel>? _items;
@@ -49,16 +50,16 @@ class _ItemsViewState extends State<ItemsView>{
   void _onControllerStateChanged() {
     if (mounted) {
       final state = widget.itemController.value;
-      if (state is ItemsLoaded) {
+      if (state is ItemLoaded) {
         setState(() {
-          _items = state.data;
+          _items = widget.itemController.data;
           _message = null;
         });
       } else if (state is AppStateError) {
         setState(() {
           _message = state.message ?? "Erro ao processar dados";
         });
-      } else if (state is AppStateLoading) {
+      } else if (state is ItemLoading) {
         setState(() {
           _message = null;
         });
@@ -68,9 +69,11 @@ class _ItemsViewState extends State<ItemsView>{
 
   @override
   void initState() {
-    _loadData();
-    widget.itemController.addListener(_onControllerStateChanged);
     super.initState();
+    widget.itemController.addListener(_onControllerStateChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   @override
@@ -83,44 +86,49 @@ class _ItemsViewState extends State<ItemsView>{
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
           child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800.0),
-          child: _items != null
-              ? Column(
-                  // direction: Axis.vertical,
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    MediaQuery.of(context).size.width < 500 ? Text(
-                      widget.title,
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                      ),
-                      textAlign: TextAlign.center,
-                      textScaler: TextScaler.linear(principalCardScaller(
-                          MediaQuery.of(context).size.width)),
-                    )  : const SizedBox(),
-                    _controllers(),
-                    Text(
-                        "Pedíodo: ${Config.dateFormat.format(startDate)} - ${Config.dateFormat.format(finishDate)}"),
-                    _listViewItems()
-                  ],
-                )
-              : _message == null
-                  ? SizedBox.fromSize(
-                      size: const Size(50, 50),
-                      child: const CircularProgressIndicator())
-                  : _replayData(),
-        ),
-      )),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 800.0),
+              child: _items != null
+                  ? Column(
+                      // direction: Axis.vertical,
+                      children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        MediaQuery.of(context).size.width < 500
+                            ? Text(
+                                widget.title,
+                                style: const TextStyle(
+                                  fontSize: 20.0,
+                                ),
+                                textAlign: TextAlign.center,
+                                textScaler: TextScaler.linear(
+                                    principalCardScaller(
+                                        MediaQuery.of(context).size.width)),
+                              )
+                            : const SizedBox(),
+                        _controllers(),
+                        Text(
+                            "Pedíodo: ${Config.dateFormat.format(startDate)} - ${Config.dateFormat.format(finishDate)}"),
+                        _listViewItems()
+                      ],
+                    )
+                  : _message == null
+                      ? SizedBox.fromSize(
+                          size: const Size(50, 50),
+                          child: const CircularProgressIndicator())
+                      : _replayData(),
+            ),
+          )),
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ItemForm(expense: widget.expense)))
+                    builder: (context) => ItemForm(
+                        itemController: widget.itemController,
+                        expense: widget.expense)))
                 .then((data) {
               if (data is ItemModel) {
                 _loadData();
@@ -212,10 +220,25 @@ class _ItemsViewState extends State<ItemsView>{
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   TextButton.icon(
-                      icon: const Icon(Icons.edit_calendar),
+                      icon: const Icon(
+                        Icons.edit_calendar,
+                        color: AppColors.gold,
+                      ),
                       onPressed: () async {
                         DateTimeRange? date = await showDateRangePicker(
                             context: context,
+                            builder: (context, child) {
+                              return Theme(
+                                  data: ThemeData.dark().copyWith(
+                                      datePickerTheme: DatePickerThemeData(
+                                        rangeSelectionBackgroundColor: AppColors.lightGold.withAlpha(70)
+                                      ),
+                                      colorScheme: const ColorScheme.dark(
+                                          primary: AppColors.gold,
+                                          onPrimary: Colors.white,
+                                          onSurface: AppColors.gold,)),
+                                  child: child!);
+                            },
                             firstDate: DateTime(1900, 01, 01),
                             lastDate:
                                 DateTime(DateTime.now().year + 100, 01, 01),
@@ -231,7 +254,10 @@ class _ItemsViewState extends State<ItemsView>{
                           _loadData();
                         }
                       },
-                      label: const Text("Alterar Período"))
+                      label: const Text(
+                        "Alterar Período",
+                        style: TextStyle(color: AppColors.gold),
+                      ))
                 ],
               ),
             )
@@ -313,22 +339,28 @@ class _ItemsViewState extends State<ItemsView>{
                           ),
                           trailing: IconButton(
                               onPressed: () async {
-                                try{
+                                try {
                                   await widget.itemController.deleteItem(el);
                                   SnackBar snackBar = const SnackBar(
-                                      content:
-                                          Text("Item excluido com sucesso"),
-                                      backgroundColor: Colors.greenAccent,
-                                      showCloseIcon: true,
-                                    );
-                                  if(mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                }on UnauthenticatedException
-                                {
-                                  if(mounted) Navigator.of(context).pushReplacementNamed('login');
-                                }catch(e){
+                                    content: Text("Item excluido com sucesso"),
+                                    backgroundColor: Colors.greenAccent,
+                                    showCloseIcon: true,
+                                  );
+                                  if (mounted){
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                  }
+                                    
+                                } on UnauthenticatedException {
+                                  if (mounted)
+                                  {
+                                    Navigator.of(context)
+                                        .pushReplacementNamed('login');
+                                  }
+                                } catch (e) {
                                   rethrow;
                                 }
-                                  _loadData();
+                                _loadData();
                               },
                               icon: const Icon(
                                 Icons.delete,
@@ -340,14 +372,12 @@ class _ItemsViewState extends State<ItemsView>{
                             Navigator.of(context)
                                 .push(MaterialPageRoute(
                                     builder: (context) => ItemForm(
+                                          itemController: widget.itemController,
                                           data: el,
                                           expense: widget.expense,
                                         )))
-                                .then((data) {
-                              if (data is ItemModel) {
-                                // setState(() {});
-                                _loadData();
-                              }
+                                .then((data) async {
+                              _loadData();
                             });
                           },
                         ))
@@ -377,15 +407,6 @@ class _ItemsViewState extends State<ItemsView>{
                             _message = null;
                           });
                           _loadData();
-                        },
-                        icon: AnimatedRotation(
-                          turns: _turns,
-                          duration: const Duration(seconds: 1),
-                          child: const Icon(Icons.replay),
-                        ))))
-                            _message = null;
-                          });
-                          _getData();
                         },
                         icon: AnimatedRotation(
                           turns: _turns,

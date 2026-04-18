@@ -1,19 +1,22 @@
-
+import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
+import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_all.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/domain/usecases/category_get_all.dart';
 import 'package:drahkma/features/category/domain/usecases/category_get_all_by_user.dart';
 import 'package:drahkma/features/item/data/models/item_dto.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
+import 'package:drahkma/features/category/data/mappers/category_mapper.dart';
+import 'package:drahkma/features/card/data/mappers/card_mapper.dart';
+import 'package:drahkma/features/item/data/mappers/transfer_bank_mapper.dart';
 import 'package:drahkma/features/item/data/models/transferbank_model.dart';
 import 'package:drahkma/features/item/domain/enums/transfer_bank_type_enum.dart';
-import 'package:drahkma/features/item/domain/usecases/item_save.dart';
-import 'package:drahkma/features/item/domain/usecases/item_update.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
+import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:flutter/material.dart' hide Card;
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -23,7 +26,12 @@ import 'package:intl/intl.dart';
 class ItemForm extends StatefulWidget {
   final ItemModel? data;
   final bool expense;
-  const ItemForm({super.key, this.data, this.expense = true});
+  final ItemController itemController;
+  const ItemForm(
+      {required this.itemController,
+      super.key,
+      this.data,
+      this.expense = true});
 
   @override
   State<StatefulWidget> createState() => ItemFormState();
@@ -56,6 +64,42 @@ class ItemFormState extends State<ItemForm> {
   List<CardModel>? cards = [];
   dynamic data;
   bool expense = false;
+  String? _message;
+
+  void _onControllerStateChanged() {
+    if (mounted) {
+      final state = widget.itemController.value;
+      if (state is AppStateError) {
+        setState(() {
+          _message = state.message ??
+              "Erro ao processar solicitação. Tente novamente!";
+        });
+        SnackBar snackBar = SnackBar(
+            content: Text(
+              (widget.itemController.value is AppStateError)
+                  ? _message ??
+                      "Erro ao processar solicitação. Tente novamente!"
+                  : "Erro ao salvar item",
+              style: const TextStyle(color: Colors.white),
+            ),
+            showCloseIcon: true,
+            backgroundColor: Colors.red,
+            closeIconColor: Colors.white,
+          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+      } else if (state is ItemLoading || state is ItemLoaded) {
+        setState(() {
+          _message = null;
+        });
+      } else if (state is ItemSaved) {
+        if(mounted){
+          Navigator.pop(context);
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -89,9 +133,8 @@ class ItemFormState extends State<ItemForm> {
         _transferbank_type = widget.data?.transferBank?.type;
         _transferbank_description.text =
             (_transferbank) ? widget.data!.transferBank!.description! : "";
-        _transferbank_bank_account = (_transferbank)
-            ? widget.data!.transferBank!.bankAccount?.id
-            : null;
+        _transferbank_bank_account =
+            (_transferbank) ? widget.data!.transferBank!.bankAccount?.id : null;
       } catch (e) {
         rethrow;
       }
@@ -102,6 +145,13 @@ class ItemFormState extends State<ItemForm> {
       _card = cards!.firstOrNull?.id;
     }
     super.initState();
+    widget.itemController.addListener(_onControllerStateChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.itemController.removeListener(_onControllerStateChanged);
+    super.dispose();
   }
 
   @override
@@ -146,11 +196,9 @@ class ItemFormState extends State<ItemForm> {
                   _commonsFields(),
                   _transferbankForm(),
                   _cardsForm(),
-
                   const SizedBox(
                     height: 30.0,
                   ),
-
                   _buttons(),
                 ],
               ))),
@@ -227,6 +275,14 @@ class ItemFormState extends State<ItemForm> {
           decoration: (const InputDecoration())
               .applyDefaults(Theme.of(context).inputDecorationTheme)
               .copyWith(labelText: "Descrição", counterText: ""),
+          validator: (value) {
+            if (value!.length < 3 || value.length > 100) {
+              return "O tamano minimo é 3 e o máximo é 100";
+            } else if (RegExp(r"[\w\s]+").hasMatch(value) && value.isSqlInjection) {
+              return "O campo possui caracteres ou expressões inválidas";
+            }
+            return null;
+          },
         ),
 
         const SizedBox(
@@ -297,12 +353,17 @@ class ItemFormState extends State<ItemForm> {
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           const SizedBox(
             width: 100,
-            child: Text("Cartão", textAlign: TextAlign.end,),
+            child: Text(
+              "Cartão",
+              textAlign: TextAlign.end,
+            ),
           ),
           SizedBox(
             width: 80,
             // height: 50,
-            child: Center(child: _switchTransferCard(),),
+            child: Center(
+              child: _switchTransferCard(),
+            ),
           ),
           const SizedBox(
             width: 100,
@@ -310,7 +371,7 @@ class ItemFormState extends State<ItemForm> {
           ),
         ]),
 
-                const SizedBox(
+        const SizedBox(
           height: 25.0,
         ),
       ],
@@ -445,7 +506,7 @@ class ItemFormState extends State<ItemForm> {
                     .map((el) => DropdownMenuItem<int?>(
                           value: el.id,
                           child: Text(
-                            el.brand.toString(),
+                            "${el.brand.toString()} - ${el.last4Digits.toString()} (${el.flag!.name.toString()})",
                             style: const TextStyle(color: Colors.white),
                           ),
                         ))
@@ -485,72 +546,80 @@ class ItemFormState extends State<ItemForm> {
         SizedBox(
           height: 50,
           child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.fromMap({
+                  WidgetState.hovered: AppColors.lightGold,
+                  WidgetState.any: AppColors.gold,
+                })
+              ),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  dynamic ret;
+                  ItemDTO item;
                   if (widget.data?.id != null) {
-                    ret = ItemDTO(
+                    item = ItemDTO(
                         value: _value.numberValue,
                         id: widget.data!.id,
                         description: _description.text,
-                        category:
-                            category!.firstWhere((el) => el.id == _category),
+                        category: CategoryMapper.toEntity(
+                            category!.firstWhere((el) => el.id == _category)),
                         date: dateFormat.parse(_date.text),
                         expense: widget.expense,
                         card: _transferbank
                             ? null
-                            : cards!.firstWhere((el) => el.id == _card),
+                            : CardMapper.toEntity(
+                                cards!.firstWhere((el) => el.id == _card)),
                         transferBank: _transferbank
-                            ? TransferBankModel(
+                            ? TransferBankMapper.toEntity(TransferBankModel(
                                 id: widget.data?.transferBank?.id,
                                 bankAccount: bankAccounts?.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
-                                type: _transferbank_type)
+                                type: _transferbank_type))
                             : null);
-                    await getIt<ItemUpdate>().call(item:ret);
+                    await widget.itemController.updateItem(item);
                   } else {
-                    
-                    ret = await getIt<ItemSave>().call(
-                      item: 
-                      ItemDTO(
+                    item = ItemDTO(
                         card: _transferbank
                             ? null
-                            : cards?.firstWhere((el) => el.id == _card),
+                            : CardMapper.toEntity(
+                                cards!.firstWhere((el) => el.id == _card)),
                         description: _description.text,
                         date: dateFormat.parse(_date.text),
                         value: _value.numberValue,
-                        category:
-                            category!.firstWhere((el) => el.id == _category),
+                        category: CategoryMapper.toEntity(
+                            category!.firstWhere((el) => el.id == _category)),
                         expense: expense,
                         transferBank: _transferbank
-                            ? TransferBankModel(
+                            ? TransferBankMapper.toEntity(TransferBankModel(
                                 bankAccount: bankAccounts?.firstWhere((el) =>
                                     el.id == _transferbank_bank_account),
                                 description: _transferbank_description.text,
-                                type: _transferbank_type)
-                            : null));
+                                type: _transferbank_type))
+                            : null);
+                    widget.itemController.saveItem(item);
                   }
-
-                  if (ret is ItemModel || ret is ItemDTO) {
-                    if(mounted)
-                    {
-                      Navigator.pop(context, ret);
-                    }
-                  } else {
-                    SnackBar snackBar = SnackBar(
-                      content: Text(
-                        ret['errors'].toString(),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      showCloseIcon: true,
-                      backgroundColor: Colors.red,
-                      closeIconColor: Colors.white,
-                    );
-                    if(mounted){
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    }
-                  }
+                  // print(widget.itemController.value);
+                  // if (widget.itemController.value is ItemSaved) {
+                  //   if (mounted) {
+                  //     Navigator.pop(context);
+                  //   }
+                  // } else {
+                  //   SnackBar snackBar = SnackBar(
+                  //     content: Text(
+                  //       (widget.itemController.value is AppStateError)
+                  //           ? _message ??
+                  //               "Erro ao processar solicitação. Tente novamente!"
+                  //           : "Erro ao salvar item",
+                  //       style: const TextStyle(color: Colors.white),
+                  //     ),
+                  //     showCloseIcon: true,
+                  //     backgroundColor: Colors.red,
+                  //     closeIconColor: Colors.white,
+                  //   );
+                  //   if (mounted) {
+                  //     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  //   }
+                  // }
                 }
               },
               child: const Text("Salvar")),

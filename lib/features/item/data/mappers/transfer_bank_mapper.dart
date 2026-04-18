@@ -1,5 +1,4 @@
 import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
-import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/features/item/data/models/transferbank_model.dart';
 import 'package:drahkma/features/item/domain/entities/transfer_bank.dart';
 
