@@ -18,10 +18,10 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   @override
   Future<List<CategoryModel>> getAll() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var request = await http.get(
       _url,
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     List<CategoryModel>? categories = [];
@@ -40,10 +40,10 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   @override
   Future<List<CategoryModel>> getAllByUser() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var request = await http.get(
       _url.replace(path: "${_url.path}all"),
-      headers: {'Authorization': " Bearer ${user?.token ?? ''}"},
+      headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     List<CategoryModel>? categories = [];
@@ -61,16 +61,15 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   @override
   Future<CategoryModel?> save(CategoryDTO data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var request = await http.post(
       _url,
       body: jsonEncode(data.toMap()),
       headers: {
-        'Authorization': " Bearer ${user?.token ?? ''}",
+        'Authorization': " Bearer ${userModel?.token ?? ''}",
         'Content-type': 'application/json'
       },
     );
-
     CategoryModel? cat;
 
     if (request.statusCode == 201) {
@@ -83,14 +82,14 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   @override
   Future<void> update(CategoryDTO data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
-    if (user == null) throw UnauthenticatedException();
+    UserModel? userModel = user as UserModel?;
+    if (userModel == null) throw UnauthenticatedException();
     
     var request = await http.put(
       _url,
       body: jsonEncode(data.toMap()),
       headers: {
-        'Authorization': " Bearer ${user.token ?? ''}",
+        'Authorization': " Bearer ${userModel.token ?? ''}",
         'Content-type': 'application/json',
       },
     );
@@ -109,12 +108,12 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   @override
   Future delete(CategoryModel data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
-    user as UserModel?;
+    UserModel? userModel = user as UserModel?;
     var url = _url.resolve("${data.id}");
     var request = await http.delete(
       url,
       headers: {
-        'Authorization': " Bearer ${user?.token ?? ''}",
+        'Authorization': " Bearer ${userModel?.token ?? ''}",
         'Content-type': 'application/json'
       },
     );
@@ -122,8 +121,8 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
     if (request.statusCode == 200) {
       return true;
     } else {
-      dynamic ret = request.body;
-      return ret;
+      var json = jsonDecode(request.body);
+      throw http.ClientException(json['error']);
     }
   }
   
