@@ -6,14 +6,15 @@ import 'package:drahkma/features/amount/data/models/amount_model.dart';
 import 'package:drahkma/features/amount/data/models/transfer_bank_amount_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/core/config.dart';
-import 'package:drahkma/core/presentation/notifiers/aposentar_data_notifier.dart';
+import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ChartsWidgetTotalAmountGroup extends StatelessWidget {
   final List<AmountModel>? data;
   final String title;
+  final AppNotifier dataNotifier = appNotifier;
 
-  const ChartsWidgetTotalAmountGroup(
+  ChartsWidgetTotalAmountGroup(
       {super.key, required this.data, required this.title});
 
   @override
@@ -108,8 +109,9 @@ class ChartsWidgetTotalAmountGroup extends StatelessWidget {
 class ChartsWidgetTotalAmountTranferBank extends StatelessWidget {
   final List<TransferBankAmountModel>? data;
   final String title;
+  final AppNotifier dataNotifier = appNotifier;
 
-  const ChartsWidgetTotalAmountTranferBank(
+  ChartsWidgetTotalAmountTranferBank(
       {super.key, required this.data, required this.title});
 
   @override
