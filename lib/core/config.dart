@@ -1,9 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 // import 'package:web/web.dart' as html;
 
 class Config{
-  // static String urlApi= "${html.window.location.origin}/public/api/v1/";
-  static String urlApi = 'http://localhost:8081/api/v1/';
+  static String _urlApi = '${kDebugMode ? 'http://localhost:8081' :  kIsWeb ? Uri.base.origin : 'https://drahkma.leoncio.dev'}/api/v1/';
   static String keyStorageAuthToken = "_auth_token";
   static String keyStorageEmail = '_email';
   static String keyStorageUser = "_user_profile";
@@ -14,8 +14,9 @@ class Config{
   static String keyStorageDashboard = "_dashboard";
 
   static set setUrlApi(String value){
-    urlApi = Uri.parse(value).toString();
+    _urlApi = Uri.parse(value).toString();
   }
+  static String get urlApi => _urlApi;
 
   static final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   static final NumberFormat currencyFormat =
