@@ -33,10 +33,10 @@ class TimeoutConnectState extends AppState
   List<String?> get props => [message];
 }
 
-class ErrorState extends AppState
+class AppStateError extends AppState
 {
   final String? message;
-  const ErrorState({this.message});
+  const AppStateError({this.message});
   @override
   List<String?> get props => [message];
 }
