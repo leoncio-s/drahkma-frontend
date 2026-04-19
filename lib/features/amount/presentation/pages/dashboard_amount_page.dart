@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:drahkma/core/config.dart';
@@ -58,32 +57,29 @@ class _Cards extends StatefulWidget
 class _CardsState extends State<_Cards> {
   late DashboardModel data;
   late AppNotifier notifier;
-  Timer? _refreshTimer;
 
-  void _onTimerListener(){
-    _refreshTimer?.cancel();
-    _refreshTimer= Timer.periodic(const Duration(seconds: 2), (Timer timer)=> widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end));
+  void _onTimerListener() async{
+      await widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
+      setState(() {
+        data = widget.amountController.data!;
+      });
   }
 
   @override
   void initState() {
     notifier = widget.notifier;
     notifier.addListener(_onTimerListener);
-    widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
-    data = widget.amountController.data ?? DashboardModel();
+    data = widget.amountController.data!;
     super.initState();
+    _onTimerListener();
   }
 
   @override
   void dispose() {
-    _refreshTimer?.cancel();
     notifier.removeListener(_onTimerListener);
     super.dispose();
   }
 
-
-
-  
 
   @override
   Widget build(BuildContext context) {
