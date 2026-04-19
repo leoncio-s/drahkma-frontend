@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
@@ -39,11 +41,18 @@ class _ItemsViewState extends State<ItemsView> {
   String? _message;
   double _turns = 0.0;
 
-  void _loadData() {
-    if (widget.expense) {
-      widget.itemController.loadExpense(start: startDate, end: finishDate);
-    } else {
-      widget.itemController.loadIncome(start: startDate, end: finishDate);
+  void _loadData() async {
+    try {
+      if (widget.expense) {
+        await widget.itemController
+            .loadExpense(start: startDate, end: finishDate);
+      } else {
+        await widget.itemController
+            .loadIncome(start: startDate, end: finishDate);
+      }
+    } catch (e) {
+      log(e.toString(), name: "ItemsView._loadData");
+      rethrow;
     }
   }
 
@@ -231,12 +240,14 @@ class _ItemsViewState extends State<ItemsView> {
                               return Theme(
                                   data: ThemeData.dark().copyWith(
                                       datePickerTheme: DatePickerThemeData(
-                                        rangeSelectionBackgroundColor: AppColors.lightGold.withAlpha(70)
-                                      ),
+                                          rangeSelectionBackgroundColor:
+                                              AppColors.lightGold
+                                                  .withAlpha(70)),
                                       colorScheme: const ColorScheme.dark(
-                                          primary: AppColors.gold,
-                                          onPrimary: Colors.white,
-                                          onSurface: AppColors.gold,)),
+                                        primary: AppColors.gold,
+                                        onPrimary: Colors.white,
+                                        onSurface: AppColors.gold,
+                                      )),
                                   child: child!);
                             },
                             firstDate: DateTime(1900, 01, 01),
@@ -346,14 +357,12 @@ class _ItemsViewState extends State<ItemsView> {
                                     backgroundColor: Colors.greenAccent,
                                     showCloseIcon: true,
                                   );
-                                  if (mounted){
+                                  if (mounted) {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
                                   }
-                                    
                                 } on UnauthenticatedException {
-                                  if (mounted)
-                                  {
+                                  if (mounted) {
                                     Navigator.of(context)
                                         .pushReplacementNamed('login');
                                   }
@@ -411,7 +420,10 @@ class _ItemsViewState extends State<ItemsView> {
                         icon: AnimatedRotation(
                           turns: _turns,
                           duration: const Duration(seconds: 1),
-                          child: const Icon(Icons.replay),
+                          child: const Icon(
+                            Icons.replay,
+                            color: Colors.white,
+                          ),
                         ))))
           ],
         ));
