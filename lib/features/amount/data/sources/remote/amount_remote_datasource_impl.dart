@@ -18,12 +18,14 @@ class AmountRemoteDatasourceImpl implements AmountRemoteDatasource
     var start = DateFormat('yyyyMMdd').format(startDate);
     var end = DateFormat('yyyyMMdd').format(endDate);
 
-    var response = await http.get(_url.replace(queryParameters: {"start_date": start, "finish_date": end}),
+    var url = _url.replace(queryParameters: {"start_date": start, "finish_date": end});
+
+    var response = await http.get(url,
         headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"});
+
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
-
       return json;
     }
 
