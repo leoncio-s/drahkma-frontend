@@ -4,7 +4,7 @@ class AmountModel extends Amount {
   AmountModel({super.total, super.description});
 
   factory AmountModel.fromJson(Map<String, dynamic> data) {
-    return AmountModel(total: data['total'], description: data['description']);
+    return AmountModel(total: double.tryParse(data['total'].toString()) ?? 0.00, description: data['description']);
   }
 
   @override

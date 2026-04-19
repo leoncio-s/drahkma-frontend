@@ -28,8 +28,10 @@ class ItemLocalDatasourceImpl implements ItemLocalDatasource {
     if (jsonString != null) {
       List<dynamic> jsonList = JsonDecoder().convert(jsonString);
       return jsonList
-          .map((json) => ItemModel.fromJson(json))
-          .cast<Item>()
+          .map((json) {
+              return ItemModel.fromJson(json).toEntity();
+          })
+          // .cast<Item>()
           .toList();
     }
     return null;

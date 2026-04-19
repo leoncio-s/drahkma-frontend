@@ -6,7 +6,7 @@ class TransferBankAmountModel extends TransferBankAmount {
 
   factory TransferBankAmountModel.fromJson(Map<String, dynamic> data) {
     return TransferBankAmountModel(
-        total: data['total'],
+        total: double.tryParse(data['total'].toString()) ?? 0.00,
         description: data['description'],
         type: TransferBankTypeEnum.values
             .where((el) => el.name == data['type'])

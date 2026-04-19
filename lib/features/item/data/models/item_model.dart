@@ -1,4 +1,3 @@
-
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/category/data/mappers/category_mapper.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
@@ -18,48 +17,53 @@ class ItemModel {
     final TransferBankModel? transferBank;
 
     ItemModel({
-      this.card, 
-      this.category, 
-      this.date, 
-      this.description, 
-      this.expense, 
-      this.id, 
-      this.transferBank, 
+      this.card,
+      this.category,
+      this.date,
+      this.description,
+      this.expense,
+      this.id,
+      this.transferBank,
       this.value
     });
 
     factory ItemModel.fromJson(dynamic data){
       int? id = data['id'];
-      
+
       String? description = data['description'];
-      
+
       bool? expense = data['expense'];
-      
-      double? value = data['value'] ?? 0.0;
-      
-      DateTime? date = data['date'] == null ? null : DateFormat('yyyy-MM-dd').parse(data['date']['date']!);
-      
-      CategoryModel? category = data['category'] == null ? null : CategoryModel.fromJson(data['category']);
-      
-      CardModel? card = data['card'] == null? null : CardModel.fromJson(data['card']!);
-      
-      TransferBankModel? transferBank = data['transfer_bank'] == null ? null : TransferBankModel.fromJson(data['transfer_bank']);
+
+      double? value = double.tryParse(data['value'].toString()) ?? 0.0;
+
+      DateTime? date = data['date'] == null
+          ? null
+          : DateFormat('yyyy-MM-dd').parse(data['date']['date']!);
+
+      CategoryModel? category = data['category'] == null
+          ? null
+          : CategoryModel.fromJson(data['category']);
+
+      CardModel? card =
+          data['card'] == null ? null : CardModel.fromJson(data['card']!);
+
+      TransferBankModel? transferBank = data['transfer_bank'] == null
+          ? null
+          : TransferBankModel.fromJson(data['transfer_bank']);
 
       return ItemModel(
-        card: card,
-        transferBank: transferBank,
-        date: date,
-        category: category,
-        id: id,
-        description: description,
-        expense: expense,
-        value: value
-        );
+          card: card,
+          transferBank: transferBank,
+          date: date,
+          category: category,
+          id: id,
+          description: description,
+          expense: expense,
+          value: value);
     }
-    
 
-      Item toEntity(){
-        return Item(
+    Item toEntity() {
+      return Item(
           id: id,
           description: description,
           expense: expense,
@@ -67,7 +71,6 @@ class ItemModel {
           date: date,
           category: CategoryMapper.toEntity(category!),
           card: card,
-          transferBank: transferBank as TransferBank
-        );
-      }
+          transferBank: transferBank as TransferBank);
+    }
 }
