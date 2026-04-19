@@ -21,10 +21,15 @@ class ExpenseItemView extends DrahkmaStatefulWidget {
 class _OutflowState extends State<ExpenseItemView> {
   @override
   Widget build(BuildContext context) {
-    return ItemsView(
-      title: "Despesas",
-      itemController: widget.itemController,
-      expense: true,
-    );
+    try {
+      return ItemsView(
+        title: "Despesas",
+        itemController: widget.itemController,
+        expense: true,
+      );
+    } catch (e, s) {
+      debugPrintStack(stackTrace: s, label: "Expense Item View");
+      return Text("Erro ao carregar despesas");
+    }
   }
 }
