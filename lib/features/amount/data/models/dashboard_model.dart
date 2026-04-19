@@ -19,41 +19,39 @@ class DashboardModel extends Dashboard {
       super.amountOutflowTransferBank});
 
   factory DashboardModel.fromJson(Map<String, dynamic> data) {
-    double totalAmountInflowTransferBank =
-        data['totalAmountInflowTransferBank'] ?? 0.00;
-    double totalAmountOutflowTransferBank =
-        data['totalAmountOutflowTransferBank'] ?? 0.00;
-    double totalAmountInflowCards = data['totalAmountInflowCards'] ?? 0.00;
-    double totalAmountOutflowCards = data['totalAmountOutflowCards'] ?? 0.00;
-    double inflow = data['inflow'] ?? 0.00;
-    double outflow = data['outflow'] ?? 0.00;
-    double amount = data['amount'] ?? 0.00;
+    double totalAmountInflowTransferBank = double.tryParse(data['totalAmountInflowTransferBank'].toString())  ?? 0.00;
+    double totalAmountOutflowTransferBank = double.tryParse(data['totalAmountOutflowTransferBank'].toString()) ?? 0.00;
+    double totalAmountInflowCards = double.tryParse(data['totalAmountInflowCards'].toString()) ?? 0.00;
+    double totalAmountOutflowCards = double.tryParse(data['totalAmountOutflowCards'].toString()) ?? 0.00;
+    double inflow = double.tryParse(data['inflow'].toString()) ?? 0.00;
+    double outflow = double.tryParse(data['outflow'].toString()) ?? 0.00;
+    double amount = double.tryParse(data['amount'].toString()) ?? 0.00;
 
-    List<AmountModel>? amountInflowCategory =
+    List<AmountModel> amountInflowCategory =
         List.of(data['amountInflowCategory'])
             .map((el) => AmountModel.fromJson(el))
             .toList();
-    List<AmountModel>? amountOutflowCategory =
+    List<AmountModel> amountOutflowCategory =
         List.of(data['amountOutflowCategory'])
             .map((el) => AmountModel.fromJson(el))
             .toList();
-    List<AmountModel>? amountInflowCard = List.of(data['amountInflowCard'])
+
+    List<AmountModel>  amountInflowCard = List.of(data['amountInflowCard'])
         .map((el) => AmountModel.fromJson(el))
         .toList();
-    List<AmountModel>? amountOutflowCard = List.of(data['amountOutflowCard'])
+    List<AmountModel> amountOutflowCard = List.of(data['amountOutflowCard'])
         .map((el) => AmountModel.fromJson(el))
         .toList();
 
-    List<TransferBankAmountModel>? amountInflowTransferBank =
+    List<TransferBankAmountModel> amountInflowTransferBank =
         List.of(data['amountInflowTransferBank'])
             .map((el) => TransferBankAmountModel.fromJson(el))
             .toList();
 
-    List<TransferBankAmountModel>? amountOutflowTransferBank =
+    List<TransferBankAmountModel> amountOutflowTransferBank =
         List.of(data['amountOutflowTransferBank'])
             .map((el) => TransferBankAmountModel.fromJson(el))
             .toList();
-
     return DashboardModel(
         inflow: inflow,
         outflow: outflow,
@@ -84,12 +82,12 @@ class DashboardModel extends Dashboard {
       'totalAmountInflowTransferBank': totalAmountInflowTransferBank,
       'totalAmountOutflowCards': totalAmountOutflowCards,
       'totalAmountOutflowTransferBank': totalAmountOutflowTransferBank,
-      'amountInflowCard': amountInflowCard!.map((e)=> e.toMap()).toList(),
-      'amountInflowCategory': amountInflowCategory!.map((e)=> e.toMap()).toList(),
-      'amountInflowTransferBank': amountInflowTransferBank!.map((e)=> e.toMap()).toList(),
-      'amountOutflowCard': amountOutflowCard!.map((e)=> e.toMap()).toList(),
-      'amountOutflowCategory': amountOutflowCategory!.map((e)=> e.toMap()).toList(),
-      'amountOutflowTransferBank': amountOutflowTransferBank!.map((e)=> e.toMap()).toList()
+      'amountInflowCard': amountInflowCard?.map((e)=> e.toMap()).toList(),
+      'amountInflowCategory': amountInflowCategory?.map((e)=> e.toMap()).toList(),
+      'amountInflowTransferBank': amountInflowTransferBank?.map((e)=> e.toMap()).toList(),
+      'amountOutflowCard': amountOutflowCard?.map((e)=> e.toMap()).toList(),
+      'amountOutflowCategory': amountOutflowCategory?.map((e)=> e.toMap()).toList(),
+      'amountOutflowTransferBank': amountOutflowTransferBank?.map((e)=> e.toMap()).toList()
     };
   }
 }
