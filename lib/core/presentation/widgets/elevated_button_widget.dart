@@ -38,8 +38,8 @@ class ElevatedButtonWidget extends StatelessWidget {
               WidgetState.hovered: foregroundHoverColor ?? Colors.white
             }),
             backgroundColor: WidgetStateColor.fromMap({
-              WidgetState.hovered: hoverColor!,
-              WidgetState.any: backgroundColor!
+              WidgetState.hovered: hoverColor ?? AppColors.lightGold,
+              WidgetState.any: backgroundColor ?? AppColors.gold
             }),
             shape: WidgetStateProperty.fromMap({
               WidgetState.any : RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(12)))
@@ -67,7 +67,7 @@ class ElevatedButtonWidget extends StatelessWidget {
               fontWeight: FontWeight.w500
             ),
           )),
-          if(icon == null) SizedBox() else Flexible(child: Container(margin: EdgeInsets.fromLTRB(5, 4, 0, 0), child: icon!,))
+          if(icon == null) SizedBox() else Flexible(child: Container(margin: EdgeInsets.fromLTRB(5, 4, 0, 0), child: icon,))
             ],
           ),
         ),
