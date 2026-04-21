@@ -26,11 +26,11 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
 
   @override
   Future<void> saveAuthToken(covariant User user) async {
-    UserDTO userDTO = UserDTO.fromModel(user as UserModel);
-    storage.setString(
+    UserModel userModel = user as UserModel;
+    UserDTO userDTO = UserDTO.fromModel(userModel);
+    await storage.setString(
         Config.keyStorageAuthToken,
         JsonEncoder().convert(userDTO.toMap()));
-    return;
   }
   
   @override
