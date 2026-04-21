@@ -14,8 +14,10 @@ class AuthRepositoryImpl implements AuthRepository
 
   @override
   Future<User?> checkSession() async {
-    var authToken = (await _localDatasource.getAuthToken());
-    if(authToken == null) return null;
+    var authToken = await _localDatasource.getAuthToken() as UserModel?;
+    if(authToken == null) {
+      return null;
+    }
     var result = await _remoteDatasource.checkSession(authToken);
     if (result)
     {
