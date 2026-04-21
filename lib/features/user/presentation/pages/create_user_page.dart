@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
@@ -255,7 +256,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
               ],
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed("login");
+              Navigator.of(context).pushNamed(AppRoutes.login);
             }),
       ));
 
@@ -390,7 +391,7 @@ class SuccessPage extends StatelessWidget {
                 ),
                 style: _textButtonStyle,
                 onPressed: () {
-                  Navigator.maybeOf(context)!.pushReplacementNamed("login");
+                  Navigator.maybeOf(context)!.pushReplacementNamed(AppRoutes.login);
                 },
                 label: const Text(
                   "Ir para página de login",

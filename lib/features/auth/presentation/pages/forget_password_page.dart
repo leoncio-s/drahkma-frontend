@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/utils/extensions/string_regex_validate.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
@@ -169,7 +170,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
                         ],
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed("login");
+                        Navigator.of(context).pushNamed(AppRoutes.login);
                       }),
                 ))
           ],

@@ -1,4 +1,5 @@
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/models/auth_model.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
@@ -32,7 +33,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
   
   void _toLogin(){
     SchedulerBinding.instance.addPostFrameCallback((_){
-      if(mounted) Navigator.of(context).pushReplacementNamed("login");
+      if(mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.login);
     });
   }
 
@@ -220,7 +221,7 @@ class _DrawerProfileComponentState extends State<DrawerProfileComponent> {
       }on UnauthenticatedException catch (e)
       {
         snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.redAccent,);
-        if(mounted) Navigator.of(context).pushReplacementNamed("login");
+        if(mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       }on ArgumentError catch(e)
       {
         snack = SnackBarWidget(content: Text(e.invalidValue), backgroundColor: Colors.redAccent,);
