@@ -1,3 +1,4 @@
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
@@ -37,7 +38,8 @@ class AuthForm extends StatelessWidget {
             padding: EdgeInsetsGeometry.all(20),
             child: Form(
                 key: _formKey,
-                child: Column(
+                child: AutofillGroup(
+                    child: Column(
                   verticalDirection: VerticalDirection.down,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -60,14 +62,17 @@ class AuthForm extends StatelessWidget {
                             focusNode: loginFocusNode,
                             controller: loginEDC,
                             prefixIcon: Icon(Icons.email),
+                            autofillHints: [AutofillHints.email],
                             readOnly: controller.value is AuthLoading,
                             textInputAction: TextInputAction.next,
-                            onFieldSubmited: (_) =>
-                                passwordFocusNode!.requestFocus(),
+                            onFieldSubmited: (_) => passwordFocusNode?.requestFocus(),
                             validator: (value) {
                               final emailRegex =
                                   RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                              if (value!.isEmpty) return "Campo obrigatório";
+                              if (value == null || value.isEmpty)
+                              {
+                                return "Campo obrigatório";
+                              }
                               if (!emailRegex.hasMatch(value) ||
                                   value.isSqlInjection) {
                                 return "Informe um e-mail valido";
@@ -111,7 +116,8 @@ class AuthForm extends StatelessWidget {
                               TextButton(
                                   focusNode: FocusNode(skipTraversal: true),
                                   onPressed: () {
-                                    Navigator.of(context).pushNamed('forget-password');
+                                    Navigator.of(context)
+                                        .pushNamed(AppRoutes.forgetPassword);
                                   },
                                   style: ButtonStyle(textStyle:
                                       WidgetStateTextStyle.resolveWith(
@@ -132,13 +138,18 @@ class AuthForm extends StatelessWidget {
                         TextFormFieldWidget(
                           focusNode: passwordFocusNode,
                           controller: passwordEDC,
+                          autofillHints: [AutofillHints.password],
                           prefixIcon: Icon(Icons.lock),
                           obscureText: true,
                           textInputAction: TextInputAction.send,
                           readOnly: controller.value is AuthLoading,
                           onFieldSubmited: (_) => _formSubmit(),
                           validator: (value) {
-                            if (value!.isEmpty) return "Campo obrigatório";
+                            if (value == null || value.isEmpty)
+                            {
+                              return "Campo obrigatório";
+                            }
+
                             if (value.isSqlInjection) {
                               return "Valor inválido para o campo";
                             }
@@ -173,8 +184,9 @@ class AuthForm extends StatelessWidget {
                     SizedBox(
                       height: 20,
                       child: controller.value is AuthFailure
-                          ? (controller.value as AuthFailure).error != null
-                              ? Wrap(
+                          ? (controller.value as AuthFailure).error == null
+                              ? null
+                              : Wrap(
                                   children: (controller.value as AuthFailure)
                                       .error!
                                       .map<Widget>(
@@ -186,7 +198,6 @@ class AuthForm extends StatelessWidget {
                                       .whereType<Widget>()
                                       .toList(),
                                 )
-                              : null
                           : null,
                     ),
 
@@ -238,7 +249,7 @@ class AuthForm extends StatelessWidget {
                           ),
                           TextButton(
                               onPressed: () {
-                                Navigator.pushNamed(context, "sign-in");
+                                Navigator.pushNamed(context, AppRoutes.signIn);
                               },
                               style: ButtonStyle(textStyle:
                                   WidgetStateTextStyle.resolveWith(
@@ -255,7 +266,7 @@ class AuthForm extends StatelessWidget {
                       ),
                     )
                   ],
-                )),
+                ))),
           ),
         ),
       ),
