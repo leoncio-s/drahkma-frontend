@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 
 class Drahkma extends StatelessWidget {
   final String initialRoute;
-  const Drahkma({super.key, this.initialRoute="login"});
+  const Drahkma({super.key, this.initialRoute=AppRoutes.login});
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-        key: AppRoutes.navigatorKey,
+        navigatorKey: AppRoutes.navigatorKey,
         title: "Drahkma",
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
@@ -18,7 +18,7 @@ class Drahkma extends StatelessWidget {
         routes: AppRoutes.routes,
         initialRoute: initialRoute,
         onUnknownRoute: (settings){
-          return MaterialPageRoute(builder: (context) => DefaultErrorPage(message: "Página não encontrada", route: "login",));
+          return MaterialPageRoute(builder: (context) => DefaultErrorPage(message: "Página não encontrada", route: AppRoutes.login,));
         },
       );
 }

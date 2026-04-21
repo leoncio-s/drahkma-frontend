@@ -1,6 +1,7 @@
 
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/error/update_password_exception.dart';
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update_password.dart';
 import 'package:drahkma/core/presentation/widgets/default_layout_widget.dart';
@@ -87,7 +88,7 @@ class _NewPassWordFormPage extends State<NewPasswordFormPage>{
       }on UnauthenticatedException
       {
         snack = SnackBarWidget(content: Text("Usuário Não autenticado"), backgroundColor: Colors.redAccent, duration: Duration(seconds: 3),);
-        if(mounted) Navigator.of(context).pushReplacementNamed("login");
+        if(mounted) Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       }on UpdatePasswordException catch (e)
       {
         snack = SnackBarWidget(content: Text(e.message), backgroundColor: Colors.red, duration: Duration(seconds: 3),);

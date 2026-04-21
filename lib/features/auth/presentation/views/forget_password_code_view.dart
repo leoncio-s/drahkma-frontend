@@ -1,3 +1,4 @@
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/remote/auth_remote_datasource.dart';
@@ -165,7 +166,7 @@ class ForgetPasswordCodeViewState extends State<ForgetPasswordCodeView> {
                         ],
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed("login");
+                        Navigator.of(context).pushNamed(AppRoutes.login);
                       }),
                 ))
             ],

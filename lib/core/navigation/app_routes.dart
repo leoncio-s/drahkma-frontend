@@ -12,11 +12,18 @@ import 'package:flutter/material.dart';
 class AppRoutes {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey();
 
+  static const String login = "/login";
+  static const String dashboard = "/dashboard";
+  static const String forgetPassword = "/forget-password";
+  static const String errorPage = "/error-page";
+  static const String signIn = "/sign-in";
+
+
   static Map<String, Widget Function(BuildContext)> routes =  {
-    'login': (context) => AuthPage(getIt<AuthController>(), getIt<AuthGetSavedEmailUseCase>()),
-    'dashboard': (context) => HomeView(),
-    'forget-password': (context) => ForgetPasswordPage(authController: getIt<AuthController>()),
-    'error-page': (context) => DefaultErrorPage(),
-    'sign-in': (context) => CreateUserPage(getIt<UserController>()),
+    login: (context) => AuthPage(getIt<AuthController>(), getIt<AuthGetSavedEmailUseCase>()),
+    dashboard: (context) => HomeView(),
+    forgetPassword: (context) => ForgetPasswordPage(authController: getIt<AuthController>()),
+    errorPage: (context) => DefaultErrorPage(),
+    signIn: (context) => CreateUserPage(getIt<UserController>()),
   };
 }

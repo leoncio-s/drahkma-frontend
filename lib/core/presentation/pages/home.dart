@@ -1,3 +1,4 @@
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/amount/presentation/pages/dashboard_amount_page.dart';
 import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
@@ -22,7 +23,10 @@ class HomeViewState extends State<HomeView> {
 
   void _toLogin(){
     SchedulerBinding.instance.addPostFrameCallback((_){
-      if(mounted) Navigator.of(context).pushReplacementNamed("login");
+      if(mounted)
+      {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+      }
     });
   }
 
