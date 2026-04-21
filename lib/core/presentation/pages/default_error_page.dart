@@ -1,3 +1,4 @@
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:drahkma/main.dart';
@@ -25,7 +26,7 @@ class DefaultErrorPage extends StatelessWidget {
                   applyTextScaling: true,
                   weight: 700.0,
                   semanticLabel: "No Network",
-                  size: MediaQuery.of(context).textScaler.scale(150),
+                  size: context.mounted ? MediaQuery.of(context).textScaler.scale(150) : 150,
                   opticalSize: 200,
                   color: AppColors.borderBlue,
                 ),
@@ -33,7 +34,7 @@ class DefaultErrorPage extends StatelessWidget {
                   message ?? "SEM CONEXÃO COM A INTERNET!",
                   textAlign: TextAlign.center,
                   style: AppTextStyle.errorTextStyle.copyWith(
-                      fontSize: MediaQuery.of(context).textScaler.scale(50),
+                      fontSize:  context.mounted ? MediaQuery.of(context).textScaler.scale(50) : 50,
                       color: AppColors.borderBlue),
                 ),
                 TextButton.icon(
@@ -44,7 +45,7 @@ class DefaultErrorPage extends StatelessWidget {
                           {WidgetState.any: Colors.white})),
                   onPressed: () async {
                     if(route != null){
-                      Navigator.of(context).pushReplacementNamed(route!);
+                      Navigator.of(context).pushReplacementNamed(route ?? AppRoutes.login);
                     }else{
                       await appController.checkNetwork();
                       WidgetsBinding.instance.addPostFrameCallback((_){

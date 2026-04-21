@@ -1,4 +1,5 @@
 
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/domain/usecases/logout_use_case.dart';
@@ -26,7 +27,7 @@ class AppBarNavigatorWidget extends StatelessWidget {
                 ElevatedButton.icon(
                     onPressed: () {
                       getIt<LogoutUseCase>().call();
-                      Navigator.of(context).pushReplacementNamed("login");
+                      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
                     }, label: const Tooltip(message: "Sair", child:  Icon(Icons.exit_to_app)),)
               ],
               bottom: TabBar(
@@ -37,11 +38,11 @@ class AppBarNavigatorWidget extends StatelessWidget {
                   tabs: childrens
                       .map((el) =>
                       ConstrainedBox(constraints: const BoxConstraints(maxHeight: 60, minHeight: 30, minWidth: 40,  maxWidth: 200), child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: MediaQuery.of(context).size.width > 500 ? Tab(
+                        width: context.mounted ? MediaQuery.of(context).size.width : 400,
+                        child: (context.mounted ? MediaQuery.of(context).size.width > 500 : false) ? Tab(
                               icon:el.icon,
                               height: 50,
-                              text: MediaQuery.of(context).size.width > 500 ? el.name : null,
+                              text: (context.mounted ? MediaQuery.of(context).size.width > 500 : false) ? el.name : null,
                             ) :
                       Tooltip(
                             constraints: BoxConstraints.expand(height: 50),
