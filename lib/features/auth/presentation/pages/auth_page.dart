@@ -1,4 +1,5 @@
 import 'package:drahkma/core/domain/usecases/use_cases.dart';
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/auth/presentation/controllers/auth_controller.dart';
@@ -46,7 +47,7 @@ class _AuthPageState extends State<AuthPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           Navigator.of(context)
-              .pushReplacementNamed('dashboard');
+              .pushReplacementNamed(AppRoutes.dashboard);
         }
       });
     } else if (state is NoNetworkState && _lastProcessedStateType is! NoNetworkState) {
@@ -98,7 +99,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
                   child: ValueListenableBuilder<AppState>(
@@ -111,9 +112,10 @@ class _AuthPageState extends State<AuthPage> {
                       {
 
                         Future.microtask(() async {
-                          String? value = await widget.useCases.call() as String?;
+                          var value = await widget.useCases.call();
+                          value = value ?? "";
                           if(mounted && _login.text.isEmpty){
-                              _login.text = value ?? "";
+                              _login.text = value;
                           }
                         });
 
