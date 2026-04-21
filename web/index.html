@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <script>
+    (function () {
+      var originalPushState = history.pushState;
+      history.pushState = function () {
+        // Se algum script externo tentar disparar eventos em frames nulos, 
+        // nós protegemos a execução aqui.
+        try {
+          return originalPushState.apply(this, arguments);
+        } catch (e) {
+          console.warn("Drahkma: Prevenção de erro no pushState mobile capturada.");
+          return;
+        }
+      };
+    })();
+  </script>
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -19,7 +35,8 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Drahkma é um aplicação que foi criada com o intuito de auxiliar as pessoas no controle financeiro pessoal.">
+  <meta name="description"
+    content="Drahkma é um aplicação que foi criada com o intuito de auxiliar as pessoas no controle financeiro pessoal.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -28,12 +45,14 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.webp"/>
+  <link rel="icon" type="image/png" href="favicon.webp" />
 
   <title>Drahkma - Controle financeiro</title>
   <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
-  <script defer src="flutter_bootstrap.js"></script>
+  <script defer src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>
