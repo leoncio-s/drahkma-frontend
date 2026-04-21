@@ -10,7 +10,7 @@ VoidCallback alertDialog<T>(
     builder: (context)=>
     AlertDialog(
         scrollable: true,
-        title: Text(title ?? "", style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.red),),
+        title: Text(title ?? "", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red),),
         actions: [
           ElevatedButton(onPressed: (){Navigator.of(context).pop([true]);}, child: Text("Ok"))
           ],
