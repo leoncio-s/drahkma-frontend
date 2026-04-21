@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
-// import 'package:web/web.dart' as html;
 
 class Config{
   static String _urlApi = '${kDebugMode ? 'http://localhost:8081' :  kIsWeb ? Uri.base.origin : 'https://drahkma.leoncio.dev'}/api/v1/';
