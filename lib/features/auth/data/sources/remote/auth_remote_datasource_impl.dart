@@ -87,7 +87,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   @override
   Future<bool> checkSession(User data) async {
 
-
     UserModel nData = data as UserModel;
 
     try{
