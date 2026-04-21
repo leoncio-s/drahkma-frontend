@@ -22,6 +22,7 @@ class TextFormFieldWidget extends StatelessWidget{
   final ValueChanged<String>? onFieldSubmited;
   final Widget? prefixIcon;
   final Color? prefixIconColor;
+  final Iterable<String>? autofillHints;
 
   const TextFormFieldWidget(
     {super.key,
@@ -42,7 +43,8 @@ class TextFormFieldWidget extends StatelessWidget{
     this.onFieldSubmited,
     this.textInputAction,
     this.prefixIcon,
-    this.prefixIconColor
+    this.prefixIconColor,
+    this.autofillHints
     });
   
   @override
@@ -54,6 +56,7 @@ class TextFormFieldWidget extends StatelessWidget{
       keyboardType: keyboardType,
       obscureText: obscureText,
       obscuringCharacter: obscuringCharacter,
+      autofillHints: autofillHints,
       autofocus: autofocus,
       inputFormatters: inputFormatters,
       validator: validator,
