@@ -20,7 +20,7 @@ class AppNotifier with ChangeNotifier{
                                           primary: AppColors.gold,
                                           onPrimary: Colors.white,
                                           onSurface: AppColors.gold,)),
-                                  child: child!);
+                                  child: child ?? const SizedBox());
                             },
               initialDateRange: _dateTimeRange,
               firstDate: DateTime(1900),
