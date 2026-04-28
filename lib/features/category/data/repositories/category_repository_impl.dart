@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
 import 'package:drahkma/features/category/data/mappers/category_mapper.dart';
-import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
+import 'package:drahkma/features/category/data/sources/remote/category_remote_datasource.dart';
 import 'package:drahkma/features/category/data/sources/local/category_local_datasource.dart';
 import 'package:drahkma/features/category/domain/entities/category.dart';
 import 'package:drahkma/features/category/domain/repositories/category_repository.dart';

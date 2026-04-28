@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/card/data/models/card_dto.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
-import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
+import 'package:drahkma/features/card/data/sources/remote/card_remote_datasource.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class CardRemoteDatasourceImpl implements CardRemoteDatasource {
-  static final Uri _url = Uri.parse("${Config.urlApi}cards/");
+  static final Uri _url = Uri.parse("${Config.urlApi}cards");
 
   @override
   Future<List<CardModel>?> getAll() async {
@@ -62,20 +63,21 @@ class CardRemoteDatasourceImpl implements CardRemoteDatasource {
   Future<void> delete(CardModel data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
+    var url = joinUrl(_url, '${data.id}');
     var response = await http.delete(
-      _url.resolve("${data.id}"),
+      url,
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
     if (response.statusCode == 404) {
-      throw http.ClientException("Página ou cartão não encontrado", _url);
+      throw http.ClientException("Página ou cartão não encontrado", url);
     } else if (response.statusCode > 499) {
       throw HttpException("Erro interno no servidor");
     } else if (response.statusCode == 400) {
       var json = response.body.isNotEmpty ? jsonDecode(response.body) : {};
-      throw http.ClientException(json['errors'], _url);
+      throw http.ClientException(json['errors'], url);
     } else {
-      throw http.ClientException("Ocorreu um problema para realizar sua solicitação. Tente novamente mais tarde!", _url);
+      throw http.ClientException("Ocorreu um problema para realizar sua solicitação. Tente novamente mais tarde!", url);
     }
   }
 
@@ -102,13 +104,14 @@ class CardRemoteDatasourceImpl implements CardRemoteDatasource {
   Future<CardModel?> getBy({int? id}) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var response = await http.get(_url.resolve("/$id"), headers: {
+    var url = joinUrl(_url, "$id");
+    var response = await http.get(url, headers: {
       'Authorization': " Bearer ${userModel?.token ?? ''}",
       'Content-type': 'application/json'
     });
 
     if (response.statusCode == 404) {
-      throw http.ClientException("Página ou cartão não encontrado", _url);
+      throw http.ClientException("Página ou cartão não encontrado", url);
     } else if (response.statusCode > 499 || response.statusCode != 200) {
       throw HttpException("Erro interno no servidor");
     } else {

@@ -1,7 +1,7 @@
 import 'package:drahkma/features/item/data/models/item_dto.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/data/mappers/item_mapper.dart';
-import 'package:drahkma/features/item/data/sources/item_remote_datasource.dart';
+import 'package:drahkma/features/item/data/sources/remote/item_remote_datasource.dart';
 import 'package:drahkma/features/item/data/sources/local/item_local_datasource.dart';
 import 'package:drahkma/features/item/domain/entities/item.dart';
 import 'package:drahkma/features/item/domain/repositories/item_repository.dart';

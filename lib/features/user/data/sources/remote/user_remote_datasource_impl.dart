@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/error/update_password_exception.dart';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
-import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
+import 'package:drahkma/features/user/data/sources/remote/user_remote_datasource.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
@@ -126,9 +127,9 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
       'new_password': newPassword,
       'conf_new_password': confirmNewPassword
     };
-
+    var url = joinUrl(_url, 'password');
     var request = await http.put(
-        _url.resolve('/password'), 
+        url,
         body: jsonEncode(data), 
         headers: {
           'Content-type': 'application/json', 

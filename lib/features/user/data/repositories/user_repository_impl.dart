@@ -1,4 +1,4 @@
-import 'package:drahkma/features/user/data/sources/user_remote_datasource.dart';
+import 'package:drahkma/features/user/data/sources/remote/user_remote_datasource.dart';
 import 'package:drahkma/features/user/data/sources/local/user_local_datasource.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:drahkma/features/user/domain/repositories/user_repository.dart';

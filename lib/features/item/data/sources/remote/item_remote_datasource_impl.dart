@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/item/data/models/item_dto.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
-import 'package:drahkma/features/item/data/sources/item_remote_datasource.dart';
+import 'package:drahkma/features/item/data/sources/remote/item_remote_datasource.dart';
 import 'package:drahkma/features/item/domain/entities/item.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
@@ -15,7 +16,7 @@ import 'package:http/http.dart' as http;
 
 class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
 {
-  static final Uri _url = Uri.parse("${Config.urlApi}item/");
+  static final Uri _url = Uri.parse("${Config.urlApi}item");
 
   @override
   Future<List<ItemModel>?> getIncome(DateTime start, DateTime end) async {
@@ -24,8 +25,9 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     if (user == null) throw UnauthenticatedException();
 
     DateFormat dateFormat = DateFormat("yyyyMMdd");
+    var url = joinUrl(_url, 'inflow');
     Response response = await http.get(
-      _url.resolve("inflow").replace(queryParameters: {
+      url.replace(queryParameters: {
         'start_date': dateFormat.format(start),
         'finish_date': dateFormat.format(end)
       }),
@@ -54,8 +56,9 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
     DateFormat dateFormat = DateFormat("yyyyMMdd");
+    var url = joinUrl(_url, 'outflow');
     Response response = await http.get(
-        _url.resolve("outflow").replace(queryParameters: {
+        url.replace(queryParameters: {
           'start_date': dateFormat.format(start),
           'finish_date': dateFormat.format(end)
         }),
@@ -82,7 +85,8 @@ class ItemRemoteDatasourceImpl implements ItemRemoteDatasource
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
     if (user == null) throw UnauthenticatedException();
-    Response response = await http.delete(_url.resolve("${item.id}"),
+    var url = joinUrl(_url, item.id.toString());
+    Response response = await http.delete(url,
         headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"});
 
     if (response.statusCode == 200) {
