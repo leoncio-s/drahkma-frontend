@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:drahkma/features/card/data/mappers/card_mapper.dart';
-import 'package:drahkma/features/card/data/sources/card_remote_datasource.dart';
+import 'package:drahkma/features/card/data/sources/remote/card_remote_datasource.dart';
 import 'package:drahkma/features/card/data/sources/local/card_local_datasource.dart';
 import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/domain/repositories/card_repository.dart';

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_model.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
-import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
+import 'package:drahkma/features/bank_account/data/sources/remote/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
@@ -61,8 +62,9 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
   Future delete(BankAccount data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
+    var url = joinUrl(_url, "${data.id}");
     var response = await http.delete(
-      _url.replace(path:"${_url.path}/${data.id}"),
+      url,
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 

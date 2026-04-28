@@ -1,4 +1,4 @@
-import 'package:drahkma/features/bank_account/data/sources/bank_account_remote_datasource.dart';
+import 'package:drahkma/features/bank_account/data/sources/remote/bank_account_remote_datasource.dart';
 import 'package:drahkma/features/bank_account/data/sources/local/bank_account_local_datasource.dart';
 import 'package:drahkma/features/bank_account/domain/entities/bank.dart';
 import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';

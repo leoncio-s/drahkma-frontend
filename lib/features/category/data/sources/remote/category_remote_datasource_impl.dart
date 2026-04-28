@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/error/unauthenticated_exception.dart';
+import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
 import 'package:drahkma/features/category/data/models/category_dto.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
-import 'package:drahkma/features/category/data/sources/category_remote_datasource.dart';
+import 'package:drahkma/features/category/data/sources/remote/category_remote_datasource.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
 {
-  static String defaultUrl = "${Config.urlApi}categories/";
+  static String defaultUrl = "${Config.urlApi}categories";
   static final Uri _url = Uri.parse(defaultUrl);
 
   @override
@@ -41,8 +42,9 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   Future<List<CategoryModel>> getAllByUser() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
+    var url = joinUrl(_url, 'all');
     var request = await http.get(
-      _url.replace(path: "${_url.path}all"),
+      url,
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
@@ -109,7 +111,7 @@ class CategoryRemoteDatasourceImpl implements CategoryRemoteDatasource
   Future delete(CategoryModel data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var url = _url.resolve("${data.id}");
+    var url = joinUrl(_url, '${data.id}');
     var request = await http.delete(
       url,
       headers: {
