@@ -1,48 +1,24 @@
-import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/domain/enums/card_flag_enum.dart';
 import 'package:drahkma/features/card/domain/enums/card_type_enum.dart';
 
-class CardModel extends Card {
-    // @override
-    // final int? id;
-    // @override
-    // final CardTypeEnum? type;
-    // final String? brand;
-    // @override
-    // final CardFlagEnum? flag;
-    // @override
-    // final DateTime? expiresAt;
-    // @override
-    // final String? last4Digits;
-    // @override
-    // final int? invoiceDay;
+class CardModel {
+    final int? id;
+    final CardTypeEnum? type;
+    final String? brand;
+    final CardFlagEnum? flag;
+    final DateTime? expiresAt;
+    final String? last4Digits;
+    final int? invoiceDay;
 
     CardModel({ 
-      super.id,
-      super.type,
-      super.brand,
-      super.expiresAt,
-      super.flag,
-      super.invoiceDay,
-      super.last4Digits
+      this.id, 
+      this.type,
+      this.brand,
+      this.expiresAt,
+      this.flag,
+      this.invoiceDay,
+      this.last4Digits
     });
-    // : 
-    //   // id = id,
-    //   // type = type,
-    //   // brand = brand,
-    //   // expiresAt = expiresAt,
-    //   // flag = flag,
-    //   // invoiceDay = invoiceDay,
-    //   // last4Digits = last4Digits,
-    //   super(
-    //     id: id,
-    //     type: type,
-    //     brand: brand,
-    //     expiresAt: expiresAt,
-    //     flag: flag,
-    //     invoiceDay: invoiceDay,
-    //     last4Digits: last4Digits
-    //   );
 
     DateTime get nextInvoiceDate{
       DateTime date = DateTime(DateTime.now().year, DateTime.now().month, int.parse(invoiceDay.toString()));

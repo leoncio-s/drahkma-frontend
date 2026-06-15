@@ -1,3 +1,4 @@
+import 'package:drahkma/features/card/data/mappers/card_mapper.dart';
 import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/category/data/mappers/category_mapper.dart';
 import 'package:drahkma/features/category/data/models/category_model.dart';
@@ -70,7 +71,7 @@ class ItemModel {
           value: value,
           date: date,
           category: CategoryMapper.toEntity(category!),
-          card: card,
+          card: CardMapper.toEntity(card!),
           transferBank: transferBank as TransferBank);
     }
 }

@@ -1,10 +1,11 @@
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
-import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
+import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
-import 'package:drahkma/features/bank_account/utils/bank_account_sort.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
+import 'package:drahkma/features/bank_account/presentation/widgets/bank_account_card.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
 
@@ -42,6 +43,7 @@ class BankAccountsViewState extends State<BankAccountView> {
           _message = state.message ??
               "Erro ao processar solicitação. Tente novamente!";
         });
+        _replayData();
       } else if (state is BankAccountLoading) {
         setState(() {
           _message = null;
@@ -68,143 +70,141 @@ class BankAccountsViewState extends State<BankAccountView> {
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(10.0),
-        child: Center(
-            child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Flex(
-            direction: Axis.vertical,
+        child: LayoutBuilder(
+          builder: (context, _) => Column(
+            // direction: MediaQuery.of(context).size.width <= 300
+            //     ? Axis.vertical
+            //     : Axis.horizontal,
             children: [
-              const SizedBox(
-                height: 30,
+              const SizedBox(height: 10.0),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  Flexible(
+                      flex: 1,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Minhas Contas",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
+                                textScaler: TextScaler.linear(1.2),
+                                textAlign: TextAlign.left,
+                              ),
+                              const Text(
+                                "Gerência suas contas bancárias para um melhor controle financeiro",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0),
+                                textScaler: TextScaler.linear(1.2),
+                              ),
+                            ],
+                          ),
+                          ElevatedButton.icon(
+                            icon: Icon(Icons.add),
+                            onPressed: () async {
+                              BankAccountModel? data =
+                                  await Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                          builder: (context) => BankAccountForm(
+                                                bankAccountController: widget
+                                                    .bankAccountController,
+                                              )));
+                              if (data != null) {
+                                _loadData();
+                              }
+                            },
+                            style: ButtonStyle(
+                                minimumSize:
+                                    WidgetStatePropertyAll(Size(150, 60)),
+                                maximumSize:
+                                    WidgetStatePropertyAll(Size(350, 120)),
+                                iconAlignment: IconAlignment.start,
+                                backgroundColor: WidgetStateProperty.fromMap({
+                                  WidgetState.hovered:
+                                      AppColors.gold.withAlpha(200),
+                                  WidgetState.any: AppColors.gold
+                                }),
+                                foregroundColor:
+                                    WidgetStatePropertyAll(Colors.white),
+                                shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(
+                                                10.0)))),
+                            label: const Text("Adicionar Nova Conta"),
+                          )
+                        ],
+                      )),
+                  const SizedBox(width: 20.0),
+                ],
               ),
-              MediaQuery.of(context).size.width < 500
-                  ? Text(
-                      "Contas bancárias",
-                      style: const TextStyle(
-                        fontSize: 20.0,
-                      ),
-                      textAlign: TextAlign.center,
-                      textScaler: TextScaler.linear(principalCardScaller(
-                          MediaQuery.of(context).size.width)),
-                    )
-                  : const SizedBox(),
-              bankAccounts != null && bankAccounts!.isNotEmpty
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Tooltip(
-                          message: "Ordem Crescente",
-                          child: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  bankAccounts!.sort(BankAccountSort.asc);
-                                });
-                              },
-                              icon: const Icon(Icons.arrow_upward)),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Tooltip(
-                          message: "Ordem Decrescente",
-                          child: IconButton(
-                              onPressed: () {
-                                bankAccounts != null
-                                    ? setState(() {
-                                        bankAccounts!
-                                            .sort(BankAccountSort.desc);
-                                      })
-                                    : null;
-                              },
-                              icon: const Icon(Icons.arrow_downward)),
-                        ),
-                      ],
-                    )
-                  : const SizedBox(),
-              const SizedBox(
-                height: 30,
-              ),
-              listTileCategory()
+              Flex(
+                direction: MediaQuery.of(context).size.width < 400
+                    ? Axis.vertical
+                    : Axis.horizontal,
+                children: bankAccounts != null
+                    ? bankAccounts!
+                        .map((el) => BankAccountCard(bankAccount: el, onDelete: ()async=> _onDelete(el), onEdit: ()async => _onEdit(el),))
+                        .toList()
+                    : [],
+              )
             ],
           ),
-        )),
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            BankAccountModel? data = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => BankAccountForm(bankAccountController: widget.bankAccountController,)));
-            if (data != null) {
-              _loadData();
-            }
-          },
-          label: const Text("Adicionar Banco")),
     );
   }
 
-  Widget listTileCategory() {
-    return bankAccounts != null
-        ? Column(
-            children: ListTile.divideTiles(
-                    context: context,
-                    tiles: bankAccounts!
-                        .map((el) => ListTile(
-                              title: Text(el.bankName.toString()),
-                              subtitle: Text(
-                                  "Agencia: ${el.agency}  Conta: ${el.accountNumber}"),
-                              contentPadding: const EdgeInsets.all(5),
-                              titleAlignment: ListTileTitleAlignment.center,
-                              onTap: () async {
-                                BankAccountModel? data = await Navigator.of(
-                                        context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            BankAccountForm(bankAccounts: el, bankAccountController: widget.bankAccountController,)));
-                                if (data != null) {
-                                  _loadData();
-                                }
-                              },
-                              trailing: IconButton(
-                                  splashRadius: 20.0,
-                                  hoverColor: Colors.white,
-                                  onPressed: () async {
-                                    await widget.bankAccountController
-                                        .deleteBankAccount(
-                                            BankAccountMapper.fromEntityToDTO(el));
-                                    if (_message != null) {
-                                      if (mounted) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                                _snackBarError(_message!));
-                                      }
-                                      return;
-                                    }
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(_snackBarError(
-                                              "Item excluido com sucesso"));
-                                    }
-                                    return;
-                                  },
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                  )),
-                            ))
-                        .toList())
-                .toList())
-        : _message == null
-            ? SizedBox.fromSize(
-                size: const Size(50, 50),
-                child: const CircularProgressIndicator())
-            : Center(
-                child: _replayData(),
-              );
+  Future<void> _onEdit(BankAccountModel banckAccount) async
+  {
+      BankAccountModel? data = await Navigator.of(
+          context)
+      .push(MaterialPageRoute(
+          builder: (context) => BankAccountForm(
+                bankAccounts: banckAccount,
+                bankAccountController:
+                    widget.bankAccountController,
+              )));
+      if (data != null) {
+        _loadData();
+      }
+  }
+
+  Future<void>  _onDelete(BankAccountModel bankAccount)async
+  {
+      await widget.bankAccountController
+          .deleteBankAccount(
+              BankAccountMapper.fromEntityToDTO(bankAccount));
+      if (_message != null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(
+                  _snackBarError(_message!));
+        }
+        return;
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(_snackBarError(
+                "Item excluido com sucesso"));
+      }
+      return;                          
   }
 
   SnackBar _snackBarError(String message) {
     return SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red,
+      content: Text(message, style: TextStyle(color: Colors.white),),
+      backgroundColor: AppColors.redError,
       closeIconColor: Colors.white,
       showCloseIcon: true,
     );

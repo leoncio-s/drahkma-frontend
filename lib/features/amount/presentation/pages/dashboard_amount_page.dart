@@ -60,9 +60,11 @@ class _CardsState extends State<_Cards> {
 
   void _onTimerListener() async{
       await widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
-      setState(() {
-        data = widget.amountController.data!;
-      });
+      if(mounted){
+        setState(() {
+          data = widget.amountController.data!;
+        });
+      }
   }
 
   @override
