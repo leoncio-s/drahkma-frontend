@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:drahkma/core/error/invalid_credentials_exception.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_dto.dart';
@@ -42,6 +43,8 @@ class BankAccountController extends ValueNotifier<AppState> {
     try {
       data = await _getAll.call();
       value = BankAccountLoaded();
+    } on InvalidCredentialsException{
+      value = Unauthenticated();
     } catch (e) {
       value = AppStateError(message: e.toString());
     }
@@ -52,6 +55,8 @@ class BankAccountController extends ValueNotifier<AppState> {
       data = await _save.call(dto: account);
       await loadBankAccounts();
       value = BankAccountSaved();
+    }  on InvalidCredentialsException{
+      value = Unauthenticated();
     } catch (e) {
       value = AppStateError(message: e.toString());
     }
@@ -62,6 +67,8 @@ class BankAccountController extends ValueNotifier<AppState> {
       await _update.call(dto: account);
       await loadBankAccounts();
       value = BankAccountSaved();
+    }  on InvalidCredentialsException{
+      value = Unauthenticated();
     } catch (e) {
       value = AppStateError(message: e.toString());
     }
@@ -73,7 +80,9 @@ class BankAccountController extends ValueNotifier<AppState> {
       await loadBankAccounts();
     } on ClientException catch (e) {
       value = AppStateError(message: e.message);
-    }catch(e, s)
+    } on InvalidCredentialsException{
+      value = Unauthenticated();
+    } catch(e, s)
     {
       log(e.toString(), stackTrace: s, name: "Delete Bank Account", error: accountId);
     }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/error/invalid_credentials_exception.dart';
 import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
@@ -31,6 +32,9 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
       for (var el in data) {
         toRet.add(BankAccountModel.fromJson(el));
       }
+    }else if(request.statusCode == 401)
+    {
+      throw InvalidCredentialsException("Usuário não autenticado");
     }
     
     return toRet;
@@ -52,6 +56,9 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
 
     if (response.statusCode == 201) {
       return BankAccountMapper.toEntity(BankAccountModel.fromJson(jsonDecode(response.body)));
+    }else if(response.statusCode == 401)
+    {
+      throw InvalidCredentialsException("Usuário não autenticado");
     } else {
       var toRet = jsonDecode(response.body);
       return toRet;
@@ -71,6 +78,9 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     if (response.statusCode != 200) {
       var json = jsonDecode(response.body);
       throw http.ClientException(json['error']);
+    }else if(response.statusCode == 401)
+    {
+      throw InvalidCredentialsException("Usuário não autenticado");
     } else {
       return true;
     }
@@ -89,7 +99,10 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
       'Content-type': 'application/json'
     });
 
-    if (response.statusCode != 200) {
+    if(response.statusCode == 401)
+    {
+      throw InvalidCredentialsException("Usuário não autenticado");
+    } else if (response.statusCode != 200) {
       var toRet = jsonDecode(response.body);
       throw http.ClientException(toRet['error']);
     } else {
