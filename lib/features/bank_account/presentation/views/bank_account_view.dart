@@ -1,10 +1,11 @@
+import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/bank_account/data/mappers/bank_account_mapper.dart';
 import 'package:drahkma/features/bank_account/data/models/bank_account_model.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
-import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/bank_account/presentation/controllers/bank_account_controller.dart';
+import 'package:drahkma/features/bank_account/presentation/widgets/amount_bank_accounts_card.dart';
 import 'package:drahkma/features/bank_account/presentation/widgets/bank_account_card.dart';
 import 'package:flutter/material.dart';
 import 'package:drahkma/features/bank_account/presentation/forms/bank_account_form.dart';
@@ -48,6 +49,12 @@ class BankAccountsViewState extends State<BankAccountView> {
         setState(() {
           _message = null;
         });
+      } else if (state is Unauthenticated){
+        if(mounted){
+          WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_){
+            Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+          });
+        }
       }
     }
   }
@@ -72,9 +79,6 @@ class BankAccountsViewState extends State<BankAccountView> {
         padding: const EdgeInsets.all(10.0),
         child: LayoutBuilder(
           builder: (context, _) => Column(
-            // direction: MediaQuery.of(context).size.width <= 300
-            //     ? Axis.vertical
-            //     : Axis.horizontal,
             children: [
               const SizedBox(height: 10.0),
               Flex(
@@ -145,9 +149,10 @@ class BankAccountsViewState extends State<BankAccountView> {
                           )
                         ],
                       )),
-                  const SizedBox(width: 20.0),
                 ],
               ),
+              SizedBox(height: 30,),
+              AmountBankAccountsCard(),
               Flex(
                 direction: MediaQuery.of(context).size.width < 400
                     ? Axis.vertical
