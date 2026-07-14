@@ -49,9 +49,9 @@ class BankAccountsViewState extends State<BankAccountView> {
         setState(() {
           _message = null;
         });
-      } else if (state is Unauthenticated){
-        if(mounted){
-          WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_){
+      } else if (state is Unauthenticated) {
+        if (mounted) {
+          WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) {
             Navigator.of(context).pushReplacementNamed(AppRoutes.login);
           });
         }
@@ -75,24 +75,37 @@ class BankAccountsViewState extends State<BankAccountView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: MediaQuery.of(context).size.width <= 710 ? 
+              FloatingActionButton
+              (
+                  onPressed: _addNewAccount, 
+                  // label: const Text("Adicionar Nova Conta"), 
+                  backgroundColor: AppColors.gold, 
+                  mouseCursor: WidgetStateMouseCursor.clickable,
+                  heroTag: "add_new_bank_account",
+                  tooltip: "Adicionar Nova Conta",
+                  child: Icon(Icons.add),
+                  ) 
+              : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(10.0),
         child: LayoutBuilder(
           builder: (context, _) => Column(
             children: [
               const SizedBox(height: 10.0),
-              Flex(
-                direction: Axis.horizontal,
-                children: [
-                  Flexible(
-                      flex: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ConstrainedBox(
+                constraints: BoxConstraints(minWidth: double.infinity, minHeight: 50),
+                // direction: Axis.horizontal,
+                child: Wrap(
+                        spacing: 5.0,
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          Wrap(
+                            // mainAxisSize: MainAxisSize.max,
+                            direction: Axis.vertical,
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            alignment: WrapAlignment.start,
                             children: [
                               const Text(
                                 "Minhas Contas",
@@ -113,20 +126,9 @@ class BankAccountsViewState extends State<BankAccountView> {
                               ),
                             ],
                           ),
-                          ElevatedButton.icon(
+                          MediaQuery.of(context).size.width > 710 ? ElevatedButton.icon(
                             icon: Icon(Icons.add),
-                            onPressed: () async {
-                              BankAccountModel? data =
-                                  await Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                          builder: (context) => BankAccountForm(
-                                                bankAccountController: widget
-                                                    .bankAccountController,
-                                              )));
-                              if (data != null) {
-                                _loadData();
-                              }
-                            },
+                            onPressed: _addNewAccount,
                             style: ButtonStyle(
                                 minimumSize:
                                     WidgetStatePropertyAll(Size(150, 60)),
@@ -144,24 +146,33 @@ class BankAccountsViewState extends State<BankAccountView> {
                                     RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadiusGeometry.circular(
-                                                10.0)))),
+                                                10.0))),
+                                mouseCursor: WidgetStateMouseCursor.clickable),
                             label: const Text("Adicionar Nova Conta"),
-                          )
+                          ) : SizedBox()
                         ],
-                      )),
-                ],
+                      ),
               ),
-              SizedBox(height: 30,),
+              SizedBox(
+                height: 30,
+              ),
               AmountBankAccountsCard(),
-              Flex(
-                direction: MediaQuery.of(context).size.width < 400
-                    ? Axis.vertical
-                    : Axis.horizontal,
-                children: bankAccounts != null
-                    ? bankAccounts!
-                        .map((el) => BankAccountCard(bankAccount: el, onDelete: ()async=> _onDelete(el), onEdit: ()async => _onEdit(el),))
-                        .toList()
-                    : [],
+              ConstrainedBox(
+                constraints: BoxConstraints(minHeight: 200, minWidth: double.infinity),
+                child: Wrap(
+                    alignment: MediaQuery.of(context).size.width < 500 ? WrapAlignment.center : WrapAlignment.start,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: bankAccounts != null
+                        ? bankAccounts!
+                            .map((el) => BankAccountCard(
+                                  bankAccount: el,
+                                  onDelete: () async => _onDelete(el),
+                                  onEdit: () async => _onEdit(el),
+                                ))
+                            .toList()
+                        : [],
+                  )
+                ,
               )
             ],
           ),
@@ -170,45 +181,53 @@ class BankAccountsViewState extends State<BankAccountView> {
     );
   }
 
-  Future<void> _onEdit(BankAccountModel banckAccount) async
+  Future<void> _onEdit(BankAccountModel banckAccount) async {
+    BankAccountModel? data = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => BankAccountForm(
+              bankAccounts: banckAccount,
+              bankAccountController: widget.bankAccountController,
+            )));
+    if (data != null) {
+      _loadData();
+    }
+  }
+
+  Future<void> _addNewAccount() async 
   {
-      BankAccountModel? data = await Navigator.of(
-          context)
-      .push(MaterialPageRoute(
-          builder: (context) => BankAccountForm(
-                bankAccounts: banckAccount,
-                bankAccountController:
-                    widget.bankAccountController,
-              )));
+      BankAccountModel? data =
+          await Navigator.of(context)
+              .push(MaterialPageRoute(
+                  builder: (context) => BankAccountForm(
+                        bankAccountController: widget
+                            .bankAccountController,
+                      )));
       if (data != null) {
         _loadData();
       }
-  }
+    }
 
-  Future<void>  _onDelete(BankAccountModel bankAccount)async
-  {
-      await widget.bankAccountController
-          .deleteBankAccount(
-              BankAccountMapper.fromEntityToDTO(bankAccount));
-      if (_message != null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(
-                  _snackBarError(_message!));
-        }
-        return;
-      }
+  Future<void> _onDelete(BankAccountModel bankAccount) async {
+    await widget.bankAccountController
+        .deleteBankAccount(BankAccountMapper.fromEntityToDTO(bankAccount));
+    if (_message != null) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(_snackBarError(
-                "Item excluido com sucesso"));
+        ScaffoldMessenger.of(context).showSnackBar(_snackBarError(_message!));
       }
-      return;                          
+      return;
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBarError("Item excluido com sucesso"));
+    }
+    return;
   }
 
   SnackBar _snackBarError(String message) {
     return SnackBar(
-      content: Text(message, style: TextStyle(color: Colors.white),),
+      content: Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      ),
       backgroundColor: AppColors.redError,
       closeIconColor: Colors.white,
       showCloseIcon: true,

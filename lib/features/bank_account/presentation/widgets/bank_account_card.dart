@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BankAccountCard extends StatelessWidget {
   final Function()? onEdit;
@@ -55,7 +56,8 @@ class BankAccountCard extends StatelessWidget {
                                     iconColor: WidgetStateColor.fromMap({
                                       WidgetState.hovered: AppColors.lightGold,
                                       WidgetState.any: AppColors.gold,
-                                    })),
+                                    }),
+                                    mouseCursor: WidgetStateMouseCursor.clickable),
                                 onPressed: onEdit,
                                 icon: Icon(Icons.edit),
                                 padding: EdgeInsets.zero,
@@ -70,7 +72,8 @@ class BankAccountCard extends StatelessWidget {
                                       WidgetState.hovered: const Color.fromARGB(
                                           255, 255, 172, 194),
                                       WidgetState.any: AppColors.redError,
-                                    })),
+                                    }),
+                                    mouseCursor: WidgetStateMouseCursor.clickable),
                                 onPressed: onDelete,
                                 icon: Icon(Icons.delete),
                                 padding: EdgeInsets.zero,
@@ -82,6 +85,7 @@ class BankAccountCard extends StatelessWidget {
                   ),
                   // Flexible(child: SizedBox(height: 10)),
                   Flexible(
+                    flex: 2,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -103,13 +107,15 @@ class BankAccountCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Flexible(child: Divider(color: AppColors.gold.withAlpha(50),),),
+                  Flexible(
+                    flex: 3,
+                    child: Divider(color: AppColors.gold.withAlpha(50),),),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Saldo do período:"),
-                      Text("R\$ ", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.gold,), textScaler: TextScaler.linear(1.5),)
+                      Text(NumberFormat.currency(locale: 'pt-br', symbol: 'R\$', decimalDigits: 2).format(0.00), style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.gold,), textScaler: TextScaler.linear(1.5),)
                     ],
                   )
                 ],
