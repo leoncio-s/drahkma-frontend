@@ -85,6 +85,7 @@ import 'package:drahkma/features/user/presentation/controllers/user_controller.d
 import 'package:drahkma/features/user/presentation/controllers/create_user_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -92,6 +93,7 @@ final GetIt getIt = GetIt.instance;
 void initializeDependencies()
 {
   getIt.registerFactory<SharedPreferencesAsync>(()=>SharedPreferencesAsync());
+  getIt.registerFactory<http.Client>(()=>http.Client());
   
   ///// App
   getIt.registerSingleton<AppCheckNetworkDatasource>(kIsWeb ? AppWebCheckNetworkDatasourceImpl() : AppWindowsCheckNetworkDatasourceImpl());
@@ -128,7 +130,7 @@ void initializeDependencies()
   getIt.registerSingleton<AmountController>(AmountController(getIt()));
 
   //// BankAccounts
-  getIt.registerFactory<BankAccountRemoteDatasource>(()=>BankAccountRemoteDatasourceImpl());
+  getIt.registerFactory<BankAccountRemoteDatasource>(()=>BankAccountRemoteDatasourceImpl(getIt()));
   getIt.registerFactory<BankAccountLocalDatasource>(()=>BankAccountLocalDatasourceImpl(storage: getIt<SharedPreferencesAsync>()));
   getIt.registerFactory<BankAccountRepository>(()=>BankAccountRepositoryImpl(getIt<BankAccountRemoteDatasource>(), getIt<BankAccountLocalDatasource>()));
   getIt.registerFactory<BankAccountSave>(()=>BankAccountSave(getIt<BankAccountRepository>()));
