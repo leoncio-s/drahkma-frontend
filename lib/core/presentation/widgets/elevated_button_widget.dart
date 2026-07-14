@@ -1,3 +1,4 @@
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/core/presentation/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -32,42 +33,46 @@ class ElevatedButtonWidget extends StatelessWidget {
         height: height,
         child: ElevatedButton(
           style: ButtonStyle(
-            alignment: Alignment.center,
-            foregroundColor: WidgetStateColor.fromMap({
-              WidgetState.any : foregroundColor ?? Colors.white,
-              WidgetState.hovered: foregroundHoverColor ?? Colors.white
-            }),
-            backgroundColor: WidgetStateColor.fromMap({
-              WidgetState.hovered: hoverColor ?? AppColors.lightGold,
-              WidgetState.any: backgroundColor ?? AppColors.gold
-            }),
-            shape: WidgetStateProperty.fromMap({
-              WidgetState.any : RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.all(Radius.circular(12)))
-            }),
-            iconAlignment: IconAlignment.end,
-            iconColor: WidgetStateColor.fromMap({
-              WidgetState.any : Colors.white
-            }),
-            iconSize: WidgetStateProperty.fromMap({
-              WidgetState.any : 20
-            })
-          ),
+              alignment: Alignment.center,
+              foregroundColor: WidgetStateColor.fromMap({
+                WidgetState.any: foregroundColor ?? Colors.white,
+                WidgetState.hovered: foregroundHoverColor ?? Colors.white
+              }),
+              backgroundColor: WidgetStateColor.fromMap({
+                WidgetState.hovered: hoverColor ?? AppColors.lightGold,
+                WidgetState.any: backgroundColor ?? AppColors.gold
+              }),
+              shape: WidgetStateProperty.fromMap({
+                WidgetState.any: RoundedRectangleBorder(
+                    borderRadius: BorderRadiusGeometry.all(Radius.circular(12)))
+              }),
+              iconAlignment: IconAlignment.end,
+              iconColor:
+                  WidgetStateColor.fromMap({WidgetState.any: Colors.white}),
+              iconSize: WidgetStateProperty.fromMap({WidgetState.any: 20})),
           onPressed: readOnly ? null : onPressed,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-             Flexible(child:  Text(
-            title,
-            textScaler: TextScaler.linear(0.8),
-            overflow: TextOverflow.fade,
-            textAlign: TextAlign.center,
-            style: AppTextStyle.inputTextStyle.copyWith(
-              fontSize: 20,
-              fontWeight: FontWeight.w500
-            ),
-          )),
-          if(icon == null) SizedBox() else Flexible(child: Container(margin: EdgeInsets.fromLTRB(5, 4, 0, 0), child: icon,))
+              Flexible(
+                  child: Text(
+                title,
+                textScaler: responsiveTextScaler(context),
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+                style: AppTextStyle.inputTextStyle.copyWith(
+                    fontSize: responsiveFontSize(context, min: 16, max: 20),
+                    fontWeight: FontWeight.w500),
+              )),
+              if (icon == null)
+                SizedBox()
+              else
+                Flexible(
+                    child: Container(
+                  margin: EdgeInsets.fromLTRB(5, 4, 0, 0),
+                  child: icon,
+                ))
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
@@ -9,14 +10,14 @@ import 'package:drahkma/features/amount/presentation/pages/chart_page.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 
-class DashboardAmountPage extends DrahkmaStatefulWidget{
+class DashboardAmountPage extends DrahkmaStatefulWidget {
   final AmountController amountController;
-  const DashboardAmountPage(
-      {
-        required this.amountController,
-        super.key,
-        super.name = "Dashboard",
-        super.icon = const Icon(Icons.dashboard, size: 20),});
+  const DashboardAmountPage({
+    required this.amountController,
+    super.key,
+    super.name = "Dashboard",
+    super.icon = const Icon(Icons.dashboard, size: 20),
+  });
 
   @override
   State<DashboardAmountPage> createState() => _DashboardState();
@@ -36,35 +37,31 @@ class _DashboardState extends State<DashboardAmountPage> {
         body: _Cards(
       notifier: _notifier,
       amountController: widget.amountController,
-    )
-        );
+    ));
   }
 }
 
-
-class _Cards extends StatefulWidget
-{
+class _Cards extends StatefulWidget {
   final AppNotifier notifier;
   final AmountController amountController;
   const _Cards({required this.notifier, required this.amountController});
 
   @override
   State<_Cards> createState() => _CardsState();
-  
 }
-
 
 class _CardsState extends State<_Cards> {
   late DashboardModel data;
   late AppNotifier notifier;
 
-  void _onTimerListener() async{
-      await widget.amountController.loadAmounts(start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
-      if(mounted){
-        setState(() {
-          data = widget.amountController.data!;
-        });
-      }
+  void _onTimerListener() async {
+    await widget.amountController.loadAmounts(
+        start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
+    if (mounted) {
+      setState(() {
+        data = widget.amountController.data!;
+      });
+    }
   }
 
   @override
@@ -81,7 +78,6 @@ class _CardsState extends State<_Cards> {
     notifier.removeListener(_onTimerListener);
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,46 +102,39 @@ class _CardsState extends State<_Cards> {
                 builder: (c, w) {
                   return _balance(context, data.amount);
                 }),
-
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflow(context, data.inflow);
                 }),
-
-            
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceOutflow(context, data.outflow);
                 }),
-            
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflowCards(
                       context, data.totalAmountInflowCards);
                 }),
-            
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceOutflowCards(
                       context, data.totalAmountOutflowCards);
                 }),
-            
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
                   return _balanceInflowTransferBank(
                       context, data.totalAmountInflowTransferBank);
                 }),
-            
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
-                  return _balanceOutflowTransferBank(context,
-                      data.totalAmountOutflowTransferBank);
+                  return _balanceOutflowTransferBank(
+                      context, data.totalAmountOutflowTransferBank);
                 }),
             ListenableBuilder(
                 listenable: widget.amountController,
@@ -221,7 +210,9 @@ class _CardsState extends State<_Cards> {
                     width: 250,
                     child: Center(
                       child: Text(
-                          "Período: ${Config.dateFormat.format(notifier.dateTimeRange.start)} - ${Config.dateFormat.format(notifier.dateTimeRange.end)}", textAlign: TextAlign.center,),
+                        "Período: ${Config.dateFormat.format(notifier.dateTimeRange.start)} - ${Config.dateFormat.format(notifier.dateTimeRange.end)}",
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ));
                 }),
@@ -230,11 +221,18 @@ class _CardsState extends State<_Cards> {
               width: 250,
               child: Center(
                 child: TextButton.icon(
-                    icon: const Icon(Icons.calendar_month, color:AppColors.gold,),
+                    icon: const Icon(
+                      Icons.calendar_month,
+                      color: AppColors.gold,
+                    ),
                     onPressed: () async {
                       notifier.selectDateRange(context);
                     },
-                    label: const Text("Selecionar Período", textAlign: TextAlign.center, style: TextStyle(color: AppColors.gold),)),
+                    label: const Text(
+                      "Selecionar Período",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.gold),
+                    )),
               ),
             ))
           ],
@@ -276,11 +274,14 @@ class _CardsState extends State<_Cards> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
@@ -316,11 +317,14 @@ class _CardsState extends State<_Cards> {
                           style: TextStyle(
                               color: Colors.white,
                               fontFamily: "Roboto",
-                              fontSize:
-                                  MediaQuery.textScalerOf(context).scale(60.0),
+                              fontSize: responsiveFontSize(
+                                context,
+                                factor: 0.14,
+                                min: 34,
+                                max: 60,
+                              ),
                               fontWeight: FontWeight.w900),
-                          textScaler: MediaQuery.textScalerOf(context)
-                              .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                          textScaler: responsiveTextScaler(context),
                         ),
                       ])),
             )));
@@ -356,11 +360,14 @@ class _CardsState extends State<_Cards> {
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
@@ -397,11 +404,14 @@ class _CardsState extends State<_Cards> {
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
@@ -438,11 +448,14 @@ class _CardsState extends State<_Cards> {
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
@@ -479,11 +492,14 @@ class _CardsState extends State<_Cards> {
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
@@ -520,11 +536,14 @@ class _CardsState extends State<_Cards> {
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Roboto",
-                            fontSize:
-                                MediaQuery.textScalerOf(context).scale(60.0),
+                            fontSize: responsiveFontSize(
+                              context,
+                              factor: 0.14,
+                              min: 34,
+                              max: 60,
+                            ),
                             fontWeight: FontWeight.w900),
-                        textScaler: MediaQuery.textScalerOf(context)
-                            .clamp(minScaleFactor: 0.2, maxScaleFactor: 2.0),
+                        textScaler: responsiveTextScaler(context),
                       ),
                     ])),
           ),
