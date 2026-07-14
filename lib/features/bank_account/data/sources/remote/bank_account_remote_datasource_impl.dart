@@ -16,11 +16,14 @@ import 'package:http/http.dart' as http;
 class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
   static final Uri _url = Uri.parse("${Config.urlApi}banks");
 
+  final http.Client client;
+  BankAccountRemoteDatasourceImpl(this.client);
+
   @override
   Future<List<BankAccount>?> getAll() async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var request = await http.get(
+    var request = await client.get(
       _url,
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
@@ -45,7 +48,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     var dataDto = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var response = await http.post(
+    var response = await client.post(
       _url,
       body: jsonEncode(dataDto.toMap()),
       headers: {
@@ -70,7 +73,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
     var url = joinUrl(_url, "${data.id}");
-    var response = await http.delete(
+    var response = await client.delete(
       url,
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
@@ -91,7 +94,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     var dataDTO = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var response = await http.put(
+    var response = await client.put(
       _url, 
       body: jsonEncode(dataDTO.toMap()),
       headers: {
@@ -114,7 +117,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
   @override
   Future<List<BankModel>?> getBanks() async {
     http.Response response =
-        await http.get(Uri.parse("https://brasilapi.com.br/api/banks/v1"));
+        await client.get(Uri.parse("https://brasilapi.com.br/api/banks/v1"));
 
     if (response.statusCode == 200) {
       List json = jsonDecode(response.body);
