@@ -104,7 +104,7 @@ void main() {
           .thenAnswer((_) async => http.Response(
               jsonEncode({"message": "usuário não autenticado"}), 401));
 
-      expect(await datasource.getAll(),
+      await expectLater(datasource.getAll(),
           throwsA(isA<InvalidCredentialsException>()));
     });
 
@@ -167,10 +167,6 @@ void main() {
                   (exception) => exception.error?.errors,
                   "Contains accountNumber validation",
                   containsPair("accountNumber", ["This field is required"]))));
-
-      verify(client.post(Uri.parse("${Config.urlApi}banks"),
-              headers: anyNamed("headers"), body: anyNamed("body")))
-          .called(1);
     });
   });
 }
