@@ -152,3 +152,5 @@ windows/
 devtools_options.yaml
 analysis_options.yaml
 .flutter-plugins-dependencies
+
+*.mocks.dart
