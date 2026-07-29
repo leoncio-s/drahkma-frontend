@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:drahkma/core/config.dart';
+import 'package:drahkma/core/data/models/unprocessable_entity_model.dart';
 import 'package:drahkma/core/error/invalid_credentials_exception.dart';
+import 'package:drahkma/core/error/unprocessable_entity_exception.dart';
 import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
@@ -35,11 +37,10 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
       for (var el in data) {
         toRet.add(BankAccountModel.fromJson(el));
       }
-    }else if(request.statusCode == 401)
-    {
+    } else if (request.statusCode == 401) {
       throw InvalidCredentialsException("Usuário não autenticado");
     }
-    
+
     return toRet;
   }
 
@@ -58,13 +59,14 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     );
 
     if (response.statusCode == 201) {
-      return BankAccountMapper.toEntity(BankAccountModel.fromJson(jsonDecode(response.body)));
-    }else if(response.statusCode == 401)
-    {
+      return BankAccountMapper.toEntity(
+          BankAccountModel.fromJson(jsonDecode(response.body)));
+    } else if (response.statusCode == 401) {
       throw InvalidCredentialsException("Usuário não autenticado");
     } else {
       var toRet = jsonDecode(response.body);
-      return toRet;
+      throw UnprocessableEntityException(
+          error: UnprocessableEntityModel.fromJson(toRet));
     }
   }
 
@@ -81,8 +83,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     if (response.statusCode != 200) {
       var json = jsonDecode(response.body);
       throw http.ClientException(json['error']);
-    }else if(response.statusCode == 401)
-    {
+    } else if (response.statusCode == 401) {
       throw InvalidCredentialsException("Usuário não autenticado");
     } else {
       return true;
@@ -94,23 +95,21 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     var dataDTO = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
-    var response = await client.put(
-      _url, 
-      body: jsonEncode(dataDTO.toMap()),
-      headers: {
+    var response =
+        await client.put(_url, body: jsonEncode(dataDTO.toMap()), headers: {
       'Authorization': " Bearer ${userModel?.token ?? ''}",
       'Content-type': 'application/json'
     });
 
-    if(response.statusCode == 401)
-    {
+    if (response.statusCode == 401) {
       throw InvalidCredentialsException("Usuário não autenticado");
-    } else if (response.statusCode != 200) {
-      var toRet = jsonDecode(response.body);
-      throw http.ClientException(toRet['error']);
-    } else {
+    } else if (response.statusCode == 200) {
       var toRet = BankAccountModel.fromJson(jsonDecode(response.body));
       return toRet;
+    } else {
+      var toRet = jsonDecode(response.body);
+      throw UnprocessableEntityException(
+          error: UnprocessableEntityModel.fromJson(toRet));
     }
   }
 
@@ -129,7 +128,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
 
     return null;
   }
-  
+
   @override
   Future<BankAccount?> get({id}) {
     throw UnimplementedError();
