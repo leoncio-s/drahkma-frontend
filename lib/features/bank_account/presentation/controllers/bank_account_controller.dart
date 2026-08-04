@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:drahkma/core/error/invalid_credentials_exception.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
@@ -10,7 +11,6 @@ import 'package:drahkma/features/bank_account/domain/usecases/bank_account_get_a
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_save.dart';
 import 'package:drahkma/features/bank_account/domain/usecases/bank_account_update.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 class BankAccountController extends ValueNotifier<AppState> {
   final BankAccountBank _bank;
@@ -78,7 +78,7 @@ class BankAccountController extends ValueNotifier<AppState> {
     try {
       await _delete.call(dto: BankAccountMapper.fromDTOToEntity(accountId));
       await loadBankAccounts();
-    } on ClientException catch (e) {
+    } on HttpException catch (e) {
       value = AppStateError(message: e.message);
     } on InvalidCredentialsException{
       value = Unauthenticated();
