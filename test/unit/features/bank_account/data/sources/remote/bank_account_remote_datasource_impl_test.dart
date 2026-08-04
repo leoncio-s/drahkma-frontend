@@ -17,7 +17,7 @@ import 'package:mockito/annotations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-import 'bank_account_datasource_impl_test.mocks.dart';
+import 'bank_account_remote_datasource_impl_test.mocks.dart';
 
 @GenerateMocks([], customMocks: [
   MockSpec<http.Client>(as: #MockHttpClient),
