@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/data/models/unprocessable_entity_model.dart';
 import 'package:drahkma/core/error/invalid_credentials_exception.dart';
@@ -38,7 +39,7 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
         toRet.add(BankAccountModel.fromJson(el));
       }
     } else if (request.statusCode == 401) {
-      throw InvalidCredentialsException("Usuário não autenticado");
+      throw InvalidCredentialsException("Unauthenticated");
     }
 
     return toRet;
@@ -62,16 +63,19 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
       return BankAccountMapper.toEntity(
           BankAccountModel.fromJson(jsonDecode(response.body)));
     } else if (response.statusCode == 401) {
-      throw InvalidCredentialsException("Usuário não autenticado");
-    } else {
+      throw InvalidCredentialsException("Unauthenticated");
+    } else if(response.statusCode == 422 || response.statusCode == 400) {
       var toRet = jsonDecode(response.body);
       throw UnprocessableEntityException(
           error: UnprocessableEntityModel.fromJson(toRet));
+    }else{
+      var toRet = jsonDecode(response.body);
+      throw HttpException(toRet['message'] ?? response.statusCode.toString());
     }
   }
 
   @override
-  Future delete(BankAccount data) async {
+  Future<void> delete(BankAccount data) async {
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
     var url = joinUrl(_url, "${data.id}");
@@ -80,18 +84,18 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
       headers: {'Authorization': " Bearer ${userModel?.token ?? ''}"},
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200){
+      return;
+    }else if (response.statusCode == 401) {
+      throw InvalidCredentialsException("Unauthenticated");
+    } else{
       var json = jsonDecode(response.body);
-      throw http.ClientException(json['error']);
-    } else if (response.statusCode == 401) {
-      throw InvalidCredentialsException("Usuário não autenticado");
-    } else {
-      return true;
+      throw HttpException(json['error'] ?? json['message']);
     }
   }
 
   @override
-  Future update(data) async {
+  Future<void> update(data) async {
     var dataDTO = BankAccountMapper.fromEntityToDTO(data);
     User? user = await getIt<AuthLocalDatasource>().getAuthToken();
     UserModel? userModel = user as UserModel?;
@@ -102,14 +106,16 @@ class BankAccountRemoteDatasourceImpl implements BankAccountRemoteDatasource {
     });
 
     if (response.statusCode == 401) {
-      throw InvalidCredentialsException("Usuário não autenticado");
+      throw InvalidCredentialsException("Unauthenticated");
     } else if (response.statusCode == 200) {
-      var toRet = BankAccountModel.fromJson(jsonDecode(response.body));
-      return toRet;
-    } else {
+      return;
+    } else if(response.statusCode == 422 || response.statusCode == 400) {
       var toRet = jsonDecode(response.body);
       throw UnprocessableEntityException(
           error: UnprocessableEntityModel.fromJson(toRet));
+    }else{
+      var toRet = jsonDecode(response.body);
+      throw HttpException(toRet['message'] ?? response.statusCode.toString());
     }
   }
 
