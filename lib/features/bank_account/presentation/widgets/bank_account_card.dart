@@ -84,9 +84,7 @@ class BankAccountCard extends StatelessWidget {
                         ]),
                   ),
                   // Flexible(child: SizedBox(height: 10)),
-                  Flexible(
-                    flex: 2,
-                    child: Column(
+                  Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +104,6 @@ class BankAccountCard extends StatelessWidget {
                             textAlign: TextAlign.left),
                       ],
                     ),
-                  ),
                   Flexible(
                     flex: 3,
                     child: Divider(color: AppColors.gold.withAlpha(50),),),
