@@ -15,7 +15,13 @@ void main() {
 
     BankAccount bankAccount = BankAccount(id: 1, bankName: "Banco do Brasil", bankCode: "001", agency: "1234", accountNumber: "56789-0");
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: BankAccountCard(bankAccount: bankAccount))));
+    await tester.pumpWidget(MaterialApp(home: 
+      Scaffold(body: 
+        ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 700, maxHeight: 700),
+          child: BankAccountCard(bankAccount: bankAccount),
+        )
+      )));
 
     
     expect(find.byKey(ValueKey("bank_account_card")), findsOneWidget);
@@ -23,8 +29,8 @@ void main() {
     expect(find.byIcon(Icons.delete), findsOneWidget);
 
     expect(find.text(bankAccount.bankName??""), findsOne);
-    expect(find.text("Agência: ${bankAccount.agency ?? ""}"), findsOne);
-    expect(find.text("Conta: ${bankAccount.accountNumber ?? ""}"), findsOne);
+    expect(find.text("AGÊNCIA: ${bankAccount.agency ?? ""}"), findsOne);
+    expect(find.text("CONTA: ${bankAccount.accountNumber ?? ""}"), findsOne);
 
     await tester.pump();
   });
