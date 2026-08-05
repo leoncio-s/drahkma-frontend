@@ -1,9 +1,11 @@
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
+import 'package:drahkma/core/utils/helpers/currency_brl_format.dart';
 import 'package:flutter/material.dart';
 
 class AmountBankAccountsCard extends StatelessWidget {
-  const AmountBankAccountsCard({super.key});
+  final double value;
+  const AmountBankAccountsCard({super.key, required this.value});
 
   @override
   Widget build(BuildContext context) => Card(
@@ -33,7 +35,7 @@ class AmountBankAccountsCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      "SALDO TOTAL",
+                      "SALDO TOTAL CONSOLIDADO",
                       style: TextStyle(
                         fontSize: responsiveFontSize(context, min: 16, max: 20),
                       ),
@@ -50,7 +52,8 @@ class AmountBankAccountsCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "1.000,00",
+                      key: ValueKey("value_amount_bank_account_card"),
+                      currencyBRLFormat(value),
                       style: TextStyle(
                         fontSize: responsiveFontSize(
                           context,

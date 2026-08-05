@@ -156,7 +156,7 @@ class BankAccountsViewState extends State<BankAccountView> {
               SizedBox(
                 height: 30,
               ),
-              AmountBankAccountsCard(),
+              AmountBankAccountsCard(value: 1000,),
               ConstrainedBox(
                 constraints: BoxConstraints(minHeight: 200, minWidth: double.infinity),
                 child: Wrap(
