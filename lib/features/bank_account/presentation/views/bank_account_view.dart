@@ -15,7 +15,7 @@ class BankAccountView extends DrahkmaStatefulWidget {
   const BankAccountView(
       {super.key,
       super.name = "Contas Bancárias",
-      super.icon = const Icon(Icons.category, size: 20),
+      super.icon = const Icon(Icons.account_balance_outlined, size: 20),
       required this.bankAccountController});
 
   @override
