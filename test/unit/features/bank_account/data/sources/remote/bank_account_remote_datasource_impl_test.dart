@@ -39,6 +39,8 @@ void main() {
           200));
 
       expect(await datasource.getBanks(), isA<List<BankModel>>());
+
+      verify(client.get(Uri.parse("https://brasilapi.com.br/api/banks/v1"))).called(1);
     });
 
     test(
@@ -62,6 +64,8 @@ void main() {
           jsonEncode({"message": "erro interno no servidor"}), 500));
 
       expect(await datasource.getBanks(), null);
+
+      verify(client.get(Uri.parse("https://brasilapi.com.br/api/banks/v1"))).called(3);
     });
   });
 
@@ -101,6 +105,9 @@ void main() {
               200));
 
       expect(await datasource.getAll(), isA<List<BankAccount>>());
+
+      verify(client.get(Uri.parse("${Config.urlApi}banks"),headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
     test("should throw an unauthorized exception when the server returns 401", () async {
       when(client.get(Uri.parse("${Config.urlApi}banks"),
@@ -110,6 +117,9 @@ void main() {
 
       await expectLater(
           datasource.getAll(), throwsA(isA<InvalidCredentialsException>()));
+      
+      verify(client.get(Uri.parse("${Config.urlApi}banks"),headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an internal server exception when the server returns 500", () async {
@@ -119,6 +129,9 @@ void main() {
               jsonEncode({"message": "erro interno no servidor"}), 500));
 
       expect(await datasource.getAll(), equals(List.empty()));
+
+      verify(client.get(Uri.parse("${Config.urlApi}banks"),headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should return an empty list when the user has no bank accounts", () async {
@@ -130,6 +143,9 @@ void main() {
           await datasource.getAll(),
           isA<List?>()
               .having((data) => data!.length, "data value count", equals(0)));
+      
+      verify(client.get(Uri.parse("${Config.urlApi}banks"),headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
   });
 
@@ -167,6 +183,10 @@ void main() {
       var ret = await datasource.save(data);
       expect(ret, isA<BankAccount>());
       expect(ret?.id, equals(1));
+
+      verify(client.post(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an unprocessable entity exception when saving an invalid bank account",
@@ -195,6 +215,10 @@ void main() {
                   (exception) => exception.error?.errors,
                   "Contains accountNumber validation",
                   containsPair("accountNumber", ["This field is required"]))));
+      
+      verify(client.post(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an unauthorized exception when saving a bank account", () async {
@@ -206,6 +230,10 @@ void main() {
           BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
       await expectLater(
           datasource.save(data), throwsA(isA<InvalidCredentialsException>()));
+      
+      verify(client.post(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an internal server exception when saving a bank account", () async {
@@ -216,6 +244,10 @@ void main() {
       BankAccount data =
           BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
       await expectLater(datasource.save(data), throwsA(isA<HttpException>()));
+
+      verify(client.post(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
   });
 
@@ -253,6 +285,10 @@ void main() {
           bankCode: "341");
 
       await expectLater(datasource.update(data), completes);
+
+      verify(client.put(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an unprocessable entity exception when updating an invalid bank account",
@@ -286,6 +322,10 @@ void main() {
                   (exception) => exception.error?.errors,
                   "Contains id validation",
                   containsPair("id", ["This field is required"]))));
+      
+      verify(client.put(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an unauthorized exception when updating a bank account", () async {
@@ -297,6 +337,11 @@ void main() {
           BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
       await expectLater(
           datasource.update(data), throwsA(isA<InvalidCredentialsException>()));
+
+      
+      verify(client.put(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an internal server exception when updating a bank account", () async {
@@ -307,6 +352,10 @@ void main() {
       BankAccount data =
           BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
       await expectLater(datasource.update(data), throwsA(isA<HttpException>()));
+
+      verify(client.put(Uri.parse("${Config.urlApi}banks"),
+              headers: anyNamed("headers"), body: anyNamed("body"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
   });
 
@@ -336,6 +385,10 @@ void main() {
           .thenAnswer((_) async => http.Response(jsonEncode([]), 200));
 
       await expectLater(datasource.delete(data), isA<void>());
+
+      verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
+              headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an unauthorized exception when deleting a bank account", () async {
@@ -346,6 +399,10 @@ void main() {
 
       await expectLater(
           datasource.delete(data), throwsA(isA<InvalidCredentialsException>()));
+
+      verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
+              headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
 
     test("should throw an internal server exception when deleting a bank account", () async {
@@ -360,6 +417,10 @@ void main() {
               (except) => except.message,
               "Message internal server error",
               equals('internal server error'))));
+      
+      verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
+              headers: anyNamed("headers"))).called(1);
+      verify(authLocal.getAuthToken()).called(1);
     });
   });
 }
