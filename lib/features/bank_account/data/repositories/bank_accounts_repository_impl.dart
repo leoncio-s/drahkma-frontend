@@ -17,6 +17,7 @@ class BankAccountRepositoryImpl implements BankAccountRepository
   Future<void> delete(BankAccount dto) async {
     try {
       await _remoteDatasource.delete(dto);
+      await _localDatasource.clearBankAccounts();
     } catch (e) {
       rethrow;
     }
@@ -44,16 +45,11 @@ class BankAccountRepositoryImpl implements BankAccountRepository
 
   @override
   Future<BankAccount?> save(BankAccount dto) async {
-    try {
-      BankAccount? savedAccount = await _remoteDatasource.save(dto);
-      if (savedAccount != null) {
-        await _localDatasource.saveBankAccounts([savedAccount]);
-      }
-      return savedAccount;
-    } catch (e) {
-      // Fallback to local datasource on network error
-      return await _localDatasource.getBankAccounts().then((accounts) => accounts?.isEmpty ?? true ? null : accounts?.first);
+    BankAccount? savedAccount = await _remoteDatasource.save(dto);
+    if (savedAccount != null) {
+      await _localDatasource.saveBankAccounts([savedAccount]);
     }
+    return savedAccount;
   }
 
   @override
