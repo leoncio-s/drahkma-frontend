@@ -94,30 +94,58 @@ void main() {
       verify(remoteDataSource.getAll()).called(1);
       verifyNever(localDataSource.getBankAccounts()).called(0);
     });
+    
     test("should throw an unauthorized exception when the server returns 401",
         () async {
-      when(remoteDataSource.getBanks())
-          .thenThrow(InvalidCredentialsException());
-
-      when(localDataSource.getBankAccounts())
+      when(remoteDataSource.getAll())
           .thenThrow(InvalidCredentialsException());
 
       await expectLater(
           repository.getAll(), throwsA(isA<InvalidCredentialsException>()));
 
       verify(remoteDataSource.getAll()).called(1);
-      verify(localDataSource.getBankAccounts()).called(1);
+      verifyNever(localDataSource.getBankAccounts()).called(0);
     });
 
     test(
-        "should throw an internal server exception when the server returns 500",
+        "should return local storage data when the remote data source throws an HttpException",
         () async {
-      when(remoteDataSource.getAll()).thenAnswer((_) async => []);
+          when(remoteDataSource.getAll()).thenThrow(HttpException("Internal Server error"));
+          when(localDataSource.getBankAccounts()).thenAnswer((_) async => [BankAccount(
+            bankName: "Itau",
+            agency: "543",
+            accountNumber: "345555",
+            bankCode: "341")
+          ]);
 
-      expect(await repository.getAll(), equals(List.empty()));
+        expect(await repository.getAll(), isA<List<BankAccount>>().having((list) => list.first.bankName, "Bank name validation", equals("Itau")));
 
-      verify(remoteDataSource.getAll()).called(1);
-      verifyNever(localDataSource.getBankAccounts()).called(0);
+        verify(remoteDataSource.getAll()).called(1);
+        verify(localDataSource.getBankAccounts()).called(1);
+    });
+
+    test(
+        "should return local storage empty data when the remote data source throws an HttpException",
+        () async {
+          when(remoteDataSource.getAll()).thenThrow(HttpException("Internal Server error"));
+          when(localDataSource.getBankAccounts()).thenAnswer((_) async => []);
+
+        expect(await repository.getAll(), isA<List<BankAccount>>().having((list) => list.length, "Empty list validation", equals(0)));
+
+        verify(remoteDataSource.getAll()).called(1);
+        verify(localDataSource.getBankAccounts()).called(1);
+    });
+
+    test(
+        "should thows local storage Exception when the remote data source throws an HttpException",
+        () async {
+          when(remoteDataSource.getAll()).thenThrow(HttpException("Internal Server error"));
+          when(localDataSource.getBankAccounts()).thenThrow(Exception("Key not found"));
+
+        await expectLater(repository.getAll(), throwsA(isA<Exception>()));
+
+        verify(remoteDataSource.getAll()).called(1);
+        verify(localDataSource.getBankAccounts()).called(1);
     });
 
     test("should return an empty list when the user has no bank accounts",
@@ -139,13 +167,12 @@ void main() {
   group("BankAccounts-Save", () {
     test("should save a valid bank account successfully", () async {
       when(remoteDataSource.save(any))
-          .thenAnswer((_) async => BankAccountModel.fromJson({
-                "id": 1,
-                "bankCode": "341",
-                "bankName": "Itaú",
-                "agency": "543",
-                "accountNumber": "345555"
-              }));
+          .thenAnswer((_) async => BankAccount(
+          id: 1,
+          bankName: "Itau",
+          agency: "543",
+          accountNumber: "345555",
+          bankCode: "341"));
       BankAccount data = BankAccount(
           bankName: "Itau",
           agency: "543",
@@ -153,11 +180,10 @@ void main() {
           bankCode: "341");
 
       var ret = await repository.save(data);
-      expect(ret, isA<BankAccount>());
-      expect(ret?.id, equals(1));
+
+      expect(ret, isA<BankAccount>().having((bankAccount) => bankAccount.id, "Validate data return", equals(1)));
 
       verify(remoteDataSource.save(any)).called(1);
-      verify(localDataSource.saveBankAccounts(any)).called(1);
     });
 
     test(
@@ -186,7 +212,6 @@ void main() {
                   containsPair("accountNumber", ["This field is required"]))));
 
       verify(remoteDataSource.save(any)).called(1);
-      verifyNever(localDataSource.saveBankAccounts(any)).called(0);
     });
 
     test("should throw an unauthorized exception when saving a bank account",
@@ -199,7 +224,6 @@ void main() {
           repository.save(data), throwsA(isA<InvalidCredentialsException>()));
 
       verify(remoteDataSource.save(any)).called(1);
-      verifyNever(localDataSource.saveBankAccounts(any)).called(0);
     });
 
     test("should throw an internal server exception when saving a bank account",
@@ -211,193 +235,128 @@ void main() {
       await expectLater(repository.save(data), throwsA(isA<HttpException>()));
 
       verify(remoteDataSource.save(any)).called(1);
-      verifyNever(localDataSource.saveBankAccounts(any)).called(0);
     });
   });
 
   // // -------------- update tests
 
-  // group("BankAccounts-Update", () {
-  //   late MockAuthLocalDatasource authLocal;
-  //   setUp(() async {
-  //     await getIt.reset();
-  //     authLocal = MockAuthLocalDatasource();
-  //     getIt.registerFactory<AuthLocalDatasource>(() => authLocal);
+  group("BankAccounts-update", () {
+    test("should save a valid bank account successfully", () async {
+      when(remoteDataSource.update(any))
+          .thenAnswer((_) async => {});
 
-  //     when(authLocal.getAuthToken())
-  //         .thenAnswer((_) async => UserModel(token: 'token-teste'));
-  //   });
-  //   test("should update a valid bank account successfully", () async {
-  //     when(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .thenAnswer((_) async {
-  //       return http.Response(
-  //           jsonEncode({
-  //             "id": 1,
-  //             "bankCode": "341",
-  //             "bankName": "Itaú",
-  //             "agency": "543",
-  //             "accountNumber": "345555"
-  //           }),
-  //           200);
-  //     });
-  //     BankAccount data = BankAccount(
-  //         id: 1,
-  //         bankName: "Itau",
-  //         agency: "543",
-  //         accountNumber: "345555",
-  //         bankCode: "341");
+      BankAccount data = BankAccount(
+          id: 1,
+          bankName: "Itau",
+          agency: "543",
+          accountNumber: "345555",
+          bankCode: "341");
 
-  //     await expectLater(datasource.update(data), completes);
+      await expectLater(repository.update(data), completes);
 
-  //     verify(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
+      verify(remoteDataSource.update(any)).called(1);
+    });
 
-  //   test(
-  //       "should throw an unprocessable entity exception when updating an invalid bank account",
-  //       () async {
-  //     when(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .thenAnswer((_) async {
-  //       Map<String, dynamic> ret = {
-  //         "errors": {
-  //           "accountNumber": ["This field is required"],
-  //           "id": ["This field is required"]
-  //         },
-  //         "data": {"bankName": "Itau", "agency": "543", "bankCode": "341"}
-  //       };
+    test(
+        "should throw an unprocessable entity exception when saving an invalid bank account",
+        () async {
+      when(remoteDataSource.update(any)).thenThrow(UnprocessableEntityException(
+          error: UnprocessableEntityModel({
+          "id": 1,
+          "bankName": "Itau",
+          "agency": "543",
+          "bankCode": "341"
+      }, {
+        "accountNumber": ["This field is required"]
+      })));
 
-  //       return http.Response(jsonEncode(ret), 422);
-  //     });
-  //     BankAccount data =
-  //         BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
+      BankAccount data =
+          BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
 
-  //     await expectLater(
-  //         datasource.update(data),
-  //         throwsA(isA<UnprocessableEntityException>()
-  //             .having((exception) => exception.error, "validations errors",
-  //                 isA<UnprocessableEntityModel>())
-  //             .having(
-  //                 (exception) => exception.error?.errors,
-  //                 "Contains accountNumber validation",
-  //                 containsPair("accountNumber", ["This field is required"]))
-  //             .having(
-  //                 (exception) => exception.error?.errors,
-  //                 "Contains id validation",
-  //                 containsPair("id", ["This field is required"]))));
+      await expectLater(
+          repository.update(data),
+          throwsA(isA<UnprocessableEntityException>()
+              .having((exception) => exception.error, "validations errors",
+                  isA<UnprocessableEntityModel>())
+              .having(
+                  (exception) => exception.error?.errors,
+                  "Contains accountNumber validation",
+                  containsPair("accountNumber", ["This field is required"]))));
 
-  //     verify(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
+      verify(remoteDataSource.update(any)).called(1);
+    });
 
-  //   test("should throw an unauthorized exception when updating a bank account",
-  //       () async {
-  //     when(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .thenAnswer((_) async =>
-  //             http.Response(jsonEncode({"message": "Unauthenticated"}), 401));
-  //     BankAccount data =
-  //         BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
-  //     await expectLater(
-  //         datasource.update(data), throwsA(isA<InvalidCredentialsException>()));
+    test("should throw an unauthorized exception when saving a bank account",
+        () async {
+      when(remoteDataSource.update(any))
+          .thenThrow(InvalidCredentialsException());
+      BankAccount data =
+          BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
+      await expectLater(
+          repository.update(data), throwsA(isA<InvalidCredentialsException>()));
 
-  //     verify(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
+      verify(remoteDataSource.update(any)).called(1);
+    });
 
-  //   test(
-  //       "should throw an internal server exception when updating a bank account",
-  //       () async {
-  //     when(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .thenAnswer((_) async => http.Response(
-  //             jsonEncode({"message": "erro interno no servidor"}), 500));
-  //     BankAccount data =
-  //         BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
-  //     await expectLater(datasource.update(data), throwsA(isA<HttpException>()));
+    test("should throw an internal server exception when saving a bank account",
+        () async {
+      when(remoteDataSource.update(any))
+          .thenThrow(HttpException("internal server error"));
+      BankAccount data =
+          BankAccount(bankName: "Itau", agency: "543", bankCode: "341");
+      await expectLater(repository.update(data), throwsA(isA<HttpException>()));
 
-  //     verify(client.put(Uri.parse("${Config.urlApi}banks"),
-  //             headers: anyNamed("headers"), body: anyNamed("body")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
-  // });
+      verify(remoteDataSource.update(any)).called(1);
+    });
+  });
 
   // /// --- delete tests
-  // group("BankAccounts-delete", () {
-  //   late MockAuthLocalDatasource authLocal;
+  group("BankAccounts-delete", () {
 
-  //   BankAccount data = BankAccount(
-  //       id: 1,
-  //       bankCode: '341',
-  //       bankName: 'Itau',
-  //       agency: '1234',
-  //       accountNumber: '123456');
+    BankAccount data = BankAccount(
+        id: 1,
+        bankCode: '341',
+        bankName: 'Itau',
+        agency: '1234',
+        accountNumber: '123456');
 
-  //   setUp(() async {
-  //     await getIt.reset();
-  //     authLocal = MockAuthLocalDatasource();
-  //     getIt.registerFactory<AuthLocalDatasource>(() => authLocal);
+    test("should delete a bank account successfully", () async {
+      when(remoteDataSource.delete(any))
+          .thenAnswer((_) async => {});
 
-  //     when(authLocal.getAuthToken())
-  //         .thenAnswer((_) async => UserModel(token: 'token-teste'));
-  //   });
+      await expectLater(repository.delete(data), isA<void>());
 
-  //   test("should delete a bank account successfully", () async {
-  //     when(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .thenAnswer((_) async => http.Response(jsonEncode([]), 200));
+      verify(remoteDataSource.delete(any)).called(1);
+      verify(localDataSource.clearBankAccounts()).called(1);
+    });
 
-  //     await expectLater(datasource.delete(data), isA<void>());
+    test("should throw an unauthorized exception when deleting a bank account",
+        () async {
+      when(remoteDataSource.delete(any))
+          .thenThrow(InvalidCredentialsException());
 
-  //     verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
+      await expectLater(
+          repository.delete(data), throwsA(isA<InvalidCredentialsException>()));
 
-  //   test("should throw an unauthorized exception when deleting a bank account",
-  //       () async {
-  //     when(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .thenAnswer((_) async =>
-  //             http.Response(jsonEncode({"message": "Unauthenticated"}), 401));
+      verify(remoteDataSource.delete(any))
+          .called(1);
+    });
 
-  //     await expectLater(
-  //         datasource.delete(data), throwsA(isA<InvalidCredentialsException>()));
+    test(
+        "should throw an internal server exception when deleting a bank account",
+        () async {
+      when(remoteDataSource.delete(any))
+          .thenThrow(HttpException("internal server error"));
 
-  //     verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
+      await expectLater(
+          repository.delete(data),
+          throwsA(isA<HttpException>().having(
+              (except) => except.message,
+              "Message internal server error",
+              equals('internal server error'))));
 
-  //   test(
-  //       "should throw an internal server exception when deleting a bank account",
-  //       () async {
-  //     when(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .thenAnswer((_) async => http.Response(
-  //             jsonEncode({"message": "internal server error"}), 500));
-
-  //     await expectLater(
-  //         datasource.delete(data),
-  //         throwsA(isA<HttpException>().having(
-  //             (except) => except.message,
-  //             "Message internal server error",
-  //             equals('internal server error'))));
-
-  //     verify(client.delete(Uri.parse("${Config.urlApi}banks/${data.id}"),
-  //             headers: anyNamed("headers")))
-  //         .called(1);
-  //     verify(authLocal.getAuthToken()).called(1);
-  //   });
-  // });
+      verify(remoteDataSource.delete(any))
+          .called(1);
+    });
+  });
 }
