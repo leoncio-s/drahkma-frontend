@@ -168,5 +168,5 @@ void initializeDependencies()
   getIt.registerFactory<ItemDelete>(()=>ItemDelete(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetIncome>(()=>ItemGetIncome(getIt<ItemRepository>()));
   getIt.registerFactory<ItemGetExpense>(()=>ItemGetExpense(getIt<ItemRepository>()));
-  getIt.registerSingleton<ItemController>(ItemController(getIt(), getIt(), getIt(), getIt(), getIt()));
+  getIt.registerFactory<ItemController>(()=>ItemController(getIt(), getIt(), getIt(), getIt(), getIt()));
 }
