@@ -4,7 +4,6 @@ import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
-import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
