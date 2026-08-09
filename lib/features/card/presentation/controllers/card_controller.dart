@@ -1,4 +1,6 @@
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/features/card/data/mappers/card_mapper.dart';
+import 'package:drahkma/features/card/data/models/card_model.dart';
 import 'package:drahkma/features/card/domain/entities/card.dart';
 import 'package:drahkma/features/card/domain/usecases/card_delete.dart';
 import 'package:drahkma/features/card/domain/usecases/card_get_all.dart';
@@ -13,7 +15,7 @@ class CardController extends material.ValueNotifier<AppState> {
   final CardDelete _delete;
   List<Card>? _data = [];
 
-  List<Card> get data => _data ?? [];
+  List<CardModel> get data => _data!.map<CardModel>((card)=>CardMapper.toModel(card)).toList();
 
   CardController(this._getAll, this._save, this._update, this._delete)
       : super(CardInitial());

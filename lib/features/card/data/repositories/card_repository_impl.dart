@@ -27,7 +27,7 @@ class CardRepositoryImpl implements CardRepository
   @override
   Future<List<Card>?> getAll() async {
     try {
-      List<Card>? cards = await _remoteDatasource.getAll() as List<Card>?;
+      List<Card>? cards = (await _remoteDatasource.getAll())?.map<Card>((card)=>CardMapper.toEntity(card)).toList();
       if (cards != null) {
         await _localDatasource.saveCards(cards);
       }
