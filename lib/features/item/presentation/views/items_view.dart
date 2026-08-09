@@ -4,6 +4,7 @@ import 'package:drahkma/core/error/unauthenticated_exception.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/helpers/text_scaler.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
+import 'package:drahkma/features/bank_account/domain/entities/bank_account.dart';
 import 'package:drahkma/features/item/data/models/item_model.dart';
 import 'package:drahkma/features/item/presentation/controllers/item_controller.dart';
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
@@ -33,6 +34,7 @@ class _ItemsViewState extends State<ItemsView> {
   DateTime startDate = appNotifier.dateTimeRange.start;
   DateTime finishDate = appNotifier.dateTimeRange.end;
   List<ItemModel>? _items;
+  late List<ItemModel> _selectedItems;
 
   ItemOrderEnum orderEnum = ItemOrderEnum.DataDecrescente;
 
@@ -50,6 +52,7 @@ class _ItemsViewState extends State<ItemsView> {
         await widget.itemController
             .loadIncome(start: startDate, end: finishDate);
       }
+      _selectedItems = [];
     } catch (e) {
       log(e.toString(), name: "ItemsView._loadData");
       rethrow;
@@ -76,9 +79,18 @@ class _ItemsViewState extends State<ItemsView> {
     }
   }
 
+  double _sumItensSelected() {
+    double sum = 0;
+    _selectedItems.toList().forEach((item) {
+      sum += item.value ?? 0;
+    });
+    return sum;
+  }
+
   @override
   void initState() {
     super.initState();
+    _selectedItems = [];
     widget.itemController.addListener(_onControllerStateChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
@@ -138,10 +150,8 @@ class _ItemsViewState extends State<ItemsView> {
                     builder: (context) => ItemForm(
                         itemController: widget.itemController,
                         expense: widget.expense)))
-                .then((data) {
-              if (data is ItemModel) {
-                _loadData();
-              }
+                .then((_) {
+              _loadData();
             });
           },
           label: Text("Adicionar ${widget.title}")),
@@ -152,126 +162,139 @@ class _ItemsViewState extends State<ItemsView> {
     return SizedBox.fromSize(
         size: const Size.fromHeight(100.0),
         child: Flex(
-          direction: MediaQuery.of(context).size.width < 375
+          direction: MediaQuery.of(context).size.width < 556
               ? Axis.vertical
               : Axis.horizontal,
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
+          // runAlignment: WrapAlignment.center,
+          spacing: 10.0,
           mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-                flex: 1,
                 fit: FlexFit.tight,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    child: DropdownButton<ItemOrderEnum>(
-                        alignment: AlignmentDirectional.center,
-                        value: orderEnum,
-                        items: ItemOrderEnum.values
-                            .map((el) => DropdownMenuItem<ItemOrderEnum>(
-                                alignment: AlignmentDirectional.center,
-                                value: el,
-                                child: Text(
-                                  el.element,
-                                  textAlign: TextAlign.center,
-                                )))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            orderEnum = value!;
-                          });
-                          switch (value) {
-                            case ItemOrderEnum.DataAscendente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.dateAsc);
-                              });
-                              break;
-                            case ItemOrderEnum.DataDecrescente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.dateDesc);
-                              });
-                              break;
-                            case ItemOrderEnum.ValorAscendente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.valueAsc);
-                              });
-                              break;
-                            case ItemOrderEnum.ValorDecrescente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.valueDesc);
-                              });
-                              break;
-                            case ItemOrderEnum.DescricaoAscendente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.descrAsc);
-                              });
-                              break;
-                            case ItemOrderEnum.DescricaoDecrescente:
-                              setState(() {
-                                _items!.sort(ItemModelSort.descrDesc);
-                              });
-                              break;
-                            default:
-                              setState(() {
-                                _items!.sort(ItemModelSort.dateAsc);
-                              });
-                              break;
-                          }
-                        }),
-                  ),
-                )),
+                flex: 2,
+                child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 200),
+              child: DropdownButton<ItemOrderEnum>(
+                  
+                  alignment: AlignmentDirectional.center,
+                  value: orderEnum,
+                  items: ItemOrderEnum.values
+                      .map((el) => DropdownMenuItem<ItemOrderEnum>(
+                          alignment: AlignmentDirectional.center,
+                          value: el,
+                          child: Text(
+                            el.element,
+                            textAlign: TextAlign.center,
+                          )))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      orderEnum = value!;
+                    });
+                    switch (value) {
+                      case ItemOrderEnum.DataAscendente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.dateAsc);
+                        });
+                        break;
+                      case ItemOrderEnum.DataDecrescente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.dateDesc);
+                        });
+                        break;
+                      case ItemOrderEnum.ValorAscendente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.valueAsc);
+                        });
+                        break;
+                      case ItemOrderEnum.ValorDecrescente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.valueDesc);
+                        });
+                        break;
+                      case ItemOrderEnum.DescricaoAscendente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.descrAsc);
+                        });
+                        break;
+                      case ItemOrderEnum.DescricaoDecrescente:
+                        setState(() {
+                          _items!.sort(ItemModelSort.descrDesc);
+                        });
+                        break;
+                      default:
+                        setState(() {
+                          _items!.sort(ItemModelSort.dateAsc);
+                        });
+                        break;
+                    }
+                  }),
+              // ),
+            )),
+            // Flexible(
+            // flex: 1,
+            // fit: FlexFit.tight,
+            // child:
             Flexible(
-              flex: 1,
-              fit: FlexFit.tight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  TextButton.icon(
-                      icon: const Icon(
-                        Icons.edit_calendar,
-                        color: AppColors.gold,
-                      ),
-                      onPressed: () async {
-                        DateTimeRange? date = await showDateRangePicker(
-                            context: context,
-                            builder: (context, child) {
-                              return Theme(
-                                  data: ThemeData.dark().copyWith(
-                                      datePickerTheme: DatePickerThemeData(
-                                          rangeSelectionBackgroundColor:
-                                              AppColors.lightGold
-                                                  .withAlpha(70)),
-                                      colorScheme: const ColorScheme.dark(
-                                        primary: AppColors.gold,
-                                        onPrimary: Colors.white,
-                                        onSurface: AppColors.gold,
-                                      )),
-                                  child: child!);
-                            },
-                            firstDate: DateTime(1900, 01, 01),
-                            lastDate:
-                                DateTime(DateTime.now().year + 100, 01, 01),
-                            currentDate: DateTime.now(),
-                            initialEntryMode: DatePickerEntryMode.calendarOnly,
-                            initialDateRange: DateTimeRange(
-                                start: startDate, end: finishDate));
-                        if (date != null) {
-                          setState(() {
-                            startDate = date.start;
-                            finishDate = date.end;
-                          });
-                          _loadData();
-                        }
-                      },
-                      label: const Text(
-                        "Alterar Período",
-                        style: TextStyle(color: AppColors.gold),
-                      ))
-                ],
-              ),
-            )
+              flex: 2,
+              child: TextButton.icon(
+                  icon: const Icon(
+                    Icons.edit_calendar,
+                    color: AppColors.gold,
+                  ),
+                  onPressed: () async {
+                    DateTimeRange? date = await showDateRangePicker(
+                        context: context,
+                        builder: (context, child) {
+                          return Theme(
+                              data: ThemeData.dark().copyWith(
+                                  datePickerTheme: DatePickerThemeData(
+                                      rangeSelectionBackgroundColor:
+                                          AppColors.lightGold.withAlpha(70)),
+                                  colorScheme: const ColorScheme.dark(
+                                    primary: AppColors.gold,
+                                    onPrimary: Colors.white,
+                                    onSurface: AppColors.gold,
+                                  )),
+                              child: child!);
+                        },
+                        firstDate: DateTime(1900, 01, 01),
+                        lastDate: DateTime(DateTime.now().year + 100, 01, 01),
+                        currentDate: DateTime.now(),
+                        initialEntryMode: DatePickerEntryMode.calendarOnly,
+                        initialDateRange:
+                            DateTimeRange(start: startDate, end: finishDate));
+                    if (date != null) {
+                      setState(() {
+                        startDate = date.start;
+                        finishDate = date.end;
+                      });
+                      _loadData();
+                    }
+                  },
+                  label: const Text(
+                    "Alterar Período",
+                    style: TextStyle(color: AppColors.gold),
+                  )),
+            ),
+
+            // ),
+
+            Flexible(
+                child: _selectedItems.length > 1
+                    ? Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text("Soma dos Itens: "),
+                          Text(NumberFormat.currency(
+                                  locale: "pt_BR", symbol: "R\$")
+                              .format(_sumItensSelected())),
+                        ],
+                      )
+                    : SizedBox())
           ],
         ));
   }
@@ -282,6 +305,7 @@ class _ItemsViewState extends State<ItemsView> {
                 context: context,
                 tiles: _items!
                     .map((el) => ListTile(
+                          selected: _selectedItems.contains(el),
                           title: Flex(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             direction: Axis.horizontal,
@@ -377,6 +401,16 @@ class _ItemsViewState extends State<ItemsView> {
                               )),
                           contentPadding: const EdgeInsets.all(5),
                           titleAlignment: ListTileTitleAlignment.center,
+                          selectedColor: AppColors.lightBlue,
+                          onLongPress: () => {
+                            setState(() {
+                              if (_selectedItems.contains(el)) {
+                                _selectedItems.remove(el);
+                              } else {
+                                _selectedItems.add(el);
+                              }
+                            })
+                          },
                           onTap: () {
                             Navigator.of(context)
                                 .push(MaterialPageRoute(
