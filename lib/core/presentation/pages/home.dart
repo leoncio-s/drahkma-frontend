@@ -1,6 +1,6 @@
 import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/amount/presentation/pages/dashboard_amount_page.dart';
+import 'package:drahkma/features/amount/presentation/views/dashboard_amount_view.dart';
 import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
 import 'package:drahkma/features/card/presentation/views/card_view.dart';
 import 'package:drahkma/features/category/presentation/views/category_view.dart';
@@ -48,12 +48,12 @@ class HomeViewState extends State<HomeView> {
       return AppBarNavigatorWidget(
       childrens: <DrahkmaStatefulWidget>[
         // AmountsPage(),
-        DashboardAmountPage(amountController: getIt(),),
-        IncomeItemView(itemController: getIt()),
-        ExpenseItemView(itemController: getIt()),
-        CategoryView(categoryController: getIt()),
-        BankAccountView(bankAccountController: getIt()),
-        CardView(cardController: getIt())
+        DashboardAmountView(key: ValueKey("dashboard_page"), amountController: getIt(),),
+        IncomeItemView(key: ValueKey("incomes_page"), itemController: getIt()),
+        ExpenseItemView(key: ValueKey("expenses_page"), itemController: getIt()),
+        CategoryView(key: ValueKey("categories_page"), categoryController: getIt()),
+        BankAccountView(key: ValueKey("bank_accounts_page"), bankAccountController: getIt()),
+        CardView(key: ValueKey("cards_page"), cardController: getIt())
       ],
     );
     });

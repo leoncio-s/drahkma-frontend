@@ -6,24 +6,24 @@ import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:drahkma/core/presentation/theme/app_colors.dart';
 import 'package:drahkma/features/amount/data/models/dashboard_model.dart';
 import 'package:drahkma/features/amount/presentation/controllers/amount_controller.dart';
-import 'package:drahkma/features/amount/presentation/pages/chart_page.dart';
+import 'package:drahkma/features/amount/presentation/widgets/charts_total_amount_widget.dart';
 import 'package:drahkma/core/presentation/widgets/drahkma_stateful_widget.dart';
 import 'package:flutter/material.dart';
 
-class DashboardAmountPage extends DrahkmaStatefulWidget {
+class DashboardAmountView extends DrahkmaStatefulWidget{
   final AmountController amountController;
-  const DashboardAmountPage({
-    required this.amountController,
-    super.key,
-    super.name = "Dashboard",
-    super.icon = const Icon(Icons.dashboard, size: 20),
-  });
+  const DashboardAmountView(
+      {
+        required this.amountController,
+        super.key,
+        super.name = "Dashboard",
+        super.icon = const Icon(Icons.dashboard, size: 20),});
 
   @override
-  State<DashboardAmountPage> createState() => _DashboardState();
+  State<DashboardAmountView> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<DashboardAmountPage> {
+class _DashboardState extends State<DashboardAmountView> {
   static final AppNotifier _notifier = appNotifier;
 
   @override
@@ -57,26 +57,22 @@ class _CardsState extends State<_Cards> {
   void _onTimerListener() async {
     await widget.amountController.loadAmounts(
         start: notifier.dateTimeRange.start, end: notifier.dateTimeRange.end);
-    if (mounted) {
-      setState(() {
         data = widget.amountController.data!;
-      });
-    }
   }
 
   @override
   void initState() {
+    super.initState();
     notifier = widget.notifier;
     notifier.addListener(_onTimerListener);
     data = widget.amountController.data!;
-    super.initState();
     _onTimerListener();
   }
 
   @override
   void dispose() {
-    notifier.removeListener(_onTimerListener);
     super.dispose();
+    notifier.removeListener(_onTimerListener);
   }
 
   @override
@@ -139,7 +135,7 @@ class _CardsState extends State<_Cards> {
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
-                  return ChartsWidgetTotalAmountGroup(
+                  return ChartTotalAmountWidget(
                     data: data.amountInflowCategory,
                     title: "Receitas por Categoria",
                   );
@@ -147,7 +143,7 @@ class _CardsState extends State<_Cards> {
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
-                  return ChartsWidgetTotalAmountGroup(
+                  return ChartTotalAmountWidget(
                     data: data.amountInflowCard,
                     title: "Receitas por Cartão",
                   );
@@ -155,7 +151,7 @@ class _CardsState extends State<_Cards> {
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
-                  return ChartsWidgetTotalAmountGroup(
+                  return ChartTotalAmountWidget(
                     data: data.amountOutflowCategory,
                     title: "Despesas por Categoria",
                   );
@@ -163,7 +159,7 @@ class _CardsState extends State<_Cards> {
             ListenableBuilder(
                 listenable: widget.amountController,
                 builder: (c, w) {
-                  return ChartsWidgetTotalAmountGroup(
+                  return ChartTotalAmountWidget(
                     data: data.amountOutflowCard,
                     title: "Despesas por Cartão",
                   );
