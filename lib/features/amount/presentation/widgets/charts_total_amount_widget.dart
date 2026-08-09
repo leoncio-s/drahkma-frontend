@@ -9,12 +9,12 @@ import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/presentation/notifiers/app_notifier.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class ChartsWidgetTotalAmountGroup extends StatelessWidget {
+class ChartTotalAmountWidget extends StatelessWidget {
   final List<AmountModel>? data;
   final String title;
   final AppNotifier dataNotifier = appNotifier;
 
-  ChartsWidgetTotalAmountGroup(
+  ChartTotalAmountWidget(
       {super.key, required this.data, required this.title});
 
   @override
