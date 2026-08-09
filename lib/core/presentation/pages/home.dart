@@ -1,6 +1,6 @@
 import 'package:drahkma/core/navigation/app_routes.dart';
 import 'package:drahkma/di/injector.dart';
-import 'package:drahkma/features/amount/presentation/views/dashboard_amount_page.dart';
+import 'package:drahkma/features/amount/presentation/views/dashboard_amount_view.dart';
 import 'package:drahkma/features/bank_account/presentation/views/bank_account_view.dart';
 import 'package:drahkma/features/card/presentation/views/card_view.dart';
 import 'package:drahkma/features/category/presentation/views/category_view.dart';
