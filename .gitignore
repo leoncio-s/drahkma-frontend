@@ -24,6 +24,8 @@
 .project
 .settings/
 .vscode/*
+.vscode/
+*/.vscode/*
 
 # Flutter repo-specific
 /bin/cache/
@@ -146,6 +148,7 @@ android/
 linux/
 macos/
 windows/
+.github/
 
 
 devtools_options.yaml
