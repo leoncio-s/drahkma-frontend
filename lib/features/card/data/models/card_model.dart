@@ -58,7 +58,6 @@ class CardModel extends Card {
       return date;
     }
 
-  @override
   factory CardModel.fromJson(Map<String, dynamic> data) {
     String? dataBrand = data['brand'] ?? "";
     int? dataId = data['id'] ?? 0;
