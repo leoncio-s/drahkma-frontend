@@ -11,6 +11,7 @@ import 'package:drahkma/core/presentation/widgets/elevated_button_widget.dart';
 import 'package:drahkma/core/presentation/widgets/text_form_field_widget.dart';
 import 'package:drahkma/features/user/presentation/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class CreateUserPage extends StatefulWidget {
@@ -81,23 +82,23 @@ class _CreateUserPageState extends State<CreateUserPage> {
             const SizedBox(
               height: 15,
             ),
-            _fullNameField(),
+            AutofillGroup(child: _fullNameField()),
             const SizedBox(
               height: 15,
             ),
-            _emailField(),
+            AutofillGroup(child: _emailField()),
             const SizedBox(
               height: 15,
             ),
-            _phoneNumberField(),
+            AutofillGroup(child: _phoneNumberField()),
             const SizedBox(
               height: 15,
             ),
-            _passwordField(),
+            AutofillGroup(child: _passwordField()),
             const SizedBox(
               height: 15,
             ),
-            _confPasswordField(),
+            AutofillGroup(child: _confPasswordField()),
             const SizedBox(
               height: 15,
             ),
@@ -131,6 +132,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         controller: _fullNameController,
         hintText: "Nome Completo",
         autovalidateMode: AutovalidateMode.onUnfocus,
+        autofillHints: [AutofillHints.name],
         validator: (value) {
           if (value!.isEmpty) {
             return "Campo obrigatório";
@@ -144,6 +146,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   TextFormFieldWidget _emailField() => TextFormFieldWidget(
       controller: _emailController,
       hintText: "E-mail",
+      autofillHints: [AutofillHints.username, AutofillHints.email],
       keyboardType: TextInputType.emailAddress,
       autovalidateMode: AutovalidateMode.onUnfocus,
       validator: (value) {
@@ -160,6 +163,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   TextFormFieldWidget _passwordField() => TextFormFieldWidget(
         controller: _passwordController,
         hintText: "Senha",
+        autofillHints: [AutofillHints.password],
         obscureText: notShowPassword,
         obscuringCharacter: "*",
         keyboardType: TextInputType.visiblePassword,
@@ -188,6 +192,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
   TextFormFieldWidget _confPasswordField() => TextFormFieldWidget(
         controller: _confPasswordController,
         hintText: "Confirme a Senha",
+        autofillHints: [AutofillHints.newPassword],
         obscureText: notShowPassword2,
         obscuringCharacter: "*",
         keyboardType: TextInputType.visiblePassword,
@@ -219,6 +224,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
         controller: _phoneNumberController,
         hintText: "Número de Telefone",
         keyboardType: TextInputType.phone,
+        autofillHints: [AutofillHints.telephoneNumber],
         // keyboardType: TextInputType.emailAddress,
         autovalidateMode: AutovalidateMode.onUnfocus,
         validator: (value) {
@@ -280,6 +286,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
             errors = {'error': state.message};
           });
         } else if (mounted) {
+          TextInput.finishAutofillContext(shouldSave: true);
           Navigator.maybeOf(context)?.pushReplacement(
             MaterialPageRoute(builder: (context) => SuccessPage()),
           );
@@ -290,7 +297,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
           errors = json['errors'];
         });
         return;
-      } on Exception {
+      } catch(e) {
         rethrow;
       }
     }
