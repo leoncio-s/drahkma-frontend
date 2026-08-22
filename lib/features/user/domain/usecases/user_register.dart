@@ -11,20 +11,9 @@ class UserRegister implements UseCases<UserModel>
   const UserRegister(UserRepository repository) : _repo = repository;
 
   @override
-  call({UserDTO? user}) async {
-      UserModel userModel = UserModel(
-        id: user!.id,
-        fullname: user.fullname,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        actived: user.actived,
-        emailVerifiedAt: user.emailVerifiedAt,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-        token: user.token
-      );
-      User? saved = await _repo.save(UserMapper.toEntity(userModel));
-      return saved as UserModel;
+  Future<UserModel?> call({UserDTO? user}) async {
+      User? saved = await _repo.save(user!);
+      return UserMapper.toModel(saved!);
   }
   
 }

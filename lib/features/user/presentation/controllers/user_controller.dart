@@ -1,4 +1,5 @@
 import 'package:drahkma/core/presentation/controllers/app_state.dart';
+import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/domain/usecases/user_profile.dart';
 import 'package:drahkma/features/user/domain/usecases/user_register.dart';
 import 'package:drahkma/features/user/domain/usecases/user_update.dart';
@@ -28,7 +29,7 @@ class UserController extends ValueNotifier<AppState> {
     }
   }
 
-  Future<void> registerUser(dynamic user) async {
+  Future<void> registerUser(UserDTO user) async {
     value = AppLoading();
     try {
       await _userRegister.call(user: user);

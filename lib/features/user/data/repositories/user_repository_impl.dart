@@ -1,3 +1,4 @@
+import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/data/sources/remote/user_remote_datasource.dart';
 import 'package:drahkma/features/user/data/sources/local/user_local_datasource.dart';
 import 'package:drahkma/features/user/domain/entities/user.dart';
@@ -27,16 +28,12 @@ class UserRepositoryImpl implements UserRepository
   }
 
   @override
-  Future<User?> save(User user) async {
+  Future<User?> save(UserDTO user) async {
     try {
       User? savedUser = await _remoteDatasource.save(user);
-      if (savedUser != null) {
-        await _localDatasource.saveUser(savedUser);
-      }
       return savedUser;
     } catch (e) {
-      // Fallback to local datasource on network error
-      return await _localDatasource.getUser();
+      rethrow;
     }
   }
 
@@ -44,7 +41,6 @@ class UserRepositoryImpl implements UserRepository
   Future<void> update(User user) async {
     try {
       await _remoteDatasource.update(user);
-      await _localDatasource.saveUser(user);
     } catch (e) {
       // On network error, at least save to local
       await _localDatasource.saveUser(user);

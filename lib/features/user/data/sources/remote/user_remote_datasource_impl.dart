@@ -6,6 +6,7 @@ import 'package:drahkma/core/config.dart';
 import 'package:drahkma/core/utils/helpers/join_url.dart';
 import 'package:drahkma/di/injector.dart';
 import 'package:drahkma/features/auth/data/sources/local/auth_local_datasource.dart';
+import 'package:drahkma/features/user/data/mappers/user_mapper.dart';
 import 'package:drahkma/features/user/data/models/user_dto.dart';
 import 'package:drahkma/features/user/data/models/user_model.dart';
 import 'package:drahkma/features/user/data/sources/remote/user_remote_datasource.dart';
@@ -51,10 +52,10 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
   }
 
   @override
-  Future<User?> save(User data) async {
+  Future<User?> save(UserDTO data) async {
     try {
       var request = await http.post(_url,
-          body: jsonEncode((data as UserDTO).toMap()),
+          body: jsonEncode((data).toMap()),
           headers: {'Content-type': 'application/json'})
           .timeout(Duration(seconds: 20));
 
@@ -64,7 +65,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource{
         return UserModel.fromJson(json) as User?;
       } else if (request.statusCode == 400) {
         json = jsonDecode(request.body);
-        throw ArgumentError(jsonEncode(json), 'Erro(s) na validação do cadastro');
+        throw ArgumentError(jsonEncode(json["errors"]), 'Erro(s) na validação do cadastro');
       }
       throw Exception("Erro interno no servidor");
     } catch (e) {
