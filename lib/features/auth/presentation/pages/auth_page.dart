@@ -27,6 +27,24 @@ class _AuthPageState extends State<AuthPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final args = ModalRoute.of(context)!.settings.arguments as Map?;
+      if (args != null) {
+        bool? success = bool.tryParse(args['success'] ?? "");
+        String message = args['message'].toString().trim();
+
+        if (mounted && success != null) {
+          ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+              backgroundColor:
+                  success ? AppColors.incomeGreen : AppColors.redError,
+              content: Text(message),
+              actions: [
+                TextButton(
+                    onPressed: () => ScaffoldMessenger.of(context)
+                        .hideCurrentMaterialBanner(),
+                    child: Text("OK"))
+              ]));
+        }
+      }
       await widget.controller.checkSession();
     });
   }
@@ -46,18 +64,19 @@ class _AuthPageState extends State<AuthPage> {
       _lastProcessedStateType = state;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          Navigator.of(context)
-              .pushReplacementNamed(AppRoutes.dashboard);
+          Navigator.of(context).pushReplacementNamed(AppRoutes.dashboard);
         }
       });
-    } else if (state is NoNetworkState && _lastProcessedStateType is! NoNetworkState) {
+    } else if (state is NoNetworkState &&
+        _lastProcessedStateType is! NoNetworkState) {
       _lastProcessedStateType = state;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           Navigator.of(context).pushNamed('/');
         }
       });
-    } else if (state is TimeoutConnectState && _lastProcessedStateType is! TimeoutConnectState) {
+    } else if (state is TimeoutConnectState &&
+        _lastProcessedStateType is! TimeoutConnectState) {
       _lastProcessedStateType = state;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -74,7 +93,8 @@ class _AuthPageState extends State<AuthPage> {
         }
       });
       widget.controller.value = AuthInitial();
-    } else if (state is AppStateError && _lastProcessedStateType is! AppStateError) {
+    } else if (state is AppStateError &&
+        _lastProcessedStateType is! AppStateError) {
       _lastProcessedStateType = state;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -91,7 +111,7 @@ class _AuthPageState extends State<AuthPage> {
         }
       });
       widget.controller.value = AuthInitial();
-    }else if(state is AuthInitial){
+    } else if (state is AuthInitial) {
       _lastProcessedStateType = null;
     }
   }
@@ -105,20 +125,16 @@ class _AuthPageState extends State<AuthPage> {
                   child: ValueListenableBuilder<AppState>(
                     valueListenable: widget.controller,
                     builder: (context, state, _) {
+                      Future.microtask(() => _handleStateChange(state));
 
-                      Future.microtask(()=> _handleStateChange(state));
-
-                      if(state is AuthInitial && _login.text.isEmpty)
-                      {
-
+                      if (state is AuthInitial && _login.text.isEmpty) {
                         Future.microtask(() async {
                           var value = await widget.useCases.call();
                           value = value ?? "";
-                          if(mounted && _login.text.isEmpty){
-                              _login.text = value;
+                          if (mounted && _login.text.isEmpty) {
+                            _login.text = value;
                           }
                         });
-
                       }
 
                       return Column(

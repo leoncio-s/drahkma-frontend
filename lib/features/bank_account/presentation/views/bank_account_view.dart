@@ -26,6 +26,7 @@ class BankAccountsViewState extends State<BankAccountView> {
   List<BankAccountModel>? bankAccounts;
   String? _message;
   double _turns = 0.0;
+  bool _loading = true;
 
   void _loadData() {
     widget.bankAccountController.loadBankAccounts();
@@ -34,6 +35,16 @@ class BankAccountsViewState extends State<BankAccountView> {
   void _onControllerStateChanged() {
     if (mounted) {
       final state = widget.bankAccountController.value;
+      if (state is BankAccountLoading)
+      {
+        setState(() {
+          _loading = true;
+        });
+      }else{
+        setState(() {
+          _loading = false;
+        });
+      }
       if (state is BankAccountLoaded) {
         setState(() {
           bankAccounts = widget.bankAccountController.data;
@@ -87,7 +98,9 @@ class BankAccountsViewState extends State<BankAccountView> {
                   child: Icon(Icons.add),
                   ) 
               : null,
-      body: SingleChildScrollView(
+      body: _loading ? Center(child: SizedBox(width: 30, height: 30, child: CircularProgressIndicator.adaptive(valueColor: AlwaysStoppedAnimation(AppColors.gold),),),) :
+      
+      SingleChildScrollView(
         padding: const EdgeInsets.all(10.0),
         child: LayoutBuilder(
           builder: (context, _) => Column(
